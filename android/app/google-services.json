@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "725247131174",
+    "project_id": "texops-2e8cf",
+    "storage_bucket": "texops-2e8cf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725247131174:android:21653e35871c5ca7b8f0e7",
+        "android_client_info": {
+          "package_name": "com.example.texops"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzkjLgVHQmlVB-dj8aA4kh65B0w0_rzGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

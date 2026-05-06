@@ -1,21 +1,26 @@
-
-
 import 'package:flutter/material.dart';
 
 class AppColors {
 
-  // --- Main App Colors ---
-  static const Color AppColor = Color(0xff10112D); // Dark Background
-  static const Color ButtonColor = Color(0xff585DF9); // Primary Blue
-  static const Color homeButtonColor = Color(0xffFA4E40); // Red/Orange Accent
-
-  // --- Text & Input Colors ---
-  static const Color TfColor = Color(0xff989696); // Light Grey
 
 
-  // --- Pet App Specific Colors  ---
-  static const Color DarkPink = Color(0xff8D11CB);  // #8D11CB
-  static const Color LightPink = Color(0xffEFC7E8); // #EFC7E8
-  static const Color MyGray = Color(0xff686868);// Dark gray
+  static const Color primaryDarkTeal = Color(0xFF1C4A5A);
+
+  /// Used for active states, key focus indicators, badges, and warnings
+  static const Color accentOrange = Color(0xFFFFB057);
+
+  /// Used for the main screen backgrounds
+  static const Color backgroundLightPeach = Color(0xFFFFEEDB);
+
+  /// Used for containers, bottom sheets, list items, and input fields
+  static const Color cardOffWhite = Color(0xFFFAFAFA);
+
+  // --- Utility Colors ---
+
+  /// Used for subtle text, labels, and borders
+  static const Color textGrey = Color(0xFF686868);
+
+  /// Used for read-only fields or disabled states (like the mapped GatePass data)
+  static const Color readOnlyBg = Color(0xFFF0F0F0);
 
 }

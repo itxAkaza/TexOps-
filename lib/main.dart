@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:texops/resources/route/routes.dart';
+import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/lab_engineer/dashboard/lab_enigneer_dashboard.dart';
 
 import 'firebase_options.dart';
@@ -32,7 +33,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: LabEnigneerDashboard(),
+
+      initialRoute: RoutesNames.introScreen,
+      getPages: AppRoutes.appRoutes(),
+
 
     );
   }

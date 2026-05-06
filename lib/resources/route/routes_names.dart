@@ -3,7 +3,7 @@ class RoutesNames{
 
   static const String  introScreen="/";
 
-  static const String  loginView="/LoginView";
+  static const String  loginScreen="/LoginView";
   static const String  signUpView="/SignUpView";
 
   static const String  homeView="/homeView";

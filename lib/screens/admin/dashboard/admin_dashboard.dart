@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 import 'package:texops/screens/admin/dashboard/widgets/admin_stat_card.dart';
 import 'package:texops/screens/admin/dashboard/widgets/fiber_price_chart.dart';
+import 'package:texops/screens/admin/dashboard/widgets/inventroy_turn_over.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -90,6 +91,8 @@ class AdminDashboard extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   FiberPriceChart(),
+                  const SizedBox(height: 10),
+                  InventoryTurnoverChart(),
                 ],
               ),
             ),

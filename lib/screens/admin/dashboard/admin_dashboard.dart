@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 import 'package:texops/screens/admin/dashboard/widgets/admin_stat_card.dart';
+import 'package:texops/screens/admin/dashboard/widgets/fiber_price_chart.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -10,7 +11,6 @@ class AdminDashboard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     final crossAxisCount = size.width > 650 ? 4 : 2;
-    final aspectRatio = size.width > 650 ? 0.95 : 1.02;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFEEDB),
@@ -54,40 +54,42 @@ class AdminDashboard extends StatelessWidget {
                     crossAxisCount: crossAxisCount,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 16,
+                    mainAxisSpacing: 8,
                     crossAxisSpacing: 16,
-                    childAspectRatio: aspectRatio,
+                    childAspectRatio: 1.2,
                     children: const [
                       AdminStatCard(
                         backgroundColor: AppColors.primaryDarkTeal,
                         headingText: "Total Gate Passes",
                         icon: Icons.description_outlined,
                         bodyText: "342",
-                        subtextText: "View GatePass list",
+                        subtitleText: "View GatePass list",
                       ),
                       AdminStatCard(
                         backgroundColor: AppColors.accentOrange,
                         headingText: "Inventory Count",
                         icon: Icons.inventory_2_outlined,
                         bodyText: "7,265",
-                        subtextText: "Number of Bales",
+                        subtitleText: "Number of Bales",
                       ),
                       AdminStatCard(
                         backgroundColor: AppColors.accentOrange,
                         headingText: "Overall Quality Rate",
                         icon: Icons.verified_outlined,
                         bodyText: "94.8%",
-                        subtextText: "All Quality Rates",
+                        subtitleText: "All Quality Rates",
                       ),
                       AdminStatCard(
                         backgroundColor: AppColors.primaryDarkTeal,
                         headingText: "Total Users",
                         icon: Icons.supervised_user_circle_rounded,
                         bodyText: "12",
-                        subtextText: "Add New User",
+                        subtitleText: "Add New User",
                       ),
                     ],
                   ),
+                  const SizedBox(height: 10),
+                  FiberPriceChart(),
                 ],
               ),
             ),

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 
-class OnBoardingButton extends StatelessWidget {
+class MYButton extends StatelessWidget {
   final String text;
   final double height;
   final double width;
   final VoidCallback? onTap;
 
-  const OnBoardingButton({super.key ,
+  const MYButton({super.key ,
     required this.text,
     required this.height,
     required this.width,
@@ -24,13 +24,13 @@ class OnBoardingButton extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           color: AppColors.primaryDarkTeal,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Center(
           child: Text(text,style: GoogleFonts.poppins(
             textStyle: TextStyle(
               color: AppColors.readOnlyBg,
-              fontSize: 16,
+              fontSize: 17,
               fontWeight: .w500
             )
           ),),

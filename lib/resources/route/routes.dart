@@ -6,6 +6,7 @@ import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/Authentication/login_screen.dart';
 
+import '../../screens/lab_engineer/record_gatePass/bail_entry_screen.dart';
 import '../../screens/onBoarding/intro_screen.dart';
 
 class AppRoutes {
@@ -22,6 +23,15 @@ class AppRoutes {
     GetPage(
         name: RoutesNames.loginScreen,
         page: ()=>LoginScreen(),
+        transition: Transition.leftToRightWithFade,
+        transitionDuration: Duration(milliseconds: 250)
+
+    ),
+
+
+    GetPage(
+        name: RoutesNames.bailEntryView,
+        page: ()=>BaleEntryScreen(),
         transition: Transition.leftToRightWithFade,
         transitionDuration: Duration(milliseconds: 250)
 

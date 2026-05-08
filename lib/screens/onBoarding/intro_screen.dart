@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texops/controllers/onBoarding/onBoarding_controller.dart';
+import 'package:texops/resources/colors/app_colors.dart';
 import 'package:texops/screens/Authentication/login_screen.dart';
+import 'package:texops/screens/lab_engineer/dashboard/lab_enigneer_dashboard.dart';
 import 'package:texops/screens/onBoarding/onBoarding_Screens/onBoarding2.dart';
 import 'package:texops/screens/onBoarding/onBoarding_Screens/onBoarding3.dart';
 import 'package:texops/screens/onBoarding/widgets/my_button.dart';
@@ -40,39 +42,40 @@ class IntroScreen extends StatelessWidget {
 
           ),
 
+
           Container(
-            alignment: Alignment(0,0.08),
+            alignment: Alignment(0,0.65),
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: SmoothPageIndicator(
               controller: introController.controller,
               count: 3,
-              effect: WormEffect(
-                  dotColor: Colors.white.withValues(alpha: 0.7),
-                  activeDotColor: Colors.white,
-                  dotWidth: 12,
-                  dotHeight: 12,
-                  paintStyle: PaintingStyle.stroke
+              effect: ExpandingDotsEffect(
+                  dotColor: AppColors.pageIndicator,
+                  activeDotColor: AppColors.primaryDarkTeal,
+                  dotWidth: 13,
+                  dotHeight: 13,
+                  paintStyle: PaintingStyle.fill
               ),
 
             ),
           ),
 
           Container(
-            alignment: Alignment(0,0.8),
+            alignment: Alignment(0,0.9),
             child: Obx((){
               return introController.isLast.value
                   ?
 
-              OnBoardingButton(text: "Get Started", height: height*0.06,width: width*0.8,
+              MYButton(text: "Get Started", height: height*0.07,width: width*0.85,
                   onTap:
                       (){
-                    Get.offAll(()=>LoginScreen());
+                    Get.offAll(()=>LabEnigneerDashboard());
                     Get.delete<onBoradingController>();
 
                   }
               ) :
 
-              OnBoardingButton(text: "Next",height: height*0.06,width: width*0.8,
+              MYButton(text: "Next",height: height*0.07,width: width*0.85,
                   onTap:
                       ()=>introController.controller.nextPage(
                       duration: Duration(milliseconds: 500),

@@ -77,6 +77,7 @@ class BaleInventoryForm extends StatelessWidget {
                 type: TextInputType.number
             ),
 
+
             BailButton(
                 onTap: (){},
                 text: "Save & Generate QR Tag ",

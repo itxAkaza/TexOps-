@@ -1,0 +1,93 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
+import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/custom_action_card.dart';
+import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
+import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
+import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_progress_indicator.dart';
+import 'package:texops/screens/QualityMeasures/Screens/fibre/fibre_input.dart';
+
+class ChooseCategoryScreen extends StatelessWidget {
+  const ChooseCategoryScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.cardWhite,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Header fpr clipPath
+            EPrimaryHeaderContainer(
+              child: Column(
+                children: [
+                  AppBarWithBack(title: 'Quality Recording Category'),
+
+                  /// Circular Containers indicator
+                  StepProgressIndicator(currentStep: 1),
+
+                  /// Circular Containers indicator Label Text ( The text Below them )
+                  StepIndicatorLabelTextWidget(currentStep: 1),
+                  const SizedBox(height: 40),
+                ],
+              ),
+
+              // Body
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Text(
+                    'Choose a product category to begin recording\nquality parameters',
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  CustomActionCard(
+                    title: 'Fibre Testing',
+                    subtitle: 'Analyse Raw Material Quality Parameters',
+                    leadingIcon: Icon(
+                      Iconsax.component,
+                      color: AppColors.accentOrange,
+                    ),
+                    onTap: () => Get.to(()=> FibreTestingScreen())
+                  ),
+
+                  const SizedBox(height: 16),
+                  CustomActionCard(
+                    title: 'Yarn Testing',
+                    subtitle: 'Record Specifications for Yarn Samples',
+                    leadingIcon: Icon(
+                      Iconsax.component,
+                      color: AppColors.accentOrange,
+                    ),
+                    onTap: () {},
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  CustomActionCard(
+                    title: 'Fabric Testing',
+                    subtitle: 'Document Finished Products Quality Standards',
+                    leadingIcon: Icon(
+                      Iconsax.component,
+                      color: AppColors.accentOrange,
+                    ),
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/admin/dashboard/widgets/admin_stat_card.dart';
 import 'package:texops/screens/admin/dashboard/widgets/fiber_price_chart.dart';
 import 'package:texops/screens/admin/dashboard/widgets/inventroy_turn_over.dart';
@@ -32,10 +35,11 @@ class AdminDashboard extends StatelessWidget {
         ),
         title: Text(
           "TexOps Overview",
-          style: textTheme.titleMedium?.copyWith(
+          style: GoogleFonts.poppins(
             color: AppColors.primaryDarkTeal,
             fontWeight: FontWeight.bold,
             fontSize: 20,
+            letterSpacing: -0.1,
           ),
         ),
         centerTitle: false,
@@ -58,13 +62,16 @@ class AdminDashboard extends StatelessWidget {
                     mainAxisSpacing: 8,
                     crossAxisSpacing: 16,
                     childAspectRatio: 1.2,
-                    children: const [
+                    children: [
                       AdminStatCard(
                         backgroundColor: AppColors.primaryDarkTeal,
                         headingText: "Total Gate Passes",
                         icon: Icons.description_outlined,
                         bodyText: "342",
                         subtitleText: "View GatePass list",
+                        onTap: () {
+                          Get.toNamed(RoutesNames.adminBaleInventory);
+                        },
                       ),
                       AdminStatCard(
                         backgroundColor: AppColors.accentOrange,
@@ -72,6 +79,9 @@ class AdminDashboard extends StatelessWidget {
                         icon: Icons.inventory_2_outlined,
                         bodyText: "7,265",
                         subtitleText: "Number of Bales",
+                        onTap: () {
+                          Get.toNamed(RoutesNames.adminBaleInventory);
+                        },
                       ),
                       AdminStatCard(
                         backgroundColor: AppColors.accentOrange,
@@ -79,6 +89,9 @@ class AdminDashboard extends StatelessWidget {
                         icon: Icons.verified_outlined,
                         bodyText: "94.8%",
                         subtitleText: "All Quality Rates",
+                        onTap: () {
+                          Get.toNamed(RoutesNames.adminBaleInventory);
+                        },
                       ),
                       AdminStatCard(
                         backgroundColor: AppColors.primaryDarkTeal,
@@ -86,6 +99,9 @@ class AdminDashboard extends StatelessWidget {
                         icon: Icons.supervised_user_circle_rounded,
                         bodyText: "12",
                         subtitleText: "Add New User",
+                        onTap: () {
+                          Get.toNamed(RoutesNames.adminBaleInventory);
+                        },
                       ),
                     ],
                   ),

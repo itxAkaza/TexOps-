@@ -11,11 +11,14 @@ import 'firebase_options.dart';
 void main() async{
 // hi
 
+import 'package:texops/screens/admin/dashboard/admin_dashboard.dart';
+
+import 'firebase_options.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   //main
   runApp(const MyApp());
@@ -24,7 +27,6 @@ void main() async{
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -42,5 +44,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

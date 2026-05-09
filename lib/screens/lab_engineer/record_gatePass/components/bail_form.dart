@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/lab_engineer/record_gatePass/widgets/TextFormField.dart';
 import 'package:texops/screens/lab_engineer/record_gatePass/widgets/autoRecordContainer.dart';
 import 'package:texops/screens/lab_engineer/record_gatePass/widgets/bailButon.dart';
@@ -77,9 +78,13 @@ class BaleInventoryForm extends StatelessWidget {
                 type: TextInputType.number
             ),
 
+            SizedBox(height: 10,),
 
             BailButton(
-                onTap: (){},
+                onTap: (){
+                  baleController.submitData();
+                  Get.toNamed(RoutesNames.bailBarcodeView);
+                },
                 text: "Save & Generate QR Tag ",
                 height: height*0.07,
                 width: width,

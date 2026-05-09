@@ -7,6 +7,7 @@ class RoutesNames{
   static const String  signUpView="/SignUpView";
 
   static const String  bailEntryView="/BailEntryView";
+  static const String  bailBarcodeView="/BailBarcodeView";
 
   static const String  movieDetailView="/movieDetailView";
   static const String  movieTrailerlView="/movieTrailerView";

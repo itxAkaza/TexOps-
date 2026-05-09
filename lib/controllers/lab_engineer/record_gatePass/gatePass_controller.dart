@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -8,19 +11,29 @@ class BaleEntryController extends GetxController {
   // --- Gate Pass Controllers ---
   final gatePassRefController = TextEditingController();
   final vehicleNumberController = TextEditingController();
+  final selectedSupplier = Rxn<String>();
+  final arrivalTime =  DateFormat('dd MMMM yyyy, hh:mm a').format(DateTime.now());
 
 
   // --- Bale Inventory Controllers ---
+  final RxString generatedBaleId = ''.obs;
   final baleTypeController = TextEditingController();
   final baleCountController = TextEditingController();
   final quantityController = TextEditingController();
   final weightController = TextEditingController();
   final priceController = TextEditingController();
 
-  final arrivalTime =  DateFormat('dd MMMM yyyy, hh:mm a').format(DateTime.now());
-  final RxString generatedBaleId = ''.obs;
-  final selectedSupplier = Rxn<String>();
+
+
+  final EnginnerID="Abdullah";
+  final bool QualityStatus=false;
+  final bool ReadyforYarn=false;
+
+
+
+
   final List<String> suppliers = ['Supplier A', 'Supplier B', 'Supplier C'];
+  final RxString qrData = ''.obs;
 
 
 
@@ -47,17 +60,22 @@ class BaleEntryController extends GetxController {
 
 
   void submitData() {
-    // Print to console to verify data is captured
-    print('Submitting Gate Pass: ${gatePassRefController.text}');
-    print('Submitting Bale Type: ${baleTypeController.text}');
+    Map<String, dynamic> baleData = {
+      'gatePassRef': gatePassRefController.text.trim(),
+      'vehicleNumber': vehicleNumberController.text.trim(),
+      'supplier': selectedSupplier.value ?? 'N/A',
+      'arrivalTime': arrivalTime,
+      'baleId': generatedBaleId.value,
+      'baleType': baleTypeController.text.trim(),
+      'baleCount': baleCountController.text.trim(),
+      'quantity': quantityController.text.trim(),
+      'weight': weightController.text.trim(),
+      'price': priceController.text.trim(),
+      "engineerID":EnginnerID
+    };
 
-    Get.snackbar(
-      'Success',
-      'Data saved and QR tag generated!',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
+
+    qrData.value = jsonEncode(baleData);
   }
 
   @override

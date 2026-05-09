@@ -5,10 +5,12 @@ class MYText extends StatelessWidget {
   final String text;
   final Color color;
   final double size;
+  final FontWeight fontweight;
   const MYText({super.key,
   required this.text,
     this.color=Colors.black,
-    this.size=13
+    this.size=13,
+    this.fontweight=FontWeight.w400
   });
 
   @override
@@ -18,7 +20,7 @@ class MYText extends StatelessWidget {
       textStyle: TextStyle(
         color: color,
         fontSize: size,
-        fontWeight: FontWeight.w400
+        fontWeight: fontweight
       )
     ),
     );

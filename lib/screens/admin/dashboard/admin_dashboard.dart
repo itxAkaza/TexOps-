@@ -13,7 +13,6 @@ class AdminDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final textTheme = Theme.of(context).textTheme;
     final crossAxisCount = size.width > 650 ? 4 : 2;
 
     return Scaffold(

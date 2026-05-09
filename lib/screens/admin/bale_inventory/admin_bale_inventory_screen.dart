@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/screens/admin/bale_inventory/admin_bale_details_screen.dart';
 import 'package:texops/screens/admin/bale_inventory/widgets/bale_card.dart';
 import 'package:texops/screens/admin/bale_inventory/widgets/inventory_search_bar.dart';
 import 'package:texops/screens/admin/bale_inventory/widgets/status_filter_chip.dart';
@@ -47,7 +48,65 @@ class AdminBaleInventoryScreen extends StatelessWidget {
             SizedBox(height: 10),
             StatusFilterChip(),
             SizedBox(height: 10),
-            BaleCard(),
+            Expanded(
+              child: ListView(
+                children: [
+                  BaleCard(
+                    bale: BaleModel(
+                      baleId: "B-8902",
+                      materialType: "Polyester Blend",
+                      vendor: "Nishat Textiles",
+                      weight: "300 kg",
+                      purchasePrice: 52000,
+                      status: BaleStatus.sentForYarn,
+                      labStatus: LabStatus.completed,
+                    ),
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AdminBaleDetailsScreen(),
+                        ),
+                      );
+                      debugPrint("Hello");
+                    },
+                  ),
+
+                  BaleCard(
+                    bale: BaleModel(
+                      baleId: "B-8915",
+                      materialType: "Ring Spun Cotton",
+                      vendor: "Sapphire Textile Mills",
+                      weight: "420 kg",
+                      purchasePrice: 68500,
+                      status: BaleStatus.testing,
+                      labStatus: LabStatus.pending,
+                    ),
+
+                    onTap: () {
+                      debugPrint("Bale Opened");
+                    },
+                  ),
+
+                  BaleCard(
+                    bale: BaleModel(
+                      baleId: "B-8921",
+                      materialType: "Polyester Fiber",
+                      vendor: "Interloop Textiles",
+                      weight: "350 kg",
+                      purchasePrice: 74200,
+                      status: BaleStatus.completed,
+                      labStatus: LabStatus.completed,
+                    ),
+
+                    onTap: () {
+                      debugPrint("Completed Bale");
+                    },
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

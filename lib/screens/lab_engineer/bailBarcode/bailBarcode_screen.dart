@@ -148,6 +148,8 @@ class BailbarcodeScreen extends StatelessWidget {
                         onTap: baleController.saveTagAndRegister,
 
                     ),
+
+
           
                     const SizedBox(height: 20),
 

@@ -2,6 +2,7 @@ class RoutesNames {
   static const String adminDashboard = '/adminDashboard';
   static const String adminBaleInventory = '/adminBaleInventory';
   static const String adminBaleInfo = '/adminBaleInfo';
+  static const String adminUserDirectory = '/adminUserDirectory';
 
   static const String introScreen = "/";
 

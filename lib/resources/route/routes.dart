@@ -3,6 +3,7 @@ import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/admin/bale_inventory/admin_bale_inventory_screen.dart';
 import 'package:texops/screens/admin/dashboard/admin_dashboard.dart';
+import 'package:texops/screens/admin/user_directory/admin_user_directory.dart';
 
 class AppRoutes {
   static appRoutes() => [
@@ -21,6 +22,11 @@ class AppRoutes {
     GetPage(
       name: RoutesNames.adminBaleInventory,
       page: () => AdminBaleInventoryScreen(),
+      transition: Transition.rightToLeftWithFade,
+    ),
+    GetPage(
+      name: RoutesNames.adminUserDirectory,
+      page: () => AdminUserDirectory(),
       transition: Transition.rightToLeftWithFade,
     ),
   ];

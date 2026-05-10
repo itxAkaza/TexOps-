@@ -41,7 +41,7 @@ class AppRoutes {
     GetPage(
         name: RoutesNames.bailBarcodeView,
         page: ()=>BailbarcodeScreen(),
-        transition: Transition.leftToRightWithFade,
+        transition: Transition.fade,
         transitionDuration: Duration(milliseconds: 250)
 
     ),

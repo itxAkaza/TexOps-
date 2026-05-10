@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 import 'package:texops/screens/lab_engineer/record_gatePass/widgets/text.dart';
+import 'package:texops/screens/onBoarding/widgets/my_button.dart';
 
 import '../../../controllers/lab_engineer/record_gatePass/gatePass_controller.dart';
 
@@ -119,7 +120,7 @@ class BailbarcodeScreen extends StatelessWidget {
                     Row(
                       children: [
                         _buildDetailColumn("Date Received", baleController.arrivalTime),
-                        const Expanded(child: SizedBox()), // Empty space for alignment
+                        const Expanded(child: SizedBox()),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -131,62 +132,26 @@ class BailbarcodeScreen extends StatelessWidget {
                     ),
           
                     const SizedBox(height: 30),
-          
-                    // Action Buttons
-                    SizedBox(
-                      width: double.infinity,
-                      height: 55,
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryDarkTeal,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        icon: const Icon(Icons.share_outlined, color: Colors.white),
-                        label: MYText(
-                          text: "Share QR as PDF",
-                          color: Colors.white,
-                          size: 16,
-                          fontweight: FontWeight.bold,
-                        ),
-                        onPressed: () {
-                          // Implement Share logic
-                        },
-                      ),
+
+
+                    MYButton(
+                        text: "Share QR as PDF",
+                        height: height*0.07,
+                        width: width,
+                        onTap: baleController.shareQRAsPDF
                     ),
                     const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 55,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFA756), // Orange matching the design
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: MYText(
-                          text: "Save Tag & Register",
-                          color: Colors.white,
-                          size: 16,
-                          fontweight: FontWeight.bold,
-                        ),
-                        onPressed: () {
-                          // Implement Save logic
-                        },
-                      ),
+                    MYButton(
+                        text: "Save Tag & Register",
+                        height: height*0.07,
+                        width: width,
+                        onTap: baleController.saveTagAndRegister,
+
                     ),
           
                     const SizedBox(height: 20),
-                    Center(
-                      child: MYText(
-                        text: "... 2 minutes ago",
-                        color: Colors.grey.shade500,
-                        size: 14,
-                      ),
-                    ),
+
+
                   ],
                 ),
               ),

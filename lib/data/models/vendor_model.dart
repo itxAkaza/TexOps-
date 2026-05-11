@@ -1,24 +1,30 @@
 class VendorModel {
   final String uid;
-  final String id;
   final String name;
-  final List<String> suppliedItems;
+  final String email;
+  final String? profilePic;
+
+  /// ✅ single supply type (IMPORTANT CHANGE)
+  final String supplyType;
+
   final DateTime dateAdded;
 
   VendorModel({
     required this.uid,
-    required this.id,
     required this.name,
-    required this.suppliedItems,
+    required this.email,
+    this.profilePic,
+    required this.supplyType,
     required this.dateAdded,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
-      'id': id,
       'name': name,
-      'items': suppliedItems,
+      'email': email,
+      'profilePic': profilePic,
+      'supplyType': supplyType,
       'dateAdded': dateAdded.toIso8601String(),
     };
   }
@@ -26,12 +32,31 @@ class VendorModel {
   factory VendorModel.fromMap(Map<String, dynamic> map) {
     return VendorModel(
       uid: map['uid'] ?? '',
-      id: map['id'] ?? '',
       name: map['name'] ?? '',
-      suppliedItems: List<String>.from(map['items'] ?? []),
-      dateAdded: DateTime.parse(
-        map['dateAdded'] ?? DateTime.now().toIso8601String(),
-      ),
+      email: map['email'] ?? '',
+      profilePic: map['profilePic'],
+      supplyType: map['supplyType'] ?? '',
+      dateAdded: map['dateAdded'] is String
+          ? DateTime.parse(map['dateAdded'])
+          : (map['dateAdded'] as dynamic)?.toDate() ?? DateTime.now(),
+    );
+  }
+
+  VendorModel copyWith({
+    String? uid,
+    String? name,
+    String? email,
+    String? profilePic,
+    String? supplyType,
+    DateTime? dateAdded,
+  }) {
+    return VendorModel(
+      uid: uid ?? this.uid,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      profilePic: profilePic ?? this.profilePic,
+      supplyType: supplyType ?? this.supplyType,
+      dateAdded: dateAdded ?? this.dateAdded,
     );
   }
 }

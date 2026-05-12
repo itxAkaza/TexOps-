@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppColors{
-
-
-
+class AppColors {
   // App Colors
 
   static const Color primaryDarkTeal = Color(0xFF1C4A5A);
@@ -22,5 +19,4 @@ class AppColors{
   static const Color textGrey = Color(0xFF686868);
 
   static const Color readOnlyBg = Color(0xFFF0F0F0);
-
 }

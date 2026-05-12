@@ -38,7 +38,7 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
               child: SizedBox(
-                width: 800, // Increased for a better scroll feel
+                width: 800,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 8, right: 20),
                   child: LineChart(_chartData()),
@@ -141,8 +141,7 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval:
-                1, // FIXED: This prevents "Jan Jan Feb Feb" by forcing 1 step per label
+            interval: 1,
             reservedSize: 30,
             getTitlesWidget: (val, meta) {
               const months = [

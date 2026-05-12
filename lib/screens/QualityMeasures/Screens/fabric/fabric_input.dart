@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/continue_button.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_review_screen.dart';
@@ -264,10 +265,11 @@ class FabricTestingScreen extends StatelessWidget {
 										],
 									),
 									ContinueButton(
-										onPressed: () => Get.to(
-											() => QualityReviewScreen(
-												testType: 'Fabric Testing',
-												cards: [
+										onPressed: () => Get.toNamed(
+											RoutesNames.qualityReview,
+											arguments: {
+												'testType': 'Fabric Testing',
+												'cards': [
 													QualityReviewCardData(
 														title: 'Stiffness',
 														value: controller.stiffnessResult.value,
@@ -325,7 +327,7 @@ class FabricTestingScreen extends StatelessWidget {
 														value: controller.selectedWeaveType.value,
 													),
 												],
-											),
+											},
 										),
 									),
 								],

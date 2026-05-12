@@ -13,4 +13,10 @@ class RoutesNames {
 
   static const String movieDetailView = "/movieDetailView";
   static const String movieTrailerlView = "/movieTrailerView";
+
+  static const String qualityChooseCategory = '/qualityChooseCategory';
+  static const String qualityFibreTesting = '/qualityFibreTesting';
+  static const String qualityYarnTesting = '/qualityYarnTesting';
+  static const String qualityFabricTesting = '/qualityFabricTesting';
+  static const String qualityReview = '/qualityReview';
 }

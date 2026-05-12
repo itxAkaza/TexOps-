@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/continue_button.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_review_screen.dart';
@@ -240,10 +241,11 @@ class YarnTestingScreen extends StatelessWidget {
                   ),
 
                   ContinueButton(
-                    onPressed: () => Get.to(
-                      () => QualityReviewScreen(
-                        testType: 'Yarn Testing',
-                        cards: [
+                    onPressed: () => Get.toNamed(
+                      RoutesNames.qualityReview,
+                      arguments: {
+                        'testType': 'Yarn Testing',
+                        'cards': [
                           QualityReviewCardData(
                             title: 'Actual Count',
                             value: controller.actualCountResult.value,
@@ -275,7 +277,7 @@ class YarnTestingScreen extends StatelessWidget {
                                 'Twists: ${controller.twistsCtrl.text} | Length: ${controller.tpmLengthCtrl.text} m',
                           ),
                         ],
-                      ),
+                      },
                     ),
                   )
                 ],

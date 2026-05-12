@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:texops/resources/colors/app_colors.dart';
 
 class ContinueButton extends StatelessWidget {

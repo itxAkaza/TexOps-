@@ -4,6 +4,7 @@ import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/continue_button.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_review_screen.dart';
@@ -111,10 +112,11 @@ class FibreTestingScreen extends StatelessWidget {
 
                   // 4. The Bottom Button
                   ContinueButton(
-                    onPressed: () => Get.to(
-                      () => QualityReviewScreen(
-                        testType: 'Fibre Testing',
-                        cards: [
+                    onPressed: () => Get.toNamed(
+                      RoutesNames.qualityReview,
+                      arguments: {
+                        'testType': 'Fibre Testing',
+                        'cards': [
                           QualityReviewCardData(
                             title: 'Fibre Length',
                             value:
@@ -129,7 +131,7 @@ class FibreTestingScreen extends StatelessWidget {
                             footerSuffix: ' D',
                           ),
                         ],
-                      ),
+                      },
                     ),
                   ),
                 ],

@@ -7,10 +7,12 @@ class MyTextFormField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
   final TextInputType textType;
+  final String? Function(String?)? validator;
   const MyTextFormField({super.key,
   required this.hint,
     required this.controller,
-    this.textType=TextInputType.text
+    this.textType=TextInputType.text,
+    this.validator
   });
 
   @override
@@ -18,6 +20,7 @@ class MyTextFormField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: textType,
+      validator: validator,
       decoration:InputDecoration(
         hintText: hint,
 

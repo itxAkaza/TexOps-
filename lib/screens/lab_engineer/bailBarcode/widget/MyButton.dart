@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../resources/colors/app_colors.dart';
 
-class MYButton extends StatelessWidget {
+class QrButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
   final bool isLoading;
@@ -12,7 +12,7 @@ class MYButton extends StatelessWidget {
   final double width;
   final Color color;
 
-  const MYButton({
+  const QrButton({
     super.key,
     required this.text,
     required this.onTap,

@@ -18,6 +18,9 @@ class BaleEntryController extends GetxController {
   final vehicleNumberController = TextEditingController();
   final selectedSupplier = Rxn<String>();
   final arrivalTime =  DateFormat('dd MMMM yyyy, hh:mm a').format(DateTime.now());
+  // Add these Form Keys
+  final GlobalKey<FormState> formKeyStep1 = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKeyStep2 = GlobalKey<FormState>();
 
 
   // --- Bale Inventory Controllers ---
@@ -40,6 +43,13 @@ class BaleEntryController extends GetxController {
   final List<String> suppliers = ['Supplier A', 'Supplier B', 'Supplier C'];
   final RxString qrData = ''.obs;
 
+  String? validateNumber(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) return '$fieldName is required';
+    final number = double.tryParse(value);
+    if (number == null) return 'Must be a valid number';
+    if (number <= 0) return 'Cannot be zero or negative';
+    return null;
+  }
 
   Future<void> shareQRAsPDF() async {
 
@@ -56,7 +66,7 @@ class BaleEntryController extends GetxController {
 
 
   Future<void> saveTagAndRegister() async {
-    String currentUserId = "Sau4XSMNSMdCXc6RnYnbg6jnZjI3";
+    String? currentUserId = BailRecordService.getCurrentUserId();
 
     isLoading.value = true;
 
@@ -75,13 +85,14 @@ class BaleEntryController extends GetxController {
       'engineerID': EnginnerID,
       'qualityStatus': QualityStatus,
       'readyForYarn': ReadyforYarn,
-      'qrCodeData': qrData.value, // Save the actual QR string too!
+      'qrCodeData': qrData.value,
+      "in":true
     };
 
     try {
       // Call the service class
       await BailRecordService.saveBaleData(
-        userId: currentUserId,
+        userId: currentUserId!,
         baleId: generatedBaleId.value,
         baleData: databaseData,
       );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/resources/route/routes_names.dart';
+import 'package:texops/screens/lab_engineer/bailBarcode/widget/MyButton.dart';
 import 'package:texops/screens/lab_engineer/record_gatePass/widgets/text.dart';
 import 'package:texops/screens/onBoarding/widgets/my_button.dart';
 
@@ -23,6 +25,12 @@ class BailbarcodeScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(color: AppColors.primaryDarkTeal),
         elevation: 0,
+        actions: [
+          IconButton(
+              onPressed: ()=>Get.offAllNamed(RoutesNames.labEngineerDashboard),
+              icon: Icon(Icons.close_rounded)
+          )
+        ],
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -134,20 +142,32 @@ class BailbarcodeScreen extends StatelessWidget {
                     const SizedBox(height: 30),
 
 
-                    MYButton(
+                    QrButton(
                         text: "Share QR as PDF",
                         height: height*0.07,
                         width: width,
-                        onTap: baleController.shareQRAsPDF
-                    ),
-                    const SizedBox(height: 16),
-                    MYButton(
-                        text: "Save Tag & Register",
-                        height: height*0.07,
-                        width: width,
-                        onTap: baleController.saveTagAndRegister,
+                        onTap: baleController.shareQRAsPDF,
+                        color: AppColors.primaryDarkTeal,
 
                     ),
+
+                    const SizedBox(height: 16),
+
+                    Obx(
+                        (){
+                          return QrButton(
+                            text: "Save Tag & Register",
+                            height: height*0.07,
+                            width: width,
+                            onTap: baleController.saveTagAndRegister,
+                            color: AppColors.accentOrange,
+                            isLoading: baleController.isLoading.value,
+
+                          );
+                        }
+                    ),
+
+
 
 
           

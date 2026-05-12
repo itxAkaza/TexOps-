@@ -10,6 +10,9 @@ class AppColors {
   static const Color backgroundLightPeach = Color(0xFFFFEEDB);
 
   static const Color cardOffWhite = Color(0xFFFAFAFA);
+  
+  static const Color cardWhite = Color(0xFFFFFFFF);
+
 
   // --- Utility Colors ---
 

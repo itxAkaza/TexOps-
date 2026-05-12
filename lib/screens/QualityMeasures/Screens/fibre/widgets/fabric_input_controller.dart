@@ -15,6 +15,7 @@ class FibreTestingController extends GetxController {
   }
 
   // --- TEXT EDITING CONTROLLERS (For Inputs) ---
+  final fibreLengthCtrl = TextEditingController();
   final weightCtrl = TextEditingController();
   final lengthCtrl = TextEditingController();
 
@@ -42,6 +43,7 @@ class FibreTestingController extends GetxController {
     void updateDenier() {
       calculateDenier(weightCtrl.text, lengthCtrl.text);
     }
+
     weightCtrl.addListener(updateDenier);
     lengthCtrl.addListener(updateDenier);
   }
@@ -49,6 +51,7 @@ class FibreTestingController extends GetxController {
   @override
   void onClose() {
     // Always dispose controllers to prevent memory leaks!
+    fibreLengthCtrl.dispose();
     weightCtrl.dispose();
     lengthCtrl.dispose();
     super.onClose();

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texops/resources/colors/app_colors.dart';
-import 'package:texops/resources/route/routes_names.dart';
-import 'package:texops/screens/QualityMeasures/Screens/Common/continue_button.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
-import 'package:texops/screens/QualityMeasures/Screens/Common/quality_review_screen.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
@@ -12,6 +9,7 @@ import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/st
 import 'package:texops/screens/QualityMeasures/Screens/Common/expandable_input_card.dart';
 import 'package:texops/screens/QualityMeasures/Screens/yarn/widgets/yarn_calculated_result.dart';
 import 'package:texops/screens/QualityMeasures/Screens/yarn/widgets/yarn_controller.dart';
+import 'package:texops/screens/QualityMeasures/Screens/yarn/widgets/yarn_review_continue_button.dart';
 // Import the new widget
 // import 'package:texops/screens/QualityMeasures/Screens/yarn/widgets/calculated_result_widget.dart';
 
@@ -27,6 +25,8 @@ class YarnTestingScreen extends StatelessWidget {
         : Get.put(YarnTestingController());
 
     return Scaffold(
+                  
+      appBar: AppBarWithBack(title: 'Yarn Testing'),
       backgroundColor: AppColors.cardWhite,
       body: SingleChildScrollView(
         child: Column(
@@ -34,7 +34,6 @@ class YarnTestingScreen extends StatelessWidget {
             EPrimaryHeaderContainer(
               child: Column(
                 children: [
-                  AppBarWithBack(title: 'Yarn Testing'),
 
                   /// Circular Containers indicator
                   StepProgressIndicator(currentStep: 2),
@@ -125,13 +124,11 @@ class YarnTestingScreen extends StatelessWidget {
 
                               // Because this .value is inside the inner Obx,
                               // ONLY the yellow box will rebuild when you type!
-                              calculatedValue:
-                                  controller.tenacityResult.value,
+                              calculatedValue: controller.tenacityResult.value,
                             ),
                           ),
                         );
                       }),
-
 
                       // --- Elongation CARD ---
                       Obx(() {
@@ -144,7 +141,10 @@ class YarnTestingScreen extends StatelessWidget {
                           isExpanded: isExpanded,
                           onToggle: () => controller.toggleElongation(),
                           hasMultipleInputs: true,
-                          inputLabels: const ['Final Length (m)', 'Original Length(m)'],
+                          inputLabels: const [
+                            'Final Length (m)',
+                            'Original Length(m)',
+                          ],
                           inputHints: const ['e.g., 20', '120'],
                           inputControllers: [
                             controller.finalLengthCtrl,
@@ -167,12 +167,10 @@ class YarnTestingScreen extends StatelessWidget {
                         );
                       }),
 
-
                       // --- CLSP CARD ---
                       Obx(() {
                         // 1. Read ONLY the expansion state here in the outer Obx
-                        final bool isExpanded =
-                            controller.isCLSPExpanded.value;
+                        final bool isExpanded = controller.isCLSPExpanded.value;
 
                         return StatelessExpandableInputCard(
                           title: 'CLSP (CSP)',
@@ -195,20 +193,16 @@ class YarnTestingScreen extends StatelessWidget {
 
                               // Because this .value is inside the inner Obx,
                               // ONLY the yellow box will rebuild when you type!
-                              calculatedValue:
-                                  controller.clspResult.value,
+                              calculatedValue: controller.clspResult.value,
                             ),
                           ),
                         );
                       }),
 
-
-
                       // --- Actual TPM CARD ---
                       Obx(() {
                         // 1. Read ONLY the expansion state here in the outer Obx
-                        final bool isExpanded =
-                            controller.isTPMExpanded.value;
+                        final bool isExpanded = controller.isTPMExpanded.value;
 
                         return StatelessExpandableInputCard(
                           title: 'Actual TPM',
@@ -231,8 +225,7 @@ class YarnTestingScreen extends StatelessWidget {
 
                               // Because this .value is inside the inner Obx,
                               // ONLY the yellow box will rebuild when you type!
-                              calculatedValue:
-                                  controller.tpmResult.value,
+                              calculatedValue: controller.tpmResult.value,
                             ),
                           ),
                         );
@@ -240,46 +233,7 @@ class YarnTestingScreen extends StatelessWidget {
                     ],
                   ),
 
-                  ContinueButton(
-                    onPressed: () => Get.toNamed(
-                      RoutesNames.qualityReview,
-                      arguments: {
-                        'testType': 'Yarn Testing',
-                        'cards': [
-                          QualityReviewCardData(
-                            title: 'Actual Count',
-                            value: controller.actualCountResult.value,
-                            details:
-                                'Length: ${controller.lengthCtrl.text} yards | Weight: ${controller.weightCtrl.text} lbs',
-                          ),
-                          QualityReviewCardData(
-                            title: 'Tenacity',
-                            value: controller.tenacityResult.value,
-                            details:
-                                'Breaking Force: ${controller.forceCtrl.text} cN | Tex: ${controller.texCtrl.text}',
-                          ),
-                          QualityReviewCardData(
-                            title: 'Elongation (%)',
-                            value: controller.elongationResult.value,
-                            details:
-                                'Final Length: ${controller.finalLengthCtrl.text} m | Original Length: ${controller.originalLengthCtrl.text} m',
-                          ),
-                          QualityReviewCardData(
-                            title: 'CLSP (CSP)',
-                            value: controller.clspResult.value,
-                            details:
-                                'Count: ${controller.clspCountCtrl.text} | Strength: ${controller.strengthCtrl.text}',
-                          ),
-                          QualityReviewCardData(
-                            title: 'Actual TPM',
-                            value: controller.tpmResult.value,
-                            details:
-                                'Twists: ${controller.twistsCtrl.text} | Length: ${controller.tpmLengthCtrl.text} m',
-                          ),
-                        ],
-                      },
-                    ),
-                  )
+                  YarnReviewContinueButton(controller: controller),
                 ],
               ),
             ),

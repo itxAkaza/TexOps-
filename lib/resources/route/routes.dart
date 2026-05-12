@@ -10,7 +10,7 @@ import 'package:texops/screens/QualityMeasures/Screens/yarn/yarn_input.dart';
 // import 'package:texops/screens/admin/user_directory/admin_user_directory.dart';
 
 class AppRoutes {
-  static appRoutes() => [
+  static List<GetPage<dynamic>> appRoutes() => [
     // GetPage(
     //     name: RoutesNames.introScreen,
     //     page: ()=>IntroScreen(),
@@ -69,6 +69,6 @@ class AppRoutes {
       },
       transition: Transition.rightToLeftWithFade,
     ),
-    GetPage(name: RoutesNames.adminGatePass, page: () => AdminGatePass()),
+    // GetPage(name: RoutesNames.adminGatePass, page: () => AdminGatePass()),
   ];
 }

@@ -16,7 +16,9 @@ class FabricCalculatedResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String displayValue = units.isEmpty ? calculatedValue : '$calculatedValue $units';
+    final String displayValue = units.isEmpty
+        ? calculatedValue
+        : '$calculatedValue $units';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

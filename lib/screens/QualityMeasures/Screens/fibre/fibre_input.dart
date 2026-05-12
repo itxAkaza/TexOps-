@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:texops/resources/colors/app_colors.dart';
-import 'package:texops/resources/route/routes_names.dart';
-import 'package:texops/screens/QualityMeasures/Screens/Common/continue_button.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
-import 'package:texops/screens/QualityMeasures/Screens/Common/quality_review_screen.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
@@ -15,6 +11,7 @@ import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/st
 import 'package:texops/screens/QualityMeasures/Screens/Common/expandable_input_card.dart';
 import 'package:texops/screens/QualityMeasures/Screens/fibre/widgets/calculated_denier_widget.dart';
 import 'package:texops/screens/QualityMeasures/Screens/fibre/widgets/fabric_input_controller.dart';
+import 'package:texops/screens/QualityMeasures/Screens/fibre/widgets/fibre_review_continue_button.dart';
 
 class FibreTestingScreen extends StatelessWidget {
   const FibreTestingScreen({super.key});
@@ -22,11 +19,13 @@ class FibreTestingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get existing controller or create if doesn't exist
-    final FibreTestingController controller = Get.isRegistered<FibreTestingController>() 
-        ? Get.find<FibreTestingController>() 
+    final FibreTestingController controller =
+        Get.isRegistered<FibreTestingController>()
+        ? Get.find<FibreTestingController>()
         : Get.put(FibreTestingController());
 
     return Scaffold(
+      appBar: AppBarWithBack(title: 'Fibre Testing'),
       backgroundColor: AppColors.cardWhite,
       body: SingleChildScrollView(
         child: Column(
@@ -35,7 +34,7 @@ class FibreTestingScreen extends StatelessWidget {
             EPrimaryHeaderContainer(
               child: Column(
                 children: [
-                  AppBarWithBack(title: 'Fibre Testing'),
+                  
 
                   /// Circular Containers indicator
                   StepProgressIndicator(currentStep: 2),
@@ -54,10 +53,7 @@ class FibreTestingScreen extends StatelessWidget {
                 children: [
                   QualityResponsiveText(
                     text: 'Expand attributes to input lab test values',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 15, color: Colors.grey),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                   ),
@@ -78,6 +74,7 @@ class FibreTestingScreen extends StatelessWidget {
                           hasMultipleInputs: false,
                           inputLabels: const ['Length (mm)'],
                           inputHints: const ['e.g., 32.5'],
+                          inputControllers: [controller.fibreLengthCtrl],
                         ),
                       ),
 
@@ -110,30 +107,7 @@ class FibreTestingScreen extends StatelessWidget {
                     ],
                   ),
 
-                  // 4. The Bottom Button
-                  ContinueButton(
-                    onPressed: () => Get.toNamed(
-                      RoutesNames.qualityReview,
-                      arguments: {
-                        'testType': 'Fibre Testing',
-                        'cards': [
-                          QualityReviewCardData(
-                            title: 'Fibre Length',
-                            value:
-                                '${controller.lengthCtrl.text.isEmpty ? '-' : controller.lengthCtrl.text} mm',
-                          ),
-                          QualityReviewCardData(
-                            title: 'Fibre Denier',
-                            details:
-                                'Weight: ${controller.weightCtrl.text} g | Length: ${controller.lengthCtrl.text} m',
-                            footerLabel: 'Final Denier:',
-                            footerValue: controller.calculatedDenierResult.value,
-                            footerSuffix: ' D',
-                          ),
-                        ],
-                      },
-                    ),
-                  ),
+                  FibreReviewContinueButton(controller: controller),
                 ],
               ),
             ),
@@ -143,4 +117,3 @@ class FibreTestingScreen extends StatelessWidget {
     );
   }
 }
-

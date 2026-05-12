@@ -5,17 +5,14 @@ class CalculatedDenierWidget extends StatelessWidget {
   /// Pass something like "1.0" or "0.0" when ready.
   final String calculatedValue;
 
-  const CalculatedDenierWidget({
-    super.key,
-    required this.calculatedValue,
-  });
+  const CalculatedDenierWidget({super.key, required this.calculatedValue});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         const SizedBox(height: 8),
-        
+
         // The Italicized Formula Text
         const Text(
           'Formula: (Weight / Length) × 9000',
@@ -25,9 +22,9 @@ class CalculatedDenierWidget extends StatelessWidget {
             fontSize: 12,
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // The Orange Result Container
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

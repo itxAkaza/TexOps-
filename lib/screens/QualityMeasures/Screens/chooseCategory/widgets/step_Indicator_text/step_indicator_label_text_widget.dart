@@ -13,7 +13,7 @@ class StepIndicatorLabelTextWidget extends StatelessWidget {
       mainAxisAlignment: .spaceAround,
 
       children: [
-        StepIndicatorLabelText(text: ' Select\nCategory' , currentStep: currentStep,  stepIndex: 1, ),
+        StepIndicatorLabelText(text: ' Select\n Metric' , currentStep: currentStep,  stepIndex: 1, ),
         Container(width: 40, height: 2, color: Colors.transparent),
         StepIndicatorLabelText(text: 'Record\nData', currentStep: currentStep,  stepIndex: 2, ),
 

@@ -9,7 +9,7 @@ import 'package:texops/data/fireBaseAuthService/fireBase_Auth_Serivce.dart';
 import 'package:texops/data/fireStoreDB/admin/user_firebase_service.dart';
 import 'package:texops/data/models/user_model.dart';
 import 'package:texops/data/models/vendor_model.dart';
-// import 'package:texops/services/cloudinary_services.dart';
+import 'package:texops/services/cloudinary_services.dart';
 import 'package:texops/services/email_service.dart';
 
 class UserDirectoryController extends GetxController {
@@ -44,7 +44,7 @@ class UserDirectoryController extends GetxController {
 
   final UserFirebaseService _service = UserFirebaseService();
   final FirebaseAuthService _authService = FirebaseAuthService();
-  // final CloudinaryService _cloudinaryService = CloudinaryService();
+  final CloudinaryService _cloudinaryService = CloudinaryService();
   final ImagePicker _picker = ImagePicker();
 
   // ─── INIT ─────────────────────────────────────────────────────

@@ -4,12 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 import 'package:texops/resources/route/routes_names.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/continue_button.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/custom_action_card.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_progress_indicator.dart';
+import 'package:texops/screens/QualityMeasures/Screens/score_screen/view_score.dart';
 
 class ChooseCategoryScreen extends StatelessWidget {
   const ChooseCategoryScreen({super.key});
@@ -17,6 +19,8 @@ class ChooseCategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+                 
+      appBar:  AppBarWithBack(title: 'Select a Testing Metric'),
       backgroundColor: AppColors.cardWhite,
       body: SingleChildScrollView(
         child: Column(
@@ -25,7 +29,6 @@ class ChooseCategoryScreen extends StatelessWidget {
             EPrimaryHeaderContainer(
               child: Column(
                 children: [
-                  AppBarWithBack(title: 'Quality Recording Category'),
 
                   /// Circular Containers indicator
                   StepProgressIndicator(currentStep: 1),
@@ -44,7 +47,8 @@ class ChooseCategoryScreen extends StatelessWidget {
               child: Column(
                 children: [
                   QualityResponsiveText(
-                    text: 'Choose a product category to begin recording\nquality parameters',
+                    text:
+                        'Choose a product category to begin recording\nquality parameters',
                     style: GoogleFonts.poppins(
                       fontSize: 15,
                       color: Colors.grey,
@@ -85,6 +89,8 @@ class ChooseCategoryScreen extends StatelessWidget {
                     ),
                     onTap: () => Get.toNamed(RoutesNames.qualityFabricTesting),
                   ),
+
+                  ContinueButton(onPressed: () => Get.to(()=> ViewScoreScreen()), text: 'View Scores')
                 ],
               ),
             ),

@@ -30,7 +30,9 @@ class CalculatedResultWidget extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFF7ED), // The light yellow/orange background
+            color: const Color(
+              0xFFFFF7ED,
+            ), // The light yellow/orange background
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(

@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 
 class ContinueButton extends StatelessWidget {
-  const ContinueButton({super.key, required this.onPressed});
+  const ContinueButton({super.key, required this.onPressed , required this.text});
 
   final VoidCallback onPressed;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class ContinueButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Continue to Review',
+              text,
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: .bold,

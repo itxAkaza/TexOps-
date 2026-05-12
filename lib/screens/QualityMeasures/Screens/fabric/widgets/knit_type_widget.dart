@@ -26,9 +26,14 @@ class KnitTypeWidget extends StatelessWidget {
             onPressed: () => onChanged(label),
             style: OutlinedButton.styleFrom(
               backgroundColor: isSelected ? darkTeal : Colors.white,
-              side: BorderSide(color: isSelected ? darkTeal : borderColor, width: 1.4),
+              side: BorderSide(
+                color: isSelected ? darkTeal : borderColor,
+                width: 1.4,
+              ),
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: Text(
               label,
@@ -50,12 +55,7 @@ class KnitTypeWidget extends StatelessWidget {
           style: TextStyle(color: Colors.grey, fontSize: 12),
         ),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            option('Warp'),
-            option('Weft'),
-          ],
-        ),
+        Row(children: [option('Warp'), option('Weft')]),
         const SizedBox(height: 8),
         Text(
           'Selected Knit Type: $selectedValue',

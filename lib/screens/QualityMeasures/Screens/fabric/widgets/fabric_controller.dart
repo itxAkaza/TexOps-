@@ -15,16 +15,24 @@ class FabricTestingController extends GetxController {
   var isKnitTypeExpanded = false.obs;
   var isWeaveTypeExpanded = false.obs;
 
-  void toggleStiffness() => isStiffnessExpanded.value = !isStiffnessExpanded.value;
-  void toggleWarpCount() => isWarpCountExpanded.value = !isWarpCountExpanded.value;
-  void toggleWeftCount() => isWeftCountExpanded.value = !isWeftCountExpanded.value;
+  void toggleStiffness() =>
+      isStiffnessExpanded.value = !isStiffnessExpanded.value;
+  void toggleWarpCount() =>
+      isWarpCountExpanded.value = !isWarpCountExpanded.value;
+  void toggleWeftCount() =>
+      isWeftCountExpanded.value = !isWeftCountExpanded.value;
   void toggleGsm() => isGsmExpanded.value = !isGsmExpanded.value;
-  void toggleTensileStrength() => isTensileStrengthExpanded.value = !isTensileStrengthExpanded.value;
-  void toggleTearingStrength() => isTearingStrengthExpanded.value = !isTearingStrengthExpanded.value;
-  void toggleBurstingStrength() => isBurstingStrengthExpanded.value = !isBurstingStrengthExpanded.value;
-  void toggleCreaseRecovery() => isCreaseRecoveryExpanded.value = !isCreaseRecoveryExpanded.value;
+  void toggleTensileStrength() =>
+      isTensileStrengthExpanded.value = !isTensileStrengthExpanded.value;
+  void toggleTearingStrength() =>
+      isTearingStrengthExpanded.value = !isTearingStrengthExpanded.value;
+  void toggleBurstingStrength() =>
+      isBurstingStrengthExpanded.value = !isBurstingStrengthExpanded.value;
+  void toggleCreaseRecovery() =>
+      isCreaseRecoveryExpanded.value = !isCreaseRecoveryExpanded.value;
   void toggleKnitType() => isKnitTypeExpanded.value = !isKnitTypeExpanded.value;
-  void toggleWeaveType() => isWeaveTypeExpanded.value = !isWeaveTypeExpanded.value;
+  void toggleWeaveType() =>
+      isWeaveTypeExpanded.value = !isWeaveTypeExpanded.value;
 
   final stiffnessWeightCtrl = TextEditingController();
   final stiffnessBendingCtrl = TextEditingController();
@@ -66,11 +74,15 @@ class FabricTestingController extends GetxController {
     }
 
     void updateWarpCount() {
-      warpCountResult.value = FabricCalculations.calculateSingleValue(warpCountCtrl.text);
+      warpCountResult.value = FabricCalculations.calculateSingleValue(
+        warpCountCtrl.text,
+      );
     }
 
     void updateWeftCount() {
-      weftCountResult.value = FabricCalculations.calculateSingleValue(weftCountCtrl.text);
+      weftCountResult.value = FabricCalculations.calculateSingleValue(
+        weftCountCtrl.text,
+      );
     }
 
     void updateGsm() {
@@ -81,15 +93,21 @@ class FabricTestingController extends GetxController {
     }
 
     void updateTensileStrength() {
-      tensileStrengthResult.value = FabricCalculations.calculateSingleValue(tensileForceCtrl.text);
+      tensileStrengthResult.value = FabricCalculations.calculateSingleValue(
+        tensileForceCtrl.text,
+      );
     }
 
     void updateTearingStrength() {
-      tearingStrengthResult.value = FabricCalculations.calculateSingleValue(tearingForceCtrl.text);
+      tearingStrengthResult.value = FabricCalculations.calculateSingleValue(
+        tearingForceCtrl.text,
+      );
     }
 
     void updateBurstingStrength() {
-      burstingStrengthResult.value = FabricCalculations.calculateSingleValue(burstingPressureCtrl.text);
+      burstingStrengthResult.value = FabricCalculations.calculateSingleValue(
+        burstingPressureCtrl.text,
+      );
     }
 
     void updateCreaseRecovery() {

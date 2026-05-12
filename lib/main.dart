@@ -11,10 +11,6 @@ import 'package:texops/screens/admin/dashboard/admin_dashboard.dart';
 
 import 'firebase_options.dart';
 
-
-
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -35,12 +31,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
-        textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
-        )
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
       ),
-      home: AdminDashboard(),
-      initialRoute: RoutesNames.adminDashboard,
+      home: ChooseCategoryScreen(),
+      initialRoute: RoutesNames.qualityChooseCategory,
       getPages: AppRoutes.appRoutes(),
     );
   }

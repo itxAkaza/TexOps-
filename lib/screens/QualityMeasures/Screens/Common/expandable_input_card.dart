@@ -13,9 +13,9 @@ class StatelessExpandableInputCard extends StatelessWidget {
   final List<String> inputLabels;
   final List<String> inputHints;
   final Widget? bottomWidget;
-  
+
   // FIX 1: You must declare the variable here so the class can hold it
-  final List<TextEditingController>? inputControllers; 
+  final List<TextEditingController>? inputControllers;
 
   const StatelessExpandableInputCard({
     super.key,
@@ -49,7 +49,7 @@ class StatelessExpandableInputCard extends StatelessWidget {
           border: Border.all(color: borderColor, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues( alpha: 0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -119,8 +119,9 @@ class StatelessExpandableInputCard extends StatelessWidget {
                                 inputLabels[index],
                                 inputHints[index],
                                 // FIX 2: Pass the specific controller based on the index
-                                inputControllers != null && inputControllers!.length > index 
-                                    ? inputControllers![index] 
+                                inputControllers != null &&
+                                        inputControllers!.length > index
+                                    ? inputControllers![index]
                                     : null,
                                 darkTeal,
                                 labelColor,
@@ -135,8 +136,8 @@ class StatelessExpandableInputCard extends StatelessWidget {
                         inputLabels.first,
                         inputHints.first,
                         // FIX 3: Pass the first controller if it exists
-                        inputControllers != null && inputControllers!.isNotEmpty 
-                            ? inputControllers!.first 
+                        inputControllers != null && inputControllers!.isNotEmpty
+                            ? inputControllers!.first
                             : null,
                         darkTeal,
                         labelColor,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // Import the calculation class you just made
-import 'yarn_calculations.dart'; 
+import 'yarn_calculations.dart';
 
 class YarnTestingController extends GetxController {
   // ==========================================
@@ -14,10 +14,13 @@ class YarnTestingController extends GetxController {
   var isCLSPExpanded = false.obs;
   var isTPMExpanded = false.obs;
 
-  void toggleActualCount() => isActualCountExpanded.value = !isActualCountExpanded.value;
-  void toggleNominalCount() => isNominalCountExpanded.value = !isNominalCountExpanded.value;
+  void toggleActualCount() =>
+      isActualCountExpanded.value = !isActualCountExpanded.value;
+  void toggleNominalCount() =>
+      isNominalCountExpanded.value = !isNominalCountExpanded.value;
   void toggleTenacity() => isTenacityExpanded.value = !isTenacityExpanded.value;
-  void toggleElongation() => isElongationExpanded.value = !isElongationExpanded.value;
+  void toggleElongation() =>
+      isElongationExpanded.value = !isElongationExpanded.value;
   void toggleCLSP() => isCLSPExpanded.value = !isCLSPExpanded.value;
   void toggleTPM() => isTPMExpanded.value = !isTPMExpanded.value;
 
@@ -26,18 +29,18 @@ class YarnTestingController extends GetxController {
   // ==========================================
   final lengthCtrl = TextEditingController();
   final weightCtrl = TextEditingController();
-  
+
   final nominalCountCtrl = TextEditingController();
-  
+
   final forceCtrl = TextEditingController();
   final texCtrl = TextEditingController();
-  
+
   final finalLengthCtrl = TextEditingController();
   final originalLengthCtrl = TextEditingController();
-  
+
   final clspCountCtrl = TextEditingController();
   final strengthCtrl = TextEditingController();
-  
+
   final twistsCtrl = TextEditingController();
   final tpmLengthCtrl = TextEditingController();
 
@@ -59,36 +62,56 @@ class YarnTestingController extends GetxController {
 
     // Actual Count Listeners
     void updateActualCount() {
-      actualCountResult.value = YarnCalculations.calculateActualCount(lengthCtrl.text, weightCtrl.text);
+      actualCountResult.value = YarnCalculations.calculateActualCount(
+        lengthCtrl.text,
+        weightCtrl.text,
+      );
     }
+
     lengthCtrl.addListener(updateActualCount);
     weightCtrl.addListener(updateActualCount);
 
     // Tenacity Listeners
     void updateTenacity() {
-      tenacityResult.value = YarnCalculations.calculateTenacity(forceCtrl.text, texCtrl.text);
+      tenacityResult.value = YarnCalculations.calculateTenacity(
+        forceCtrl.text,
+        texCtrl.text,
+      );
     }
+
     forceCtrl.addListener(updateTenacity);
     texCtrl.addListener(updateTenacity);
 
     // Elongation Listeners
     void updateElongation() {
-      elongationResult.value = YarnCalculations.calculateElongation(finalLengthCtrl.text, originalLengthCtrl.text);
+      elongationResult.value = YarnCalculations.calculateElongation(
+        finalLengthCtrl.text,
+        originalLengthCtrl.text,
+      );
     }
+
     finalLengthCtrl.addListener(updateElongation);
     originalLengthCtrl.addListener(updateElongation);
 
     // CLSP Listeners
     void updateCLSP() {
-      clspResult.value = YarnCalculations.calculateCLSP(clspCountCtrl.text, strengthCtrl.text);
+      clspResult.value = YarnCalculations.calculateCLSP(
+        clspCountCtrl.text,
+        strengthCtrl.text,
+      );
     }
+
     clspCountCtrl.addListener(updateCLSP);
     strengthCtrl.addListener(updateCLSP);
 
     // TPM Listeners
     void updateTPM() {
-      tpmResult.value = YarnCalculations.calculateTPM(twistsCtrl.text, tpmLengthCtrl.text);
+      tpmResult.value = YarnCalculations.calculateTPM(
+        twistsCtrl.text,
+        tpmLengthCtrl.text,
+      );
     }
+
     twistsCtrl.addListener(updateTPM);
     tpmLengthCtrl.addListener(updateTPM);
   }

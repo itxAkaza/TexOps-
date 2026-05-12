@@ -8,6 +8,7 @@ class AdminStatCard extends StatelessWidget {
   final IconData icon;
   final String bodyText;
   final String subtitleText;
+  final VoidCallback? onTap;
 
   const AdminStatCard({
     super.key,
@@ -16,16 +17,13 @@ class AdminStatCard extends StatelessWidget {
     required this.icon,
     required this.bodyText,
     required this.subtitleText,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Touched")));
-      },
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
         decoration: BoxDecoration(

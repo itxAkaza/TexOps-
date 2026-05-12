@@ -3,16 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class EmailService {
-  // Your EmailJS Service ID
   static const _serviceId = 'service_me48bep';
 
-  // The Template ID you confirmed from the dashboard list
   static const _templateId = 'template_7k8wscn';
 
-  // Your Public Key
   static const _publicKey = 'TETv5WMyVtiKS601A';
 
-  /// Sends login credentials to new employees for the TexOps project.
   static Future<bool> sendCredentials({
     required String toEmail,
     required String name,

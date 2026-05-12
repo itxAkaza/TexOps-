@@ -69,7 +69,7 @@ class AdminDashboard extends StatelessWidget {
                         bodyText: "342",
                         subtitleText: "View GatePass list",
                         onTap: () {
-                          Get.toNamed(RoutesNames.adminBaleInventory);
+                          Get.toNamed(RoutesNames.adminGatePass);
                         },
                       ),
                       AdminStatCard(
@@ -99,7 +99,7 @@ class AdminDashboard extends StatelessWidget {
                         bodyText: "12",
                         subtitleText: "Add New User",
                         onTap: () {
-                          Get.toNamed(RoutesNames.adminBaleInventory);
+                          Get.toNamed(RoutesNames.adminUserDirectory);
                         },
                       ),
                     ],

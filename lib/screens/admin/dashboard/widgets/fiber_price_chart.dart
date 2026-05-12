@@ -57,15 +57,22 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            "Fiber Market Trends",
-            style: TextStyle(
-              color: AppColors.primaryDarkTeal,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+          // Using Flexible to prevent the title from pushing buttons off-screen
+          const Flexible(
+            child: Text(
+              "Fiber Market Trends",
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: TextStyle(
+                color: AppColors.primaryDarkTeal,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
             ),
           ),
+          const SizedBox(width: 8),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               _toggleButton("Cotton", 0, AppColors.accentOrange),
               const SizedBox(width: 8),
@@ -222,9 +229,9 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
     FlSpot(8, 520),
     FlSpot(9, 550),
     FlSpot(10, 540),
-    FlSpot(11, 570),
-    FlSpot(11, 1000),
+    FlSpot(11, 570), // Fixed: Removed the duplicate index 11 spot
   ];
+
   static const polySpots = [
     FlSpot(0, 310),
     FlSpot(1, 330),

@@ -1,7 +1,7 @@
 class UserModel {
   final String uid;
-  final String personalEmail; // given by admin — for sending creds & reset
-  final String generatedEmail; // auto-generated — used to login
+  final String personalEmail;
+  final String generatedEmail;
   final String name;
   final String? profilePic;
   final String role;

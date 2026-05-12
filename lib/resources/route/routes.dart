@@ -18,11 +18,7 @@ class AppRoutes {
     //     transitionDuration: Duration(milliseconds: 250)
     //
     // ),
-    GetPage(
-      name: RoutesNames.adminDashboard,
-      page: () => AdminDashboard(),
-      transition: Transition.leftToRightWithFade,
-    ),
+    GetPage(name: RoutesNames.adminDashboard, page: () => AdminDashboard()),
     GetPage(
       name: RoutesNames.adminBaleInventory,
       page: () => AdminBaleInventoryScreen(),
@@ -73,5 +69,6 @@ class AppRoutes {
       },
       transition: Transition.rightToLeftWithFade,
     ),
+    GetPage(name: RoutesNames.adminGatePass, page: () => AdminGatePass()),
   ];
 }

@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/continue_button.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/quality_review_screen.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_progress_indicator.dart';
-import 'package:texops/screens/QualityMeasures/Screens/fibre/expandable_input_card.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/expandable_input_card.dart';
 import 'package:texops/screens/QualityMeasures/Screens/fibre/widgets/calculated_denier_widget.dart';
 import 'package:texops/screens/QualityMeasures/Screens/fibre/widgets/fabric_input_controller.dart';
 
 class FibreTestingScreen extends StatelessWidget {
-  FibreTestingScreen({super.key});
+  const FibreTestingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +51,14 @@ class FibreTestingScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  Text(
-                    'Expand attributes to input lab test values',
-                    style: GoogleFonts.poppins(
+                  QualityResponsiveText(
+                    text: 'Expand attributes to input lab test values',
+                    style: const TextStyle(
                       fontSize: 15,
                       color: Colors.grey,
                     ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
                   ),
                   const SizedBox(height: 30),
 
@@ -86,12 +91,18 @@ class FibreTestingScreen extends StatelessWidget {
                           hasMultipleInputs: true,
                           inputLabels: const ['Weight', 'Length'],
                           inputHints: const ['e.g., 0.5 g', 'e.g., 4500 m'],
+                          inputControllers: [
+                            controller.weightCtrl,
+                            controller.lengthCtrl,
+                          ],
 
                           // Inject the Formula UI dynamically!
-                          bottomWidget: CalculatedDenierWidget(
-                            // Pass the live calculated result down to the widget
-                            calculatedValue:
-                                controller.calculatedDenierResult.value,
+                          bottomWidget: Obx(
+                            () => CalculatedDenierWidget(
+                              // Pass the live calculated result down to the widget
+                              calculatedValue:
+                                  controller.calculatedDenierResult.value,
+                            ),
                           ),
                         ),
                       ),
@@ -99,30 +110,24 @@ class FibreTestingScreen extends StatelessWidget {
                   ),
 
                   // 4. The Bottom Button
-                  Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:  AppColors.primaryDarkTeal, // Dark Teal
-                        minimumSize: const Size(double.infinity, 56),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {
-                        // Navigate to Screen 3 (Review & Save)
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Continue to Review',
-                            style: GoogleFonts.poppins(
-                              textStyle: TextStyle(fontSize: 15 , fontWeight: .bold , color: AppColors.cardWhite )
-                            )
+                  ContinueButton(
+                    onPressed: () => Get.to(
+                      () => QualityReviewScreen(
+                        testType: 'Fibre Testing',
+                        cards: [
+                          QualityReviewCardData(
+                            title: 'Fibre Length',
+                            value:
+                                '${controller.lengthCtrl.text.isEmpty ? '-' : controller.lengthCtrl.text} mm',
                           ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_forward, size: 20 , color: AppColors.cardWhite,),
+                          QualityReviewCardData(
+                            title: 'Fibre Denier',
+                            details:
+                                'Weight: ${controller.weightCtrl.text} g | Length: ${controller.lengthCtrl.text} m',
+                            footerLabel: 'Final Denier:',
+                            footerValue: controller.calculatedDenierResult.value,
+                            footerSuffix: ' D',
+                          ),
                         ],
                       ),
                     ),
@@ -136,3 +141,4 @@ class FibreTestingScreen extends StatelessWidget {
     );
   }
 }
+

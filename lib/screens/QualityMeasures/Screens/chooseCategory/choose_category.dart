@@ -3,12 +3,15 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/custom_action_card.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_progress_indicator.dart';
+import 'package:texops/screens/QualityMeasures/Screens/fabric/fabric_input.dart';
 import 'package:texops/screens/QualityMeasures/Screens/fibre/fibre_input.dart';
+import 'package:texops/screens/QualityMeasures/Screens/yarn/yarn_input.dart';
 
 class ChooseCategoryScreen extends StatelessWidget {
   const ChooseCategoryScreen({super.key});
@@ -42,12 +45,14 @@ class ChooseCategoryScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  Text(
-                    'Choose a product category to begin recording\nquality parameters',
+                  QualityResponsiveText(
+                    text: 'Choose a product category to begin recording\nquality parameters',
                     style: GoogleFonts.poppins(
                       fontSize: 15,
                       color: Colors.grey,
                     ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
                   ),
                   const SizedBox(height: 30),
                   CustomActionCard(
@@ -57,7 +62,7 @@ class ChooseCategoryScreen extends StatelessWidget {
                       Iconsax.component,
                       color: AppColors.accentOrange,
                     ),
-                    onTap: () => Get.to(()=> FibreTestingScreen())
+                    onTap: () => Get.to(() => const FibreTestingScreen()),
                   ),
 
                   const SizedBox(height: 16),
@@ -68,7 +73,7 @@ class ChooseCategoryScreen extends StatelessWidget {
                       Iconsax.component,
                       color: AppColors.accentOrange,
                     ),
-                    onTap: () {},
+                    onTap: () => Get.to(() => const YarnTestingScreen()),
                   ),
 
                   const SizedBox(height: 16),
@@ -80,7 +85,7 @@ class ChooseCategoryScreen extends StatelessWidget {
                       Iconsax.component,
                       color: AppColors.accentOrange,
                     ),
-                    onTap: () {},
+                    onTap: () => Get.to(()=> const FabricTestingScreen()),
                   ),
                 ],
               ),

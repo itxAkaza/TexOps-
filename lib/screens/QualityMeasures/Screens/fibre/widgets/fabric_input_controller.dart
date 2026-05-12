@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class FibreTestingController extends GetxController {
@@ -13,9 +14,11 @@ class FibreTestingController extends GetxController {
     isFibreDenierExpanded.value = !isFibreDenierExpanded.value;
   }
 
-  // --- DATA STATE (The text field inputs) ---
-  var weightInput = 0.0.obs;
-  var lengthInput = 0.0.obs;
+  // --- TEXT EDITING CONTROLLERS (For Inputs) ---
+  final weightCtrl = TextEditingController();
+  final lengthCtrl = TextEditingController();
+
+  // --- DATA STATE (The calculated result) ---
   var calculatedDenierResult = "-".obs;
 
   // Called whenever the user types in the Weight or Length text fields
@@ -29,5 +32,25 @@ class FibreTestingController extends GetxController {
     } else {
       calculatedDenierResult.value = "-";
     }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Denier Listeners
+    void updateDenier() {
+      calculateDenier(weightCtrl.text, lengthCtrl.text);
+    }
+    weightCtrl.addListener(updateDenier);
+    lengthCtrl.addListener(updateDenier);
+  }
+
+  @override
+  void onClose() {
+    // Always dispose controllers to prevent memory leaks!
+    weightCtrl.dispose();
+    lengthCtrl.dispose();
+    super.onClose();
   }
 }

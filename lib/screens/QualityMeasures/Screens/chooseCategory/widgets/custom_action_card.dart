@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 
 class CustomActionCard extends StatelessWidget {
   final String title;
@@ -50,23 +51,26 @@ class CustomActionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      title,
+                    QualityResponsiveText(
+                      text: title,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.primaryDarkTeal, // Dark Teal from image
+                        color: AppColors.primaryDarkTeal,
                       ),
+                      maxLines: 1,
+                      softWrap: false,
                     ),
                     const SizedBox(height: 6),
-                    Text(
-                      subtitle,
+                    QualityResponsiveText(
+                      text: subtitle,
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.grey, // Slate Gray from image
+                        color: Colors.grey,
                         height: 1.3,
                       ),
+                      maxLines: 2,
                     ),
                   ],
                 ),

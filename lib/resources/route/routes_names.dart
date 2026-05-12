@@ -1,14 +1,17 @@
+class RoutesNames {
+  static const String adminDashboard = '/adminDashboard';
+  static const String adminBaleInventory = '/adminBaleInventory';
+  static const String adminBaleInfo = '/adminBaleInfo';
+  static const String adminUserDirectory = '/adminUserDirectory';
+  static const String adminGatePass = '/adminGatePass';
 
-class RoutesNames{
+  static const String introScreen = "/";
 
-  static const String  introScreen="/";
+  static const String loginView = "/LoginView";
+  static const String signUpView = "/SignUpView";
 
-  static const String  loginView="/LoginView";
-  static const String  signUpView="/SignUpView";
+  static const String homeView = "/homeView";
 
-  static const String  homeView="/homeView";
-
-  static const String  movieDetailView="/movieDetailView";
-  static const String  movieTrailerlView="/movieTrailerView";
-
+  static const String movieDetailView = "/movieDetailView";
+  static const String movieTrailerlView = "/movieTrailerView";
 }

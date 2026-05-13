@@ -6,8 +6,6 @@ class GatePassFirebaseService {
 
   Stream<List<GatePassModel>> getGatePass() {
     return _firestore.collectionGroup('bail_data').snapshots().map((snapshot) {
-      print("DEBUG: Received ${snapshot.docs.length} documents from bail_data");
-
       return snapshot.docs.map((doc) {
         return GatePassModel.fromMap(doc.data(), doc.id);
       }).toList();

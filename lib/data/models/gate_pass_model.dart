@@ -1,6 +1,7 @@
 class GatePassModel {
-  final String id; // Added this to store the Firestore Document ID
+  final String id;
   final String gatePassRef;
+  final String baleID;
   final String vehicleNumber;
   final String supplier;
   final String arrivalTime;
@@ -17,18 +18,18 @@ class GatePassModel {
     required this.price,
     required this.qualityStatus,
     required this.baleType,
+    required this.baleID,
   });
 
-  // Updated factory to accept the document ID explicitly
   factory GatePassModel.fromMap(Map<String, dynamic> map, String documentId) {
     return GatePassModel(
       id: documentId,
+      baleID: map['baleId'] ?? "",
       gatePassRef: map['gatePassRef'] ?? '',
       vehicleNumber: map['vehicleNumber'] ?? '',
       supplier: map['supplier'] ?? '',
       arrivalTime: map['arrivalTime'] ?? '',
-      price:
-          map['price']?.toString() ?? '0', // toString handles int/double safely
+      price: map['price']?.toString() ?? '0',
       qualityStatus: map['qualityStatus'] ?? false,
       baleType: map['baleType'] ?? 'Cotton',
     );

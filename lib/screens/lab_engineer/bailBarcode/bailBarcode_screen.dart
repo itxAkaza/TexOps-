@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 import 'package:texops/resources/route/routes_names.dart';
-import 'package:texops/screens/lab_engineer/bailBarcode/widget/MyButton.dart';
+import 'package:texops/screens/lab_engineer/bailBarcode/widget/qrButton.dart';
 import 'package:texops/screens/lab_engineer/record_gatePass/widgets/text.dart';
 import 'package:texops/screens/onBoarding/widgets/my_button.dart';
 
@@ -134,7 +134,7 @@ class BailbarcodeScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        _buildDetailColumn("EngineerID", baleController.EnginnerID),
+                        _buildDetailColumn("EngineerID", baleController.engineerId.value),
                         _buildDetailColumn("Vehicle Number", baleController.vehicleNumberController.text),
                       ],
                     ),
@@ -148,10 +148,11 @@ class BailbarcodeScreen extends StatelessWidget {
                         width: width,
                         onTap: baleController.shareQRAsPDF,
                         color: AppColors.primaryDarkTeal,
+                      icon: Icons.share_outlined,
 
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
 
                     Obx(
                         (){
@@ -162,6 +163,7 @@ class BailbarcodeScreen extends StatelessWidget {
                             onTap: baleController.saveTagAndRegister,
                             color: AppColors.accentOrange,
                             isLoading: baleController.isLoading.value,
+                            icon: Icons.bookmark_border_outlined,
 
                           );
                         }

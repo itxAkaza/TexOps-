@@ -22,6 +22,8 @@ class BaleEntryController extends GetxController {
   final GlobalKey<FormState> formKeyStep1 = GlobalKey<FormState>();
   final GlobalKey<FormState> formKeyStep2 = GlobalKey<FormState>();
 
+  final RxString qrData = ''.obs;
+
 
   // --- Bale Inventory Controllers ---
   final RxString generatedBaleId = ''.obs;
@@ -33,15 +35,37 @@ class BaleEntryController extends GetxController {
 
 
 
-  final EnginnerID="Abdullah";
+
   final bool QualityStatus=false;
   final bool ReadyforYarn=false;
 
 
 
 
-  final List<String> suppliers = ['Supplier A', 'Supplier B', 'Supplier C'];
-  final RxString qrData = ''.obs;
+  // --- Reactive Dynamic Data ---
+  final RxList<String> suppliers = <String>[].obs;
+  final RxString engineerName = 'Loading...'.obs;
+  final RxString engineerId = 'Loading...'.obs; // NEW: Stores employeeId
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadDynamicData();
+  }
+
+  Future<void> _loadDynamicData() async {
+
+    final details = await BailRecordService.getEngineerDetails();
+    engineerName.value = details['name']!;
+    engineerId.value = details['employeeId']!;
+
+
+    final fetchedSuppliers = await BailRecordService.fetchSuppliers();
+    suppliers.assignAll(fetchedSuppliers);
+  }
+
+
+
 
   String? validateNumber(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) return '$fieldName is required';
@@ -82,7 +106,9 @@ class BaleEntryController extends GetxController {
       'quantity': quantityController.text.trim(),
       'weight': weightController.text.trim(),
       'price': priceController.text.trim(),
-      'engineerID': EnginnerID,
+      'engineerID': engineerId.value,
+      'engineerUID': currentUserId,
+      'engineerName': engineerName.value,
       'qualityStatus': QualityStatus,
       'readyForYarn': ReadyforYarn,
       'qrCodeData': qrData.value,
@@ -146,7 +172,8 @@ class BaleEntryController extends GetxController {
       'quantity': quantityController.text.trim(),
       'weight': weightController.text.trim(),
       'price': priceController.text.trim(),
-      "engineerID":EnginnerID
+      "engineerID":engineerId.value,
+      "in":true
     };
 
 

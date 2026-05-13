@@ -11,6 +11,7 @@ class QrButton extends StatelessWidget {
   final double height;
   final double width;
   final Color color;
+  final IconData icon;
 
   const QrButton({
     super.key,
@@ -19,7 +20,8 @@ class QrButton extends StatelessWidget {
     this.isLoading = false,
     this.height = 55,
     this.width = double.infinity,
-    required this.color// Full width by default
+    required this.color,
+    required this.icon
   });
 
   @override
@@ -33,7 +35,7 @@ class QrButton extends StatelessWidget {
           width: width,
           decoration: BoxDecoration(
             color: color, // Your Theme Color
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
@@ -49,16 +51,22 @@ class QrButton extends StatelessWidget {
               color: Colors.white,
               size: 20,
             )
-                : Text(
-              text,
-              style: GoogleFonts.jost(
-                textStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
+                : Row(
+              mainAxisAlignment: .center,
+              children: [
+                Icon(icon,color: Colors.white,),
+                Text(
+                  text,
+                  style: GoogleFonts.jost(
+                    textStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              ],
+            )
           ),
         ),
       ),

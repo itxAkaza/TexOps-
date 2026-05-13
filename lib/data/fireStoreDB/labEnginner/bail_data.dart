@@ -7,9 +7,44 @@ class BailRecordService {
 
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Returns the current Auth UID
+
   static String? getCurrentUserId() {
     return _auth.currentUser?.uid;
+  }
+
+
+  static Future<Map<String, String>> getEngineerDetails() async {
+    try {
+      String? uid = getCurrentUserId();
+      if (uid == null) return {'name': 'Unknown', 'employeeId': 'Unknown'};
+
+      final doc = await _firestore.collection('users').doc(uid).get();
+      if (doc.exists && doc.data() != null) {
+        return
+          {
+          'name': doc.data()!['name'] ?? 'Unknown',
+          'employeeId': doc.data()!['employeeId'] ?? 'Unknown',
+        };
+      }
+      return {'name': 'Unknown', 'employeeId': 'Unknown'};
+    } catch (e) {
+
+      return {'name': 'Unknown', 'employeeId': 'Unknown'};
+    }
+  }
+
+
+  static Future<List<String>> fetchSuppliers() async
+  {
+    try {
+      final snapshot = await _firestore.collection('vendors').get();
+      return snapshot.docs
+          .map((doc) => doc.data().containsKey('name') ? doc['name'] as String : 'Unknown Vendor')
+          .toList();
+    } catch (e)
+    {
+      return [];
+    }
   }
 
 

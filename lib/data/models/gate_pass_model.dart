@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class GatePassModel {
   final String id;
   final String gatePassRef;
@@ -8,6 +10,9 @@ class GatePassModel {
   final String price;
   final bool qualityStatus;
   final String baleType;
+  final String baleCount;
+  final bool readyForYarn;
+  final DateTime createdAt;
 
   GatePassModel({
     required this.id,
@@ -19,6 +24,9 @@ class GatePassModel {
     required this.qualityStatus,
     required this.baleType,
     required this.baleID,
+    required this.baleCount,
+    required this.readyForYarn,
+    required this.createdAt,
   });
 
   factory GatePassModel.fromMap(Map<String, dynamic> map, String documentId) {
@@ -32,6 +40,10 @@ class GatePassModel {
       price: map['price']?.toString() ?? '0',
       qualityStatus: map['qualityStatus'] ?? false,
       baleType: map['baleType'] ?? 'Cotton',
+      baleCount: map['baleCount'] ?? '0',
+      readyForYarn: map['readyForYarn'] ?? map['qualityStatus'] ?? false,
+      // Convert Firebase Timestamp to Dart DateTime
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
 }

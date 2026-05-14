@@ -7,10 +7,12 @@ class UserFirebaseService {
 
   Future<void> saveUser(UserModel user) async {
     await _firestore.collection('users').doc(user.uid).set(user.toMap());
+    await incrementTotalUsers();
   }
 
   Future<void> saveVendor(VendorModel vendor) async {
     await _firestore.collection("vendors").doc(vendor.uid).set(vendor.toMap());
+    await incrementTotalUsers();
   }
 
   Stream<List<UserModel>> getUsers() {
@@ -52,5 +54,11 @@ class UserFirebaseService {
         .get();
 
     return query.docs.isNotEmpty;
+  }
+
+  Future<void> incrementTotalUsers() async {
+    await _firestore.collection('records').doc('dashboard_stats').update({
+      'total_users': FieldValue.increment(1),
+    });
   }
 }

@@ -6,8 +6,7 @@ class GatePassController extends GetxController {
   final GatePassFirebaseService _service = GatePassFirebaseService();
 
   RxList<GatePassModel> allPasses = <GatePassModel>[].obs;
-  RxList<GatePassModel> displayedPasses =
-      <GatePassModel>[].obs; // Use this for ListView
+  RxList<GatePassModel> displayedPasses = <GatePassModel>[].obs;
   RxString searchQuery = ''.obs;
   RxString selectedStatus = 'All'.obs;
   RxString selectedType = 'All'.obs;
@@ -16,7 +15,6 @@ class GatePassController extends GetxController {
   void onInit() {
     allPasses.bindStream(_service.getGatePass());
 
-    // This updates displayedPasses only when data, search, or filters change
     everAll([allPasses, searchQuery, selectedStatus, selectedType], (_) {
       _filterList();
     });

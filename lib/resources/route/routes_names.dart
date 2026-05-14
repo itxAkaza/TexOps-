@@ -11,18 +11,9 @@ class RoutesNames {
   static const String loginView = "/LoginView";
   static const String signUpView = "/SignUpView";
 
-  static const String  loginScreen="/LoginView";
-  static const String  signUpView="/SignUpView";
-
-  static const String  bailEntryView="/BailEntryView";
-  static const String  labEngineerDashboard="/labEngineerDashboard";
-  static const String  bailBarcodeView="/BailBarcodeView";
-
-  static const String  movieDetailView="/movieDetailView";
-  static const String  movieTrailerlView="/movieTrailerView";
-
-}
-  static const String homeView = "/homeView";
+  static const String bailEntryView = "/BailEntryView";
+  static const String labEngineerDashboard = "/labEngineerDashboard";
+  static const String bailBarcodeView = "/BailBarcodeView";
 
   static const String movieDetailView = "/movieDetailView";
   static const String movieTrailerlView = "/movieTrailerView";

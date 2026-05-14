@@ -1,225 +1,320 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:texops/controllers/admin/dashboard_controller.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 
-class FiberPriceChart extends StatefulWidget {
+class FiberPriceChart extends StatelessWidget {
   const FiberPriceChart({super.key});
 
+  static const _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _tabs = ['Cotton', 'Poly'];
+
+  Color _lineColor(int index) =>
+      index == 0 ? AppColors.primaryDarkTeal : AppColors.accentOrange;
+
   @override
-  State<FiberPriceChart> createState() => _FiberPriceChartState();
+  Widget build(BuildContext context) {
+    final controller = Get.find<DashboardController>();
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+      decoration: BoxDecoration(
+        color: AppColors.cardWhite,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.autoRecorded, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Header ──────────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Price Trends by Bale Type",
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primaryDarkTeal,
+                    fontSize: 14,
+                  ),
+                ),
+                Obx(
+                  () => _TabSelector(
+                    tabs: _tabs,
+                    selected: controller.selectedFiberIndex.value,
+                    onTap: (i) => controller.selectedFiberIndex.value = i,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // ── Chart ───────────────────────────────────────────────
+          SizedBox(
+            height: 200,
+            child: Obx(() {
+              final tabIdx = controller.selectedFiberIndex.value;
+              final spots = controller.getWeeklyBaleSpots();
+              final maxY = controller.getLineChartMaxY();
+              final interval = controller.getLineChartInterval();
+              final color = _lineColor(tabIdx);
+              final hasData = spots.any((s) => s.y > 0);
+
+              return Stack(
+                children: [
+                  // Horizontally scrollable chart
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: SizedBox(
+                      width: MediaQuery.of(Get.context!).size.width * 1.05,
+                      child: LineChart(
+                        duration: const Duration(milliseconds: 350),
+                        curve: Curves.easeInOut,
+                        LineChartData(
+                          minX: 0,
+                          maxX: 6,
+                          minY: 0,
+                          maxY: maxY,
+                          clipData: const FlClipData.all(),
+
+                          // Grid lines – horizontal only
+                          gridData: FlGridData(
+                            show: true,
+                            drawVerticalLine: false,
+                            horizontalInterval: interval,
+                            getDrawingHorizontalLine: (_) => FlLine(
+                              color: AppColors.autoRecorded,
+                              strokeWidth: 1,
+                            ),
+                          ),
+
+                          // Show only bottom + left axis border
+                          borderData: FlBorderData(
+                            show: true,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: AppColors.autoRecorded,
+                                width: 1,
+                              ),
+                              left: BorderSide(
+                                color: AppColors.autoRecorded,
+                                width: 1,
+                              ),
+                            ),
+                          ),
+
+                          // Axis labels
+                          titlesData: FlTitlesData(
+                            topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 26,
+                                getTitlesWidget: (val, _) {
+                                  final idx = val.toInt();
+                                  if (idx < 0 || idx >= _days.length) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 6),
+                                    child: Text(
+                                      _days[idx],
+                                      style: GoogleFonts.poppins(
+                                        color: AppColors.textGrey,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                interval: interval,
+                                reservedSize: 40,
+                                getTitlesWidget: (val, meta) {
+                                  // Hide the very top overflow label
+                                  if (val == meta.max) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Text(
+                                    _fmtLabel(val),
+                                    style: GoogleFonts.poppins(
+                                      color: AppColors.textGrey,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+
+                          // Tooltip
+                          lineTouchData: LineTouchData(
+                            handleBuiltInTouches: true,
+                            touchTooltipData: LineTouchTooltipData(
+                              getTooltipColor: (_) => AppColors.primaryDarkTeal,
+                              tooltipBorderRadius: BorderRadius.circular(10),
+                              tooltipPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 7,
+                              ),
+                              getTooltipItems: (touchedSpots) =>
+                                  touchedSpots.map((s) {
+                                    return LineTooltipItem(
+                                      '${_days[s.x.toInt()]}\n'
+                                      '${s.y.toInt()} bales',
+                                      GoogleFonts.poppins(
+                                        color: AppColors.cardWhite,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.5,
+                                      ),
+                                    );
+                                  }).toList(),
+                            ),
+                          ),
+
+                          // Line bar
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: spots,
+                              isCurved: true,
+                              curveSmoothness: 0.35,
+                              color: color,
+                              barWidth: 2,
+                              isStrokeCapRound: true,
+                              // Clean Figma look – no gradient fill
+                              belowBarData: BarAreaData(show: false),
+                              dotData: FlDotData(
+                                show: true,
+                                getDotPainter: (spot, _, __, ___) =>
+                                    FlDotCirclePainter(
+                                      radius: spot.y > 0 ? 4 : 2.5,
+                                      color: AppColors.cardWhite,
+                                      strokeWidth: 2,
+                                      strokeColor: color,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Empty-state overlay
+                  if (!hasData)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.cardWhite.withOpacity(0.88),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.show_chart_rounded,
+                              size: 36,
+                              color: AppColors.autoRecorded,
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              "No bales recorded this week",
+                              style: GoogleFonts.poppins(
+                                color: AppColors.textFormText,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _FiberPriceChartState extends State<FiberPriceChart> {
-  int selectedIndex = 0;
+// ── Tab selector widget ────────────────────────────────────────────────────────
+class _TabSelector extends StatelessWidget {
+  final List<String> tabs;
+  final int selected;
+  final void Function(int) onTap;
+
+  const _TabSelector({
+    required this.tabs,
+    required this.selected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 260,
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(8, 16, 16, 12),
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
+        color: AppColors.backgroundLightPeach,
+        borderRadius: BorderRadius.circular(30),
       ),
-      child: Column(
-        children: [
-          _buildHeader(),
-          const SizedBox(height: 12),
-
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: LineChart(_chartData()),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(tabs.length, (i) {
+          final active = selected == i;
+          return GestureDetector(
+            onTap: () => onTap(i),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              decoration: BoxDecoration(
+                color: active ? AppColors.primaryDarkTeal : Colors.transparent,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Text(
+                tabs[i],
+                style: GoogleFonts.poppins(
+                  color: active ? AppColors.cardWhite : AppColors.textGrey,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 10,
+                ),
+              ),
             ),
-          ),
-        ],
+          );
+        }),
       ),
     );
   }
+}
 
-  Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Expanded(
-          child: Text(
-            "Fiber Market Trends",
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: AppColors.primaryDarkTeal,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-        ),
-        Row(
-          children: [
-            _toggleButton("Cotton", 0, AppColors.accentOrange),
-            const SizedBox(width: 8),
-            _toggleButton("Poly", 1, AppColors.primaryDarkTeal),
-          ],
-        ),
-      ],
-    );
+// ── Axis label formatter ───────────────────────────────────────────────────────
+String _fmtLabel(double val) {
+  if (val >= 1000000) {
+    return '${(val / 1000000).toStringAsFixed(1)}M';
   }
-
-  Widget _toggleButton(String label, int index, Color color) {
-    final isSelected = selectedIndex == index;
-
-    return GestureDetector(
-      onTap: () => setState(() => selectedIndex = index),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? color : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? color : Colors.grey.shade300),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : AppColors.textGrey,
-          ),
-        ),
-      ),
-    );
+  if (val >= 1000) {
+    final k = val / 1000;
+    return '${k % 1 == 0 ? k.toInt() : k.toStringAsFixed(1)}k';
   }
-
-  LineChartData _chartData() {
-    return LineChartData(
-      gridData: FlGridData(
-        show: true,
-        drawVerticalLine: false,
-        getDrawingHorizontalLine: (v) =>
-            FlLine(color: Colors.grey.withOpacity(0.08), strokeWidth: 1),
-      ),
-
-      borderData: FlBorderData(
-        show: true,
-        border: Border(left: BorderSide(color: Colors.grey.withOpacity(0.15))),
-      ),
-
-      titlesData: FlTitlesData(
-        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 40,
-            getTitlesWidget: (val, meta) {
-              return Text(
-                val.toInt().toString(),
-                style: const TextStyle(fontSize: 10, color: AppColors.textGrey),
-              );
-            },
-          ),
-        ),
-
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            interval: 1,
-            getTitlesWidget: (val, meta) {
-              const months = [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May',
-                'Jun',
-                'Jul',
-                'Aug',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dec',
-              ];
-
-              final i = val.toInt();
-              if (i < 0 || i >= months.length) {
-                return const SizedBox.shrink();
-              }
-
-              return Text(
-                months[i],
-                style: const TextStyle(fontSize: 10, color: AppColors.textGrey),
-              );
-            },
-          ),
-        ),
-      ),
-
-      lineBarsData: [
-        _lineStyle(
-          selectedIndex == 0 ? cottonSpots : polySpots,
-          selectedIndex == 0
-              ? AppColors.accentOrange
-              : AppColors.primaryDarkTeal,
-        ),
-      ],
-    );
-  }
-
-  LineChartBarData _lineStyle(List<FlSpot> spots, Color color) {
-    return LineChartBarData(
-      spots: spots,
-      isCurved: true,
-      color: color,
-      barWidth: 3,
-
-      dotData: FlDotData(show: false),
-
-      belowBarData: BarAreaData(
-        show: true,
-        gradient: LinearGradient(
-          colors: [color.withOpacity(0.12), color.withOpacity(0.0)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-    );
-  }
-
-  static const cottonSpots = [
-    FlSpot(0, 420),
-    FlSpot(1, 460),
-    FlSpot(2, 440),
-    FlSpot(3, 490),
-    FlSpot(4, 470),
-    FlSpot(5, 510),
-    FlSpot(6, 500),
-    FlSpot(7, 530),
-    FlSpot(8, 520),
-    FlSpot(9, 550),
-    FlSpot(10, 540),
-    FlSpot(11, 570),
-  ];
-
-  static const polySpots = [
-    FlSpot(0, 310),
-    FlSpot(1, 330),
-    FlSpot(2, 320),
-    FlSpot(3, 350),
-    FlSpot(4, 340),
-    FlSpot(5, 370),
-    FlSpot(6, 365),
-    FlSpot(7, 385),
-    FlSpot(8, 375),
-    FlSpot(9, 400),
-    FlSpot(10, 395),
-    FlSpot(11, 410),
-  ];
+  return val.toInt().toString();
 }

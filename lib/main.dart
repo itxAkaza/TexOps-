@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/route/routes.dart';
 import 'package:texops/resources/route/routes_names.dart';
-import 'package:texops/screens/auth/login_screen.dart';
 
 import 'firebase_options.dart';
 
@@ -17,8 +16,6 @@ void main() async {
 
   //sidsaoindoiasn
 }
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -33,26 +30,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
       ),
-      initialRoute: RoutesNames.loginScreen,
+      initialRoute: RoutesNames.adminDashboard,
       getPages: AppRoutes.appRoutes(),
-      home: LoginScreen(),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

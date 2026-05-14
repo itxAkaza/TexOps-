@@ -18,5 +18,11 @@ class AppColors {
 
   static const Color textGrey = Color(0xFF686868);
 
+  static const Color autoRecorded = Color(0xFFE5E7EB);
+
+  static const Color textFormText=Color(0xff99A1AF);
+
+  static const Color pageIndicator = Color(0xFFD3D3D3);
+
   static const Color readOnlyBg = Color(0xFFF0F0F0);
 }

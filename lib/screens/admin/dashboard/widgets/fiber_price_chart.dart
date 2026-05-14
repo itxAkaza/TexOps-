@@ -15,35 +15,29 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
       height: 260,
+      width: double.infinity,
       padding: const EdgeInsets.fromLTRB(8, 16, 16, 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Column(
         children: [
           _buildHeader(),
-          const SizedBox(height: 18),
+          const SizedBox(height: 12),
+
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: SizedBox(
-                width: 800,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8, right: 20),
-                  child: LineChart(_chartData()),
-                ),
-              ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: LineChart(_chartData()),
             ),
           ),
         ],
@@ -52,52 +46,49 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
   }
 
   Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Expanded(
+          child: Text(
             "Fiber Market Trends",
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: AppColors.primaryDarkTeal,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
           ),
-          Row(
-            children: [
-              _toggleButton("Cotton", 0, AppColors.accentOrange),
-              const SizedBox(width: 8),
-              _toggleButton("Poly", 1, AppColors.primaryDarkTeal),
-            ],
-          ),
-        ],
-      ),
+        ),
+        Row(
+          children: [
+            _toggleButton("Cotton", 0, AppColors.accentOrange),
+            const SizedBox(width: 8),
+            _toggleButton("Poly", 1, AppColors.primaryDarkTeal),
+          ],
+        ),
+      ],
     );
   }
 
-  Widget _toggleButton(String label, int index, Color activeColor) {
-    bool isSelected = selectedIndex == index;
-    return InkWell(
+  Widget _toggleButton(String label, int index, Color color) {
+    final isSelected = selectedIndex == index;
+
+    return GestureDetector(
       onTap: () => setState(() => selectedIndex = index),
-      borderRadius: BorderRadius.circular(20),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor : Colors.transparent,
+          color: isSelected ? color : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? activeColor : Colors.grey.shade300,
-          ),
+          border: Border.all(color: isSelected ? color : Colors.grey.shade300),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.textGrey,
             fontSize: 11,
             fontWeight: FontWeight.bold,
+            color: isSelected ? Colors.white : AppColors.textGrey,
           ),
         ),
       ),
@@ -109,40 +100,38 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
       gridData: FlGridData(
         show: true,
         drawVerticalLine: false,
-        getDrawingHorizontalLine: (value) =>
-            FlLine(color: Colors.grey.withOpacity(0.1), strokeWidth: 1),
+        getDrawingHorizontalLine: (v) =>
+            FlLine(color: Colors.grey.withOpacity(0.08), strokeWidth: 1),
       ),
+
       borderData: FlBorderData(
         show: true,
-        border: Border(left: BorderSide(color: Colors.grey.withOpacity(0.2))),
+        border: Border(left: BorderSide(color: Colors.grey.withOpacity(0.15))),
       ),
+
       titlesData: FlTitlesData(
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
+
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 50,
-            getTitlesWidget: (val, meta) => SideTitleWidget(
-              meta: meta,
-              child: Text(
+            reservedSize: 40,
+            getTitlesWidget: (val, meta) {
+              return Text(
                 val.toInt().toString(),
-                style: const TextStyle(
-                  color: AppColors.textGrey,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+                style: const TextStyle(fontSize: 10, color: AppColors.textGrey),
+              );
+            },
           ),
         ),
+
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
             interval: 1,
-            reservedSize: 30,
             getTitlesWidget: (val, meta) {
               const months = [
                 'Jan',
@@ -158,28 +147,28 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
                 'Nov',
                 'Dec',
               ];
-              int index = val.toInt();
-              if (index < 0 || index >= months.length) return const Text('');
-              return SideTitleWidget(
-                meta: meta,
-                space: 10,
-                child: Text(
-                  months[index],
-                  style: const TextStyle(
-                    color: AppColors.textGrey,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+
+              final i = val.toInt();
+              if (i < 0 || i >= months.length) {
+                return const SizedBox.shrink();
+              }
+
+              return Text(
+                months[i],
+                style: const TextStyle(fontSize: 10, color: AppColors.textGrey),
               );
             },
           ),
         ),
       ),
+
       lineBarsData: [
-        selectedIndex == 0
-            ? _lineStyle(cottonSpots, AppColors.accentOrange)
-            : _lineStyle(polySpots, AppColors.primaryDarkTeal),
+        _lineStyle(
+          selectedIndex == 0 ? cottonSpots : polySpots,
+          selectedIndex == 0
+              ? AppColors.accentOrange
+              : AppColors.primaryDarkTeal,
+        ),
       ],
     );
   }
@@ -189,20 +178,14 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
       spots: spots,
       isCurved: true,
       color: color,
-      barWidth: 4,
-      dotData: FlDotData(
-        show: true,
-        getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-          radius: 4,
-          color: Colors.white,
-          strokeWidth: 3,
-          strokeColor: color,
-        ),
-      ),
+      barWidth: 3,
+
+      dotData: FlDotData(show: false),
+
       belowBarData: BarAreaData(
         show: true,
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.15), color.withOpacity(0.0)],
+          colors: [color.withOpacity(0.12), color.withOpacity(0.0)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -223,8 +206,8 @@ class _FiberPriceChartState extends State<FiberPriceChart> {
     FlSpot(9, 550),
     FlSpot(10, 540),
     FlSpot(11, 570),
-    FlSpot(11, 1000),
   ];
+
   static const polySpots = [
     FlSpot(0, 310),
     FlSpot(1, 330),

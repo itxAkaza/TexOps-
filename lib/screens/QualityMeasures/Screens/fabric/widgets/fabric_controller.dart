@@ -50,6 +50,18 @@ class FabricTestingController extends GetxController {
   final creaseTheta1Ctrl = TextEditingController();
   final creaseTheta2Ctrl = TextEditingController();
 
+  final FocusNode stiffnessWeightFocus = FocusNode();
+  final FocusNode stiffnessBendingFocus = FocusNode();
+  final FocusNode warpCountFocus = FocusNode();
+  final FocusNode weftCountFocus = FocusNode();
+  final FocusNode gsmWeightFocus = FocusNode();
+  final FocusNode gsmAreaFocus = FocusNode();
+  final FocusNode tensileForceFocus = FocusNode();
+  final FocusNode tearingForceFocus = FocusNode();
+  final FocusNode burstingPressureFocus = FocusNode();
+  final FocusNode creaseTheta1Focus = FocusNode();
+  final FocusNode creaseTheta2Focus = FocusNode();
+
   var stiffnessResult = '-'.obs;
   var warpCountResult = '-'.obs;
   var weftCountResult = '-'.obs;
@@ -147,6 +159,17 @@ class FabricTestingController extends GetxController {
     burstingPressureCtrl.dispose();
     creaseTheta1Ctrl.dispose();
     creaseTheta2Ctrl.dispose();
+    stiffnessWeightFocus.dispose();
+    stiffnessBendingFocus.dispose();
+    warpCountFocus.dispose();
+    weftCountFocus.dispose();
+    gsmWeightFocus.dispose();
+    gsmAreaFocus.dispose();
+    tensileForceFocus.dispose();
+    tearingForceFocus.dispose();
+    burstingPressureFocus.dispose();
+    creaseTheta1Focus.dispose();
+    creaseTheta2Focus.dispose();
     super.onClose();
   }
 }

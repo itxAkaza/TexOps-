@@ -71,6 +71,10 @@ class FabricTestingScreen extends StatelessWidget {
                             controller.stiffnessWeightCtrl,
                             controller.stiffnessBendingCtrl,
                           ],
+                          inputFocusNodes: [
+                            controller.stiffnessWeightFocus,
+                            controller.stiffnessBendingFocus,
+                          ],
                           bottomWidget: Obx(
                             () => FabricCalculatedResultWidget(
                               formulaText: 'Formula: W x (C)',
@@ -92,6 +96,7 @@ class FabricTestingScreen extends StatelessWidget {
                           inputLabels: const ['Warp Count'],
                           inputHints: const ['e.g. 60'],
                           inputControllers: [controller.warpCountCtrl],
+                          inputFocusNodes: [controller.warpCountFocus],
                           bottomWidget: Obx(
                             () => FabricCalculatedResultWidget(
                               formulaText: 'Formula: Entered value',
@@ -113,6 +118,7 @@ class FabricTestingScreen extends StatelessWidget {
                           inputLabels: const ['Weft Count'],
                           inputHints: const ['e.g. 40'],
                           inputControllers: [controller.weftCountCtrl],
+                          inputFocusNodes: [controller.weftCountFocus],
                           bottomWidget: Obx(
                             () => FabricCalculatedResultWidget(
                               formulaText: 'Formula: Entered value',
@@ -136,6 +142,10 @@ class FabricTestingScreen extends StatelessWidget {
                             controller.gsmWeightCtrl,
                             controller.gsmAreaCtrl,
                           ],
+                          inputFocusNodes: [
+                            controller.gsmWeightFocus,
+                            controller.gsmAreaFocus,
+                          ],
                           bottomWidget: Obx(
                             () => FabricCalculatedResultWidget(
                               formulaText: 'Formula: Weight / Area',
@@ -157,6 +167,7 @@ class FabricTestingScreen extends StatelessWidget {
                           inputLabels: const ['Force (N)'],
                           inputHints: const ['e.g. 450'],
                           inputControllers: [controller.tensileForceCtrl],
+                          inputFocusNodes: [controller.tensileForceFocus],
                           bottomWidget: Obx(
                             () => FabricCalculatedResultWidget(
                               formulaText: 'Formula: Entered value',
@@ -180,6 +191,7 @@ class FabricTestingScreen extends StatelessWidget {
                           inputLabels: const ['Force (N)'],
                           inputHints: const ['e.g. 35'],
                           inputControllers: [controller.tearingForceCtrl],
+                          inputFocusNodes: [controller.tearingForceFocus],
                           bottomWidget: Obx(
                             () => FabricCalculatedResultWidget(
                               formulaText: 'Formula: Entered value',
@@ -203,6 +215,7 @@ class FabricTestingScreen extends StatelessWidget {
                           inputLabels: const ['Pressure (kPa)'],
                           inputHints: const ['e.g. 550'],
                           inputControllers: [controller.burstingPressureCtrl],
+                          inputFocusNodes: [controller.burstingPressureFocus],
                           bottomWidget: Obx(
                             () => FabricCalculatedResultWidget(
                               formulaText: 'Formula: Entered value',
@@ -228,6 +241,10 @@ class FabricTestingScreen extends StatelessWidget {
                           inputControllers: [
                             controller.creaseTheta1Ctrl,
                             controller.creaseTheta2Ctrl,
+                          ],
+                          inputFocusNodes: [
+                            controller.creaseTheta1Focus,
+                            controller.creaseTheta2Focus,
                           ],
                           bottomWidget: Obx(
                             () => FabricCalculatedResultWidget(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/controllers/quality_testing/quality_testing_controller.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
-import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
-import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_progress_indicator.dart';
 import 'scoring_models.dart';
 export 'scoring_models.dart';
 export 'scoring_rules.dart';
@@ -16,24 +16,20 @@ export 'widgets/fabricScore/fabric_score_calculator.dart';
 class ViewScoreScreen extends StatelessWidget {
 	const ViewScoreScreen({
 		super.key,
-		this.fibreScore,
-		this.yarnScore,
-		this.fabricScore,
+		required this.baleRecordId,
+		required this.baleId,
 	});
 
-	final SectionScore? fibreScore;
-	final SectionScore? yarnScore;
-	final SectionScore? fabricScore;
-
-	List<SectionScore> get _sections => [
-				if (fibreScore != null) fibreScore!,
-				if (yarnScore != null) yarnScore!,
-				if (fabricScore != null) fabricScore!,
-			];
+	final String baleRecordId;
+	final String baleId;
 
 	@override
 	Widget build(BuildContext context) {
-		final List<SectionScore> sections = _sections;
+		final QualityTestingController controller =
+				Get.isRegistered<QualityTestingController>()
+				? Get.find<QualityTestingController>()
+				: Get.put(QualityTestingController());
+		controller.loadBaleScores(baleRecordId, baleId);
 
 		return Scaffold(
 									
@@ -66,15 +62,49 @@ class ViewScoreScreen extends StatelessWidget {
 										maxLines: 2,
 									),
 									const SizedBox(height: 24),
-									if (sections.isEmpty)
-										_emptyState()
-									else
-										...sections.map(_buildSectionCard),
+									Obx(() {
+										if (controller.isLoading.value) {
+											return _loadingState();
+										}
+
+										final List<SectionScore> sections = [
+											if (controller.fibreScore.value != null)
+												controller.fibreScore.value!,
+											if (controller.yarnScore.value != null)
+												controller.yarnScore.value!,
+											if (controller.fabricScore.value != null)
+												controller.fabricScore.value!,
+										];
+
+										if (sections.isEmpty) {
+											return _emptyState();
+										}
+
+										return Column(
+											children: sections.map(_buildSectionCard).toList(),
+										);
+									}),
 									const SizedBox(height: 24),
 								],
 							),
 						),
 					],
+				),
+			),
+		);
+	}
+
+	Widget _loadingState() {
+		return Container(
+			width: double.infinity,
+			padding: const EdgeInsets.all(20),
+			decoration: BoxDecoration(
+				color: AppColors.cardOffWhite,
+				borderRadius: BorderRadius.circular(18),
+			),
+			child: const Center(
+				child: CircularProgressIndicator(
+					color: AppColors.primaryDarkTeal,
 				),
 			),
 		);

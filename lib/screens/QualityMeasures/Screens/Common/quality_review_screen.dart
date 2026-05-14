@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/controllers/quality_testing/quality_testing_controller.dart';
+import 'package:texops/data/models/quality_testing/quality_test_models.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_progress_indicator.dart';
+import 'package:texops/resources/route/routes_names.dart';
 
 class QualityReviewCardData {
   const QualityReviewCardData({
@@ -31,10 +34,12 @@ class QualityReviewScreen extends StatelessWidget {
     super.key,
     required this.testType,
     required this.cards,
+    this.savePayload,
   });
 
   final String testType;
   final List<QualityReviewCardData> cards;
+  final QualityTestPayload? savePayload;
 
   void _showSavedSnackbar() {
     Get.snackbar(
@@ -52,6 +57,11 @@ class QualityReviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final QualityTestingController qualityController =
+        Get.isRegistered<QualityTestingController>()
+        ? Get.find<QualityTestingController>()
+        : Get.put(QualityTestingController());
+
     return Scaffold(
       backgroundColor: AppColors.cardWhite,
       body: SingleChildScrollView(
@@ -109,22 +119,44 @@ class QualityReviewScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryDarkTeal,
-                        minimumSize: const Size(double.infinity, 54),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                    child: Obx(
+                      () => ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryDarkTeal,
+                          minimumSize: const Size(double.infinity, 54),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          elevation: 0,
                         ),
-                        elevation: 0,
-                      ),
-                      onPressed: _showSavedSnackbar,
-                      child: const Text(
-                        'Save Changes',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                        onPressed: qualityController.isSaving.value
+                            ? null
+                            : () async {
+                                if (savePayload == null) {
+                                  _showSavedSnackbar();
+                                  return;
+                                }
+                                debugPrint(
+                                  'quality_save_metrics: ${savePayload!.metrics}',
+                                );
+                                await qualityController.saveTest(savePayload!);
+                                if (qualityController.errorMessage.value.isEmpty) {
+                                  Get.offNamed(
+                                    RoutesNames.qualityChooseCategory,
+                                    arguments: {
+                                      'baleRecordId': savePayload!.baleRecordId,
+                                      'baleId': savePayload!.baleId,
+                                    },
+                                  );
+                                }
+                              },
+                        child: const Text(
+                          'Save Changes',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),

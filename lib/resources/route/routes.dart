@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:texops/data/models/quality_testing/quality_test_models.dart';
 import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/admin/bale_inventory/admin_bale_inventory_screen.dart';
 import 'package:texops/screens/admin/dashboard/admin_dashboard.dart';
@@ -33,6 +34,7 @@ class AppRoutes {
     GetPage(
       name: RoutesNames.qualityChooseCategory,
       page: () => const ChooseCategoryScreen(),
+      
       transition: Transition.rightToLeftWithFade,
     ),
     GetPage(
@@ -61,10 +63,15 @@ class AppRoutes {
             args is Map && args['cards'] is List<QualityReviewCardData>
             ? args['cards'] as List<QualityReviewCardData>
             : <QualityReviewCardData>[];
+        final QualityTestPayload? savePayload =
+            args is Map && args['savePayload'] is QualityTestPayload
+            ? args['savePayload'] as QualityTestPayload
+            : null;
 
         return QualityReviewScreen(
           testType: testType,
           cards: cards,
+          savePayload: savePayload,
         );
       },
       transition: Transition.rightToLeftWithFade,

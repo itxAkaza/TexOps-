@@ -36,7 +36,7 @@ class AppBarWithBack extends StatelessWidget implements PreferredSizeWidget {
           color: AppColors.primaryDarkTeal,
           size: 20,
         ),
-        onPressed: onBack ?? () => Get.back(),
+        onPressed: onBack ?? Get.back,
       ),
       title: QualityResponsiveText(
         text: title,

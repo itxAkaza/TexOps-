@@ -35,20 +35,31 @@ class CalculatedDenierWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Calculated Denier:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1B3B46), // Dark Teal
+              const Expanded(
+                child: Text(
+                  'Calculated Denier:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1B3B46), // Dark Teal
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Text(
-                '$calculatedValue D', // Appends the " D" automatically
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFFFDB45C), // Accent Orange
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  '$calculatedValue D', // Appends the " D" automatically
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFFFDB45C), // Accent Orange
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                  softWrap: false,
                 ),
               ),
             ],

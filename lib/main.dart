@@ -1,13 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:texops/resources/route/routes.dart';
 import 'package:texops/resources/route/routes_names.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/route/routes.dart';
-import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/choose_category.dart';
-import 'package:texops/screens/lab_engineer/dashboard/lab_enigneer_dashboard.dart';
-import 'package:texops/screens/admin/dashboard/admin_dashboard.dart';
+import 'package:get/get.dart';
 
 import 'firebase_options.dart';
 
@@ -33,9 +30,31 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
       ),
-      home: ChooseCategoryScreen(),
-      initialRoute: RoutesNames.qualityChooseCategory,
+      home: const _QualityTestEntryScreen(),
       getPages: AppRoutes.appRoutes(),
+    );
+  }
+}
+
+class _QualityTestEntryScreen extends StatelessWidget {
+  const _QualityTestEntryScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.offNamed(
+        RoutesNames.qualityChooseCategory,
+        arguments: {
+          'baleRecordId': 'Sau4XSMNSMdCXc6RnYnbg6jnZjI3',
+          'baleId': 'gxx_260510-2130',
+        },
+      );
+    });
+
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

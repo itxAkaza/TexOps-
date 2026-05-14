@@ -19,6 +19,10 @@ class FibreTestingController extends GetxController {
   final weightCtrl = TextEditingController();
   final lengthCtrl = TextEditingController();
 
+  final FocusNode fibreLengthFocus = FocusNode();
+  final FocusNode weightFocus = FocusNode();
+  final FocusNode lengthFocus = FocusNode();
+
   // --- DATA STATE (The calculated result) ---
   var calculatedDenierResult = "-".obs;
 
@@ -54,6 +58,9 @@ class FibreTestingController extends GetxController {
     fibreLengthCtrl.dispose();
     weightCtrl.dispose();
     lengthCtrl.dispose();
+    fibreLengthFocus.dispose();
+    weightFocus.dispose();
+    lengthFocus.dispose();
     super.onClose();
   }
 }

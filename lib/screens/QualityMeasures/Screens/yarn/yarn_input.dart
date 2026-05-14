@@ -80,6 +80,10 @@ class YarnTestingScreen extends StatelessWidget {
                             controller.lengthCtrl,
                             controller.weightCtrl,
                           ],
+                          inputFocusNodes: [
+                            controller.lengthFocus,
+                            controller.weightFocus,
+                          ],
 
                           // 2. Wrap ONLY the bottom widget in its own Obx!
                           bottomWidget: Obx(
@@ -113,6 +117,10 @@ class YarnTestingScreen extends StatelessWidget {
                           inputControllers: [
                             controller.forceCtrl,
                             controller.texCtrl,
+                          ],
+                          inputFocusNodes: [
+                            controller.forceFocus,
+                            controller.texFocus,
                           ],
 
                           // 2. Wrap ONLY the bottom widget in its own Obx!
@@ -150,6 +158,10 @@ class YarnTestingScreen extends StatelessWidget {
                             controller.finalLengthCtrl,
                             controller.originalLengthCtrl,
                           ],
+                          inputFocusNodes: [
+                            controller.finalLengthFocus,
+                            controller.originalLengthFocus,
+                          ],
 
                           // 2. Wrap ONLY the bottom widget in its own Obx!
                           bottomWidget: Obx(
@@ -183,6 +195,10 @@ class YarnTestingScreen extends StatelessWidget {
                             controller.clspCountCtrl,
                             controller.strengthCtrl,
                           ],
+                          inputFocusNodes: [
+                            controller.clspCountFocus,
+                            controller.strengthFocus,
+                          ],
 
                           // 2. Wrap ONLY the bottom widget in its own Obx!
                           bottomWidget: Obx(
@@ -214,6 +230,10 @@ class YarnTestingScreen extends StatelessWidget {
                           inputControllers: [
                             controller.twistsCtrl,
                             controller.tpmLengthCtrl,
+                          ],
+                          inputFocusNodes: [
+                            controller.twistsFocus,
+                            controller.tpmLengthFocus,
                           ],
 
                           // 2. Wrap ONLY the bottom widget in its own Obx!

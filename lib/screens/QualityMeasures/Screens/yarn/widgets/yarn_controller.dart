@@ -44,6 +44,18 @@ class YarnTestingController extends GetxController {
   final twistsCtrl = TextEditingController();
   final tpmLengthCtrl = TextEditingController();
 
+  final FocusNode lengthFocus = FocusNode();
+  final FocusNode weightFocus = FocusNode();
+  final FocusNode nominalCountFocus = FocusNode();
+  final FocusNode forceFocus = FocusNode();
+  final FocusNode texFocus = FocusNode();
+  final FocusNode finalLengthFocus = FocusNode();
+  final FocusNode originalLengthFocus = FocusNode();
+  final FocusNode clspCountFocus = FocusNode();
+  final FocusNode strengthFocus = FocusNode();
+  final FocusNode twistsFocus = FocusNode();
+  final FocusNode tpmLengthFocus = FocusNode();
+
   // ==========================================
   // 3. REACTIVE RESULTS (Shows in the Yellow UI)
   // ==========================================
@@ -130,6 +142,17 @@ class YarnTestingController extends GetxController {
     strengthCtrl.dispose();
     twistsCtrl.dispose();
     tpmLengthCtrl.dispose();
+    lengthFocus.dispose();
+    weightFocus.dispose();
+    nominalCountFocus.dispose();
+    forceFocus.dispose();
+    texFocus.dispose();
+    finalLengthFocus.dispose();
+    originalLengthFocus.dispose();
+    clspCountFocus.dispose();
+    strengthFocus.dispose();
+    twistsFocus.dispose();
+    tpmLengthFocus.dispose();
     super.onClose();
   }
 }

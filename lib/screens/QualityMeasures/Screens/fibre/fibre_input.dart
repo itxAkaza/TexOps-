@@ -75,6 +75,7 @@ class FibreTestingScreen extends StatelessWidget {
                           inputLabels: const ['Length (mm)'],
                           inputHints: const ['e.g., 32.5'],
                           inputControllers: [controller.fibreLengthCtrl],
+                          inputFocusNodes: [controller.fibreLengthFocus],
                         ),
                       ),
 
@@ -92,6 +93,10 @@ class FibreTestingScreen extends StatelessWidget {
                           inputControllers: [
                             controller.weightCtrl,
                             controller.lengthCtrl,
+                          ],
+                          inputFocusNodes: [
+                            controller.weightFocus,
+                            controller.lengthFocus,
                           ],
 
                           // Inject the Formula UI dynamically!

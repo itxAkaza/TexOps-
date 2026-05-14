@@ -16,6 +16,7 @@ class StatelessExpandableInputCard extends StatelessWidget {
 
   // FIX 1: You must declare the variable here so the class can hold it
   final List<TextEditingController>? inputControllers;
+  final List<FocusNode>? inputFocusNodes;
 
   const StatelessExpandableInputCard({
     super.key,
@@ -27,6 +28,7 @@ class StatelessExpandableInputCard extends StatelessWidget {
     required this.inputHints,
     this.bottomWidget,
     this.inputControllers, // Keeping your constructor addition
+    this.inputFocusNodes,
   });
 
   @override
@@ -36,6 +38,15 @@ class StatelessExpandableInputCard extends StatelessWidget {
     const Color accentOrange = Color(0xFFFDB45C);
     const Color borderColor = Color(0xFFE5E7EB);
     const Color labelColor = Color(0xFF4B5563);
+
+    if (isExpanded && inputFocusNodes != null && inputFocusNodes!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final FocusNode target = inputFocusNodes!.first;
+        if (!target.hasFocus) {
+          target.requestFocus();
+        }
+      });
+    }
 
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
@@ -123,6 +134,10 @@ class StatelessExpandableInputCard extends StatelessWidget {
                                         inputControllers!.length > index
                                     ? inputControllers![index]
                                     : null,
+                                inputFocusNodes != null &&
+                                        inputFocusNodes!.length > index
+                                    ? inputFocusNodes![index]
+                                    : null,
                                 darkTeal,
                                 labelColor,
                                 borderColor,
@@ -138,6 +153,9 @@ class StatelessExpandableInputCard extends StatelessWidget {
                         // FIX 3: Pass the first controller if it exists
                         inputControllers != null && inputControllers!.isNotEmpty
                             ? inputControllers!.first
+                            : null,
+                        inputFocusNodes != null && inputFocusNodes!.isNotEmpty
+                            ? inputFocusNodes!.first
                             : null,
                         darkTeal,
                         labelColor,
@@ -164,6 +182,7 @@ class StatelessExpandableInputCard extends StatelessWidget {
     String label,
     String hint,
     TextEditingController? controller, // FIX 4: Accept the controller here
+    FocusNode? focusNode,
     Color darkTeal,
     Color labelColor,
     Color borderColor,
@@ -184,6 +203,7 @@ class StatelessExpandableInputCard extends StatelessWidget {
         const SizedBox(height: 8),
         TextFormField(
           controller: controller, // FIX 5: Attach it to the field!
+          focusNode: focusNode,
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(

@@ -5,6 +5,7 @@ import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/continue_button.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_review_screen.dart';
 import 'package:texops/screens/QualityMeasures/Screens/fibre/widgets/fabric_input_controller.dart';
+import 'package:texops/data/models/quality_testing/quality_test_models.dart';
 
 class FibreReviewContinueButton extends StatelessWidget {
   const FibreReviewContinueButton({super.key, required this.controller});
@@ -19,6 +20,10 @@ class FibreReviewContinueButton extends StatelessWidget {
     return _hasValue(controller.fibreLengthCtrl) &&
         _hasValue(controller.weightCtrl) &&
         _hasValue(controller.lengthCtrl);
+  }
+
+  double? _parseDouble(String value) {
+    return double.tryParse(value.trim());
   }
 
   void _showMissingFields() {
@@ -45,6 +50,46 @@ class FibreReviewContinueButton extends StatelessWidget {
           return;
         }
 
+        final String? baleRecordId =
+          Get.arguments is Map ? (Get.arguments as Map)['baleRecordId'] as String? : null;
+        final String? baleId =
+          Get.arguments is Map ? (Get.arguments as Map)['baleId'] as String? : null;
+        if (baleRecordId == null ||
+          baleRecordId.isEmpty ||
+          baleId == null ||
+          baleId.isEmpty) {
+          Get.snackbar(
+            'Missing Bale',
+            'Please open this test from a bale record.',
+            snackPosition: SnackPosition.BOTTOM,
+            margin: const EdgeInsets.all(16),
+            borderRadius: 14,
+            backgroundColor: AppColors.primaryDarkTeal,
+            colorText: AppColors.cardWhite,
+            icon: const Icon(Icons.error_outline, color: Colors.white),
+            duration: const Duration(seconds: 2),
+          );
+          return;
+        }
+
+        final double? fibreLength = _parseDouble(controller.fibreLengthCtrl.text);
+        final double? fibreDenier =
+            _parseDouble(controller.calculatedDenierResult.value);
+        if (fibreLength == null || fibreDenier == null) {
+          _showMissingFields();
+          return;
+        }
+
+        final QualityTestPayload savePayload = QualityTestPayload(
+          baleRecordId: baleRecordId,
+          baleId: baleId,
+          category: QualityTestCategory.fibre,
+          metrics: FibreMetrics(
+            fibreLengthMm: fibreLength,
+            fibreDenier: fibreDenier,
+          ).toMap(),
+        );
+
         Get.toNamed(
           RoutesNames.qualityReview,
           arguments: {
@@ -63,6 +108,7 @@ class FibreReviewContinueButton extends StatelessWidget {
                 footerSuffix: ' D',
               ),
             ],
+            'savePayload': savePayload,
           },
         );
       },

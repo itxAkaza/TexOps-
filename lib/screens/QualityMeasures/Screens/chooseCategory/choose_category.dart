@@ -18,9 +18,23 @@ class ChooseCategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? baleRecordId =
+      Get.arguments is Map ? (Get.arguments as Map)['baleRecordId'] as String? : null;
+    final String? baleId =
+        Get.arguments is Map ? (Get.arguments as Map)['baleId'] as String? : null;
+    const String fallbackBaleRecordId = 'Sau4XSMNSMdCXc6RnYnbg6jnZjI3';
+    const String fallbackBaleId = 'gxx_260510-2130';
+
+    final String resolvedBaleRecordId =
+      (baleRecordId == null || baleRecordId.isEmpty)
+        ? fallbackBaleRecordId
+        : baleRecordId;
+    final String resolvedBaleId = (baleId == null || baleId.isEmpty)
+      ? fallbackBaleId
+      : baleId;
+
     return Scaffold(
-                 
-      appBar:  AppBarWithBack(title: 'Select a Testing Metric'),
+      appBar: AppBarWithBack(title: 'Select a Testing Metric'),
       backgroundColor: AppColors.cardWhite,
       body: SingleChildScrollView(
         child: Column(
@@ -64,7 +78,13 @@ class ChooseCategoryScreen extends StatelessWidget {
                       Iconsax.component,
                       color: AppColors.accentOrange,
                     ),
-                    onTap: () => Get.toNamed(RoutesNames.qualityFibreTesting),
+                    onTap: () => Get.toNamed(
+                      RoutesNames.qualityFibreTesting,
+                      arguments: {
+                        'baleRecordId': resolvedBaleRecordId,
+                        'baleId': resolvedBaleId,
+                      },
+                    ),
                   ),
 
                   const SizedBox(height: 16),
@@ -75,7 +95,13 @@ class ChooseCategoryScreen extends StatelessWidget {
                       Iconsax.component,
                       color: AppColors.accentOrange,
                     ),
-                    onTap: () => Get.toNamed(RoutesNames.qualityYarnTesting),
+                    onTap: () => Get.toNamed(
+                      RoutesNames.qualityYarnTesting,
+                      arguments: {
+                        'baleRecordId': resolvedBaleRecordId,
+                        'baleId': resolvedBaleId,
+                      },
+                    ),
                   ),
 
                   const SizedBox(height: 16),
@@ -87,10 +113,26 @@ class ChooseCategoryScreen extends StatelessWidget {
                       Iconsax.component,
                       color: AppColors.accentOrange,
                     ),
-                    onTap: () => Get.toNamed(RoutesNames.qualityFabricTesting),
+                    onTap: () => Get.toNamed(
+                      RoutesNames.qualityFabricTesting,
+                      arguments: {
+                        'baleRecordId': resolvedBaleRecordId,
+                        'baleId': resolvedBaleId,
+                      },
+                    ),
                   ),
 
-                  ContinueButton(onPressed: () => Get.to(()=> ViewScoreScreen()), text: 'View Scores')
+                  ContinueButton(
+                    onPressed: () {
+                      Get.to(
+                        () => ViewScoreScreen(
+                          baleRecordId: resolvedBaleRecordId,
+                          baleId: resolvedBaleId,
+                        ),
+                      );
+                    },
+                    text: 'View Scores',
+                  ),
                 ],
               ),
             ),

@@ -1,4 +1,5 @@
 class RoutesNames {
+  static const String loginScreen = '/loginScreen';
   static const String adminDashboard = '/adminDashboard';
   static const String adminBaleInventory = '/adminBaleInventory';
   static const String adminBaleInfo = '/adminBaleInfo';

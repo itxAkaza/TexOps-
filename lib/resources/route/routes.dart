@@ -4,6 +4,7 @@ import 'package:texops/screens/admin/bale_inventory/admin_bale_inventory_screen.
 import 'package:texops/screens/admin/dashboard/admin_dashboard.dart';
 import 'package:texops/screens/admin/gate_pass/admin_gate_pass.dart';
 import 'package:texops/screens/admin/user_directory/admin_user_directory.dart';
+import 'package:texops/screens/auth/login_screen.dart';
 
 class AppRoutes {
   static appRoutes() => [
@@ -24,5 +25,6 @@ class AppRoutes {
       page: () => AdminUserDirectory(),
     ),
     GetPage(name: RoutesNames.adminGatePass, page: () => AdminGatePass()),
+    GetPage(name: RoutesNames.loginScreen, page: () => LoginScreen()),
   ];
 }

@@ -66,6 +66,10 @@ dependencies:
   image: ^4.8.0
   image_picker: ^1.1.2
   path: ^1.9.1
+  share_plus: ^11.0.0
+  pdf: ^3.11.3
+
+
   iconsax: ^0.0.8
   
   cached_network_image: ^3.4.1

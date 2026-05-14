@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/route/routes.dart';
 import 'package:texops/resources/route/routes_names.dart';
+import 'package:texops/screens/auth/login_screen.dart';
 
 import 'firebase_options.dart';
 
@@ -13,6 +14,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
+
+  //sidsaoindoiasn
 }
 
 class MyApp extends StatelessWidget {
@@ -30,6 +33,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: RoutesNames.loginScreen,
       getPages: AppRoutes.appRoutes(),
+      home: LoginScreen(),
     );
   }
 }

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/route/routes.dart';
 import 'package:texops/resources/route/routes_names.dart';
-import 'package:texops/screens/auth/login_screen.dart';
 
 import 'firebase_options.dart';
 
@@ -14,11 +13,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
-
-  //sidsaoindoiasn
 }
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -26,33 +21,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'TexOps',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
       ),
+      // The main branch has the app starting on the Login Screen.
+      // If you want it to start on your Intro Screen instead, 
+      // change this to: RoutesNames.introScreen
       initialRoute: RoutesNames.loginScreen,
       getPages: AppRoutes.appRoutes(),
-      home: LoginScreen(),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

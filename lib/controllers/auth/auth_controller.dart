@@ -94,8 +94,8 @@ class AuthController extends GetxController {
 
     if (lowerCaseRole.contains("admin")) {
       Get.offAllNamed(RoutesNames.adminDashboard);
-    } else {
-      Utils.toastMesseges("Unauthorized role");
+    }else if(lowerCaseRole.contains("lab")){
+      Get.offAllNamed(RoutesNames.labEngineerDashboard);
     }
   }
 

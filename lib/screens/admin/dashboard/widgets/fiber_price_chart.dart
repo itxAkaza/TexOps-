@@ -8,7 +8,6 @@ import 'package:texops/resources/colors/app_colors.dart';
 class FiberPriceChart extends StatelessWidget {
   const FiberPriceChart({super.key});
 
-  static const _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   static const _tabs = ['Cotton', 'Poly'];
 
   Color _lineColor(int index) =>
@@ -28,53 +27,63 @@ class FiberPriceChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header ──────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
+          // ── HEADER ──────────────────────────────────────────────
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
                   "Price Trends by Bale Type",
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w600,
                     color: AppColors.primaryDarkTeal,
                     fontSize: 14,
                   ),
                 ),
-                Obx(
-                  () => _TabSelector(
+              ),
+
+              const SizedBox(width: 8),
+
+              // FIXED TAB (no overflow)
+              Obx(
+                () => FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: _TabSelector(
                     tabs: _tabs,
                     selected: controller.selectedFiberIndex.value,
                     onTap: (i) => controller.selectedFiberIndex.value = i,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 16),
 
-          // ── Chart ───────────────────────────────────────────────
+          // ── CHART ───────────────────────────────────────────────
           SizedBox(
             height: 200,
             child: Obx(() {
               final tabIdx = controller.selectedFiberIndex.value;
+
               final spots = controller.getWeeklyBaleSpots();
               final maxY = controller.getLineChartMaxY();
               final interval = controller.getLineChartInterval();
               final color = _lineColor(tabIdx);
+
+              // ✅ DYNAMIC WEEK LABELS (from controller)
+              final days = controller.getCurrentWeekLabels();
+
               final hasData = spots.any((s) => s.y > 0);
 
               return Stack(
                 children: [
-                  // Horizontally scrollable chart
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
                     child: SizedBox(
-                      width: MediaQuery.of(Get.context!).size.width * 1.05,
+                      width: MediaQuery.of(context).size.width,
                       child: LineChart(
                         duration: const Duration(milliseconds: 350),
                         curve: Curves.easeInOut,
@@ -85,7 +94,6 @@ class FiberPriceChart extends StatelessWidget {
                           maxY: maxY,
                           clipData: const FlClipData.all(),
 
-                          // Grid lines – horizontal only
                           gridData: FlGridData(
                             show: true,
                             drawVerticalLine: false,
@@ -96,7 +104,6 @@ class FiberPriceChart extends StatelessWidget {
                             ),
                           ),
 
-                          // Show only bottom + left axis border
                           borderData: FlBorderData(
                             show: true,
                             border: Border(
@@ -111,7 +118,6 @@ class FiberPriceChart extends StatelessWidget {
                             ),
                           ),
 
-                          // Axis labels
                           titlesData: FlTitlesData(
                             topTitles: const AxisTitles(
                               sideTitles: SideTitles(showTitles: false),
@@ -119,19 +125,22 @@ class FiberPriceChart extends StatelessWidget {
                             rightTitles: const AxisTitles(
                               sideTitles: SideTitles(showTitles: false),
                             ),
+
                             bottomTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 reservedSize: 26,
                                 getTitlesWidget: (val, _) {
                                   final idx = val.toInt();
-                                  if (idx < 0 || idx >= _days.length) {
+
+                                  if (idx < 0 || idx >= days.length) {
                                     return const SizedBox.shrink();
                                   }
+
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 6),
                                     child: Text(
-                                      _days[idx],
+                                      days[idx],
                                       style: GoogleFonts.poppins(
                                         color: AppColors.textGrey,
                                         fontSize: 9,
@@ -142,16 +151,17 @@ class FiberPriceChart extends StatelessWidget {
                                 },
                               ),
                             ),
+
                             leftTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 interval: interval,
                                 reservedSize: 40,
                                 getTitlesWidget: (val, meta) {
-                                  // Hide the very top overflow label
                                   if (val == meta.max) {
                                     return const SizedBox.shrink();
                                   }
+
                                   return Text(
                                     _fmtLabel(val),
                                     style: GoogleFonts.poppins(
@@ -165,7 +175,6 @@ class FiberPriceChart extends StatelessWidget {
                             ),
                           ),
 
-                          // Tooltip
                           lineTouchData: LineTouchData(
                             handleBuiltInTouches: true,
                             touchTooltipData: LineTouchTooltipData(
@@ -178,8 +187,7 @@ class FiberPriceChart extends StatelessWidget {
                               getTooltipItems: (touchedSpots) =>
                                   touchedSpots.map((s) {
                                     return LineTooltipItem(
-                                      '${_days[s.x.toInt()]}\n'
-                                      '${s.y.toInt()} bales',
+                                      '${days[s.x.toInt()]}\n${s.y.toInt()} bales',
                                       GoogleFonts.poppins(
                                         color: AppColors.cardWhite,
                                         fontSize: 11,
@@ -191,7 +199,6 @@ class FiberPriceChart extends StatelessWidget {
                             ),
                           ),
 
-                          // Line bar
                           lineBarsData: [
                             LineChartBarData(
                               spots: spots,
@@ -200,7 +207,6 @@ class FiberPriceChart extends StatelessWidget {
                               color: color,
                               barWidth: 2,
                               isStrokeCapRound: true,
-                              // Clean Figma look – no gradient fill
                               belowBarData: BarAreaData(show: false),
                               dotData: FlDotData(
                                 show: true,
@@ -219,7 +225,6 @@ class FiberPriceChart extends StatelessWidget {
                     ),
                   ),
 
-                  // Empty-state overlay
                   if (!hasData)
                     Positioned.fill(
                       child: Container(
@@ -257,7 +262,7 @@ class FiberPriceChart extends StatelessWidget {
   }
 }
 
-// ── Tab selector widget ────────────────────────────────────────────────────────
+// ── TAB SELECTOR ───────────────────────────────────────────────
 class _TabSelector extends StatelessWidget {
   final List<String> tabs;
   final int selected;
@@ -281,12 +286,13 @@ class _TabSelector extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: List.generate(tabs.length, (i) {
           final active = selected == i;
+
           return GestureDetector(
             onTap: () => onTap(i),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: active ? AppColors.primaryDarkTeal : Colors.transparent,
                 borderRadius: BorderRadius.circular(30),
@@ -307,7 +313,7 @@ class _TabSelector extends StatelessWidget {
   }
 }
 
-// ── Axis label formatter ───────────────────────────────────────────────────────
+// ── LABEL FORMATTER ─────────────────────────────────────────────
 String _fmtLabel(double val) {
   if (val >= 1000000) {
     return '${(val / 1000000).toStringAsFixed(1)}M';

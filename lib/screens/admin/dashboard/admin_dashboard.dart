@@ -32,37 +32,9 @@ class AdminDashboard extends StatelessWidget {
             fontSize: 20,
           ),
         ),
-        actions: [
-          // Live indicator dot
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Row(
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF27AE60),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  "Live",
-                  style: GoogleFonts.poppins(
-                    color: AppColors.primaryDarkTeal,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

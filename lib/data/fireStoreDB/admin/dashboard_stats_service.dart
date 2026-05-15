@@ -14,7 +14,6 @@ class DashboardService {
     });
   }
 
-  // Must return Stream<List<GatePassModel>>
   Stream<List<GatePassModel>> getAllBailData() {
     return _db.collectionGroup('bail_data').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {

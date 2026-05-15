@@ -8,9 +8,7 @@ import 'package:texops/resources/colors/app_colors.dart';
 class InventoryTurnoverChart extends StatelessWidget {
   const InventoryTurnoverChart({super.key});
 
-  // Teal = In Storage (not yet sent to yarn) — matches Figma "Received Bales"
   static const _storageColor = AppColors.primaryDarkTeal;
-  // Orange = Consumed (sent to yarn / turned over) — matches Figma "Consumed Bales"
   static const _consumedColor = AppColors.accentOrange;
 
   @override
@@ -27,7 +25,6 @@ class InventoryTurnoverChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header ──────────────────────────────────────────────
           Text(
             "Inventory Turn Over",
             style: GoogleFonts.poppins(
@@ -36,26 +33,24 @@ class InventoryTurnoverChart extends StatelessWidget {
               fontSize: 14,
             ),
           ),
+
           const SizedBox(height: 10),
 
-          // ── Legend (Figma style – square dot + label) ────────────
-          Row(
+          Wrap(
+            spacing: 16,
+            runSpacing: 8,
             children: [
               _legendDot(_storageColor, "In Storage"),
-              const SizedBox(width: 16),
-              _legendDot(_consumedColor, "Consumed Bales"),
+              _legendDot(_consumedColor, "Consumed"),
             ],
           ),
 
           const SizedBox(height: 16),
 
-          // ── Chart ───────────────────────────────────────────────
           SizedBox(
             height: 220,
             child: Obx(() {
-              final isLoading = controller.isLoadingBales.value;
-
-              if (isLoading) {
+              if (controller.isLoadingBales.value) {
                 return const Center(
                   child: CircularProgressIndicator(
                     color: AppColors.primaryDarkTeal,
@@ -64,79 +59,39 @@ class InventoryTurnoverChart extends StatelessWidget {
                 );
               }
 
-              final data = controller.getTurnoverData();
-              final inStorage = data['inStorage'] ?? 0.0;
-              final consumed = data['consumed'] ?? 0.0;
-              final maxY = controller.getBarChartMaxY();
-              final interval = controller.getBarChartInterval();
-              final hasData = inStorage > 0 || consumed > 0;
+              // ✅ WEEKLY DATA (NEW LOGIC)
+              final weeklyData = controller.getTurnoverDataByWeek();
+              final inStorageWeeks = weeklyData['inStorage']!;
+              final consumedWeeks = weeklyData['consumed']!;
 
-              if (!hasData) {
-                return _EmptyState(
-                  message: "No inventory data yet",
-                  icon: Icons.inventory_2_outlined,
-                );
-              }
+              // ✅ SAFE MAX CALC
+              final maxValue = [
+                ...inStorageWeeks,
+                ...consumedWeeks,
+              ].reduce((a, b) => a > b ? a : b);
+
+              final double maxY = maxValue > 0
+                  ? ((maxValue / 100).ceil() + 1) * 100
+                  : 500;
+
+              final double interval = maxY / 5.0;
 
               return BarChart(
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeOut,
                 BarChartData(
                   maxY: maxY,
-                  groupsSpace: 20,
-
+                  groupsSpace: 12,
                   borderData: FlBorderData(show: false),
 
-                  // Grid – horizontal dashes only
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
                     horizontalInterval: interval,
-                    getDrawingHorizontalLine: (_) =>
-                        FlLine(color: AppColors.autoRecorded, strokeWidth: 1),
-                  ),
-
-                  // Tooltip
-                  barTouchData: BarTouchData(
-                    enabled: true,
-                    touchTooltipData: BarTouchTooltipData(
-                      tooltipBorderRadius: BorderRadius.circular(10),
-                      tooltipPadding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 7,
-                      ),
-                      getTooltipColor: (_) => AppColors.primaryDarkTeal,
-                      getTooltipItem: (group, _, rod, rodIndex) {
-                        final label = rodIndex == 0 ? "In Storage" : "Consumed";
-                        return BarTooltipItem(
-                          '',
-                          const TextStyle(),
-                          children: [
-                            TextSpan(
-                              text: '$label\n',
-                              style: GoogleFonts.poppins(
-                                color: rodIndex == 0
-                                    ? AppColors.accentOrange
-                                    : AppColors.backgroundLightPeach,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10,
-                              ),
-                            ),
-                            TextSpan(
-                              text: '${rod.toY.toInt()} bales',
-                              style: GoogleFonts.poppins(
-                                color: AppColors.cardWhite,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                    getDrawingHorizontalLine: (value) => FlLine(
+                      color: AppColors.autoRecorded.withOpacity(0.5),
+                      strokeWidth: 1,
                     ),
                   ),
 
-                  // Axis titles
                   titlesData: FlTitlesData(
                     topTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
@@ -147,17 +102,23 @@ class InventoryTurnoverChart extends StatelessWidget {
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 28,
+                        reservedSize: 32,
                         getTitlesWidget: (val, _) {
-                          // Single group → label centered under the pair
-                          if (val.toInt() == 0) {
+                          const titles = [
+                            "Week 1",
+                            "Week 2",
+                            "Week 3",
+                            "Week 4",
+                          ];
+
+                          if (val >= 0 && val < titles.length) {
                             return Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Text(
-                                "Current",
+                                titles[val.toInt()],
                                 style: GoogleFonts.poppins(
                                   color: AppColors.textGrey,
-                                  fontSize: 10,
+                                  fontSize: 9,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -167,69 +128,65 @@ class InventoryTurnoverChart extends StatelessWidget {
                         },
                       ),
                     ),
+
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         interval: interval,
-                        reservedSize: 44,
-                        getTitlesWidget: (val, meta) {
-                          if (val == meta.max) {
-                            return const SizedBox.shrink();
-                          }
-                          return Text(
-                            _fmtLabel(val),
-                            style: GoogleFonts.poppins(
-                              color: AppColors.textGrey,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          );
-                        },
+                        reservedSize: 40,
+                        getTitlesWidget: (val, _) => Text(
+                          val.toInt().toString(),
+                          style: GoogleFonts.poppins(
+                            color: AppColors.textGrey,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ),
                   ),
 
-                  // Bars — two rods in one group, side by side
-                  barGroups: [
-                    BarChartGroupData(
-                      x: 0,
+                  barGroups: List.generate(4, (index) {
+                    final sY = inStorageWeeks[index];
+                    final cY = consumedWeeks[index];
+
+                    return BarChartGroupData(
+                      x: index,
                       barsSpace: 8,
                       barRods: [
-                        // Teal = In Storage
                         BarChartRodData(
-                          toY: inStorage,
+                          toY: sY,
                           color: _storageColor,
-                          width: 36,
+                          width: 28,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(6),
                           ),
                           backDrawRodData: BackgroundBarChartRodData(
-                            show: true,
-                            toY: maxY,
+                            show: sY > 0,
+                            toY: sY,
                             color: AppColors.backgroundLightPeach.withOpacity(
                               0.4,
                             ),
                           ),
                         ),
-                        // Orange = Consumed
                         BarChartRodData(
-                          toY: consumed,
+                          toY: cY,
                           color: _consumedColor,
-                          width: 36,
+                          width: 28,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(6),
                           ),
                           backDrawRodData: BackgroundBarChartRodData(
-                            show: true,
-                            toY: maxY,
+                            show: cY > 0,
+                            toY: cY,
                             color: AppColors.backgroundLightPeach.withOpacity(
                               0.4,
                             ),
                           ),
                         ),
                       ],
-                    ),
-                  ],
+                    );
+                  }),
                 ),
               );
             }),
@@ -263,43 +220,4 @@ class InventoryTurnoverChart extends StatelessWidget {
       ],
     );
   }
-}
-
-// ── Empty state ───────────────────────────────────────────────────────────────
-class _EmptyState extends StatelessWidget {
-  final String message;
-  final IconData icon;
-
-  const _EmptyState({required this.message, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 40, color: AppColors.autoRecorded),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            style: GoogleFonts.poppins(
-              color: AppColors.textFormText,
-              fontSize: 12,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Axis label formatter ───────────────────────────────────────────────────────
-String _fmtLabel(double val) {
-  if (val >= 1000000) return '${(val / 1000000).toStringAsFixed(1)}M';
-  if (val >= 1000) {
-    final k = val / 1000;
-    return '${k % 1 == 0 ? k.toInt() : k.toStringAsFixed(1)}k';
-  }
-  return val.toInt().toString();
 }

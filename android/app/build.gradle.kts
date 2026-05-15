@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "com.example.texops"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "30.0.14904198"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

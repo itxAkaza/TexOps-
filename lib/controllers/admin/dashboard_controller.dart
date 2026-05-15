@@ -16,11 +16,9 @@ class DashboardController extends GetxController {
     totalUsers: 0,
   ).obs;
 
-  // RxList does NOT support bindStream — use StreamSubscription instead
   RxList<GatePassModel> allBailData = <GatePassModel>[].obs;
   RxBool isLoadingBales = true.obs;
 
-  /// 0 = Cotton, 1 = Poly
   RxInt selectedFiberIndex = 0.obs;
 
   static const List<String> fiberTypes = ['cotton', 'poly'];
@@ -31,11 +29,8 @@ class DashboardController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // stats is Rx<DashboardStatsModel> — bindStream works fine
     stats.bindStream(_service.getDashboardStats());
 
-    // allBailData is RxList — bindStream doesn't exist on RxList.
-    // Use listen() and assign to .value to keep reactivity intact.
     _balesSub = _service.getAllBailData().listen(
       (data) {
         allBailData.value = data;
@@ -101,10 +96,6 @@ class DashboardController extends GetxController {
 
   double getLineChartInterval() => _niceInterval(getLineChartMaxY());
 
-  // ─────────────────────────────────────────────────────────────
-  // BAR CHART — Inventory Turnover (In-Storage vs Consumed)
-  // ─────────────────────────────────────────────────────────────
-
   Map<String, double> getTurnoverData() {
     if (allBailData.isEmpty) return {'inStorage': 0, 'consumed': 0};
 
@@ -156,5 +147,81 @@ class DashboardController extends GetxController {
     if (value <= 0) return 1;
     final exp = (value.toStringAsFixed(0).length - 1).clamp(0, 10);
     return double.parse('1e$exp');
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // WEEKLY TURNOVER DATA (for InventoryTurnoverChart)
+  // ─────────────────────────────────────────────────────────────
+
+  /// Returns 0, 1, 2, or 3 for Week 1–4 of the month
+  int _getWeekOfMonth(DateTime date) {
+    if (date.day <= 7) return 0;
+    if (date.day <= 14) return 1;
+    if (date.day <= 21) return 2;
+    return 3;
+  }
+
+  /// Weekly breakdown: inStorage vs consumed (current month)
+  Map<String, List<double>> getTurnoverDataByWeek() {
+    final inStorage = List.filled(4, 0.0);
+    final consumed = List.filled(4, 0.0);
+
+    if (allBailData.isEmpty) {
+      return {'inStorage': inStorage, 'consumed': consumed};
+    }
+
+    final now = DateTime.now();
+
+    for (final bale in allBailData) {
+      if (bale.createdAt.year != now.year ||
+          bale.createdAt.month != now.month) {
+        continue;
+      }
+
+      final weekIndex = _getWeekOfMonth(bale.createdAt);
+      final count = double.tryParse(bale.baleCount.trim()) ?? 0.0;
+
+      if (bale.readyForYarn == true) {
+        consumed[weekIndex] += count;
+      } else {
+        inStorage[weekIndex] += count;
+      }
+    }
+
+    return {'inStorage': inStorage, 'consumed': consumed};
+  }
+
+  /// Max Y scaling for weekly bar chart
+  double getBarChartMaxYForWeeks() {
+    final data = getTurnoverDataByWeek();
+
+    final allValues = [...data['inStorage']!, ...data['consumed']!];
+
+    final maxValue = allValues.reduce((a, b) => a > b ? a : b);
+
+    if (maxValue == 0) return 100.0;
+
+    // nice padding scaling (keeps chart readable)
+    return (((maxValue / 100).ceil() + 1) * 100).toDouble();
+  }
+
+  List<String> getCurrentWeekLabels() {
+    final now = DateTime.now();
+
+    final monday = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(Duration(days: now.weekday - 1));
+
+    return List.generate(7, (i) {
+      final date = monday.add(Duration(days: i));
+      return _weekDayName(date.weekday);
+    });
+  }
+
+  String _weekDayName(int weekday) {
+    const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return names[weekday - 1];
   }
 }

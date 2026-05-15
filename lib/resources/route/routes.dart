@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:texops/resources/route/routes_names.dart';
+import 'package:texops/screens/lab_engineer/detailScreen/detail_Screen.dart';
 
 // --- Onboarding & Auth ---
 import '../../screens/onBoarding/intro_screen.dart';
@@ -40,7 +41,7 @@ class AppRoutes {
     GetPage(
       name: RoutesNames.bailEntryView,
       page: () => BaleEntryScreen(),
-      transition: Transition.leftToRightWithFade,
+      transition: Transition.fade,
       transitionDuration: Duration(milliseconds: 250),
     ),
     GetPage(
@@ -52,6 +53,13 @@ class AppRoutes {
     GetPage(
       name: RoutesNames.labEngineerDashboard,
       page: () => LabEnigneerDashboard(),
+      transition: Transition.fade,
+      transitionDuration: Duration(milliseconds: 250),
+    ),
+
+    GetPage(
+      name: RoutesNames.detailView,
+      page: () => DetailScreen(),
       transition: Transition.fade,
       transitionDuration: Duration(milliseconds: 250),
     ),

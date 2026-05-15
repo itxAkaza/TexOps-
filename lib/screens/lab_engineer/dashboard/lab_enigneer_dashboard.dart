@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:texops/resources/route/routes_names.dart';
+import 'package:texops/screens/lab_engineer/dashboard/components/drawer.dart';
 
 import '../../../controllers/lab_engineer/lab_engineer_Dashboard/labEngineer_dashboard_controller.dart';
 import '../../../resources/colors/app_colors.dart';
-import 'components/intro card.dart';
+import 'components/intro_card.dart';
 import 'components/recent_activity_card.dart';
 
 
 class LabEnigneerDashboard extends StatelessWidget {
-  const LabEnigneerDashboard({super.key});
+   LabEnigneerDashboard({super.key});
+
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(LabEngineerController());
 
+
     return Scaffold(
       backgroundColor: AppColors.backgroundLightPeach,
+      key: scaffoldKey,
+
+      drawer: MYDrawer(),
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
@@ -26,13 +34,14 @@ class LabEnigneerDashboard extends StatelessWidget {
 
           return RefreshIndicator(
             onRefresh: () => controller.fetchDashboardData(),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 25),
                   // 1. The Top Card
-                  DashboardTopCard(controller: controller),
+                  DashboardTopCard(controller: controller,drawerKey: scaffoldKey,),
 
                   const SizedBox(height: 25),
 
@@ -69,17 +78,21 @@ class LabEnigneerDashboard extends StatelessWidget {
                         padding: EdgeInsets.all(20.0),
                         child: Text("No recent activity found.", style: TextStyle(color: AppColors.textGrey)),
                       ))
-                      : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.recentBales.length,
-                    itemBuilder: (context, index) {
-                      var bale = controller.recentBales[index];
-                      return RecentActivityTile(
-                        bale: bale,
-                        controller: controller,
-                      );
-                    },
+                      :
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: controller.recentBales.length,
+                      itemBuilder: (context, index) {
+                        var bale = controller.recentBales[index];
+                        return RecentActivityTile(
+                          bale: bale,
+                          controller: controller,
+                          onTap: (){
+                            Get.toNamed(RoutesNames.detailView,arguments: [bale]);
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

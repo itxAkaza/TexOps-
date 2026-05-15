@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:texops/resources/route/routes_names.dart';
 
 import '../../../../controllers/lab_engineer/lab_engineer_Dashboard/labEngineer_dashboard_controller.dart';
 import '../../../../resources/colors/app_colors.dart';
@@ -8,12 +9,16 @@ import '../../../../resources/colors/app_colors.dart';
 
 class DashboardTopCard extends StatelessWidget {
   final LabEngineerController controller;
+  final GlobalKey<ScaffoldState> drawerKey;
 
-  const DashboardTopCard({Key? key, required this.controller}) : super(key: key);
+   DashboardTopCard({Key? key, required this.controller,required this.drawerKey}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     String todayDate = DateFormat('EEEE, MMMM dd, yyyy').format(DateTime.now());
+    final height =MediaQuery.of(context).size.height;
+    final width =MediaQuery.of(context).size.width;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -21,31 +26,30 @@ class DashboardTopCard extends StatelessWidget {
         color: AppColors.primaryDarkTeal,
         borderRadius: BorderRadius.circular(30),
       ),
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Profile Row
+
+          //profile
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundColor: AppColors.accentOrange,
-                    backgroundImage: controller.userProfilePic.value.isNotEmpty
-                        ? NetworkImage(controller.userProfilePic.value)
-                        : null,
-                    child: controller.userProfilePic.value.isEmpty
-                        ? Text(
-                      controller.userName.value.isNotEmpty
-                          ? controller.userName.value[0].toUpperCase()
-                          : 'U',
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    )
-                        : null,
+                  GestureDetector(
+                    onTap: ()=> drawerKey.currentState?.openDrawer(),
+                    child: CircleAvatar(
+                      radius: 25,
+                      backgroundColor: AppColors.accentOrange,
+                      backgroundImage: controller.userProfilePic.value.isNotEmpty
+                          ? NetworkImage(controller.userProfilePic.value)
+                          : null,
+
+                    ),
                   ),
                   const SizedBox(width: 12),
+
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -69,62 +73,81 @@ class DashboardTopCard extends StatelessWidget {
           ),
           const SizedBox(height: 25),
 
-          // System Value Section
+          //date
           Text(
             todayDate,
             style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 5),
+
+          //value
           const Text(
-            "System Value Logged",
+            "Total Value",
             style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
+
+
           Obx(() => Text(
-            NumberFormat.currency(symbol: '₹', decimalDigits: 2).format(controller.totalSystemValue.value),
-            style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+            NumberFormat.currency(symbol: 'Rs', decimalDigits: 2).format(controller.totalSystemValue.value),
+            style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
           )),
 
           const SizedBox(height: 25),
 
-          // Action Buttons
+          //buttons
           Row(
+            mainAxisAlignment: .center,
             children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.cardWhite,
-                    foregroundColor: AppColors.primaryDarkTeal,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              GestureDetector(
+                onTap: ()=>Get.toNamed(RoutesNames.bailEntryView),
+                child: Container(
+                  height: height*0.1,
+                  width: width*0.4,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+
                   ),
-                  onPressed: () {
-                    // Get.to(BaleEntryScreen());
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text("Record New\nLab Report", textAlign: TextAlign.center),
+                  padding: EdgeInsets.all(20),
+
+                  child: Row(
+                    mainAxisAlignment: .center,
+                    children: [
+                      Icon(Icons.add),
+                      SizedBox(width: 4,),
+                      Text("Record New \n Lab Report",style: TextStyle(color: AppColors.primaryDarkTeal),),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentOrange,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              SizedBox(width: 6,),
+              GestureDetector(
+                onTap: (){},
+                child: Container(
+                  height: height*0.1,
+                  width: width*0.4,
+                  decoration: BoxDecoration(
+                    color: AppColors.accentOrange,
+                    borderRadius: BorderRadius.circular(14),
+
                   ),
-                  onPressed: () {
-                    // Handle Outbound
-                  },
-                  icon: const Icon(Icons.swap_horiz),
-                  label: const Text("Issue Outbound\nGatePass Transfer", textAlign: TextAlign.center),
+                  padding: EdgeInsets.all(20),
+
+                  child: Row(
+                    mainAxisAlignment: .center,
+                    children: [
+                      Icon(Icons.outbond_outlined,color: Colors.white,),
+                      SizedBox(width: 4,),
+                      Text("GatePass\n Transfer",style: TextStyle(color: Colors.white),),
+                    ],
+                  ),
                 ),
-              ),
+              )
             ],
           ),
           const SizedBox(height: 20),
 
-          // Quarter Dropdown
+          // Quarter
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             decoration: BoxDecoration(
@@ -138,7 +161,6 @@ class DashboardTopCard extends StatelessWidget {
                   controller.getCurrentQuarter(),
                   style: const TextStyle(color: Colors.white),
                 ),
-                const Icon(Icons.keyboard_arrow_down, color: Colors.white),
               ],
             ),
           )

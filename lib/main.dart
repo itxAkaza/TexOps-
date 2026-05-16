@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
       ),
-      initialRoute: RoutesNames.loginScreen,
+      initialRoute: RoutesNames.adminDashboard,
       getPages: AppRoutes.appRoutes(),
     );
   }

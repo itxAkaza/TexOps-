@@ -58,6 +58,9 @@ class GatePassModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'baleId': baleID,
+      'vehicleNumber': vehicleNumber,
+      'arrivalTime': arrivalTime,
       'gatePassRef': gatePassRef,
       'supplier': supplier,
       'baleType': baleType,

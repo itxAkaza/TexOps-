@@ -42,8 +42,7 @@ class UserCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  // FIXED: Changed item.generatedEmail to item.personalEmail
-                  isUser ? item.personalEmail : item.email,
+                  isUser ? item.generatedEmail : item.email,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Colors.grey.shade600,

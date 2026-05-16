@@ -86,7 +86,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            "Please enter your REGISTERED PERSONAL EMAIL address. Do NOT enter your generated corporate @texops.com ID, as link deliveries will fail.",
+                            "Please enter your REGISTERED EMAIL address",
                             style: GoogleFonts.poppins(
                               color: Colors.red.shade900,
                               fontSize: 12,

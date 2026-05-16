@@ -23,7 +23,7 @@ class QualityController extends GetxController {
 
     _db.collectionGroup('bail_data').snapshots().listen((snapshot) {
       allBails.value = snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data();
         return GatePassModel.fromMap(data, doc.id);
       }).toList();
     });

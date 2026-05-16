@@ -35,20 +35,32 @@ class UserFirebaseService {
     });
   }
 
-  /// Dynamically computes the maximum incremental tracking identity tag for new hires
+  /// Finds the highest existing employee number for the given role numerically.
+  /// Uses numeric comparison instead of string sort — works correctly beyond Lab-099.
   Future<String?> getLastEmployeeId({required String role}) async {
     final query = await _firestore
         .collection('users')
         .where('role', isEqualTo: role)
-        .orderBy('employeeId', descending: true)
-        .limit(1)
         .get();
 
-    if (query.docs.isEmpty) {
-      return null;
+    if (query.docs.isEmpty) return null;
+
+    int maxNumber = 0;
+    for (final doc in query.docs) {
+      final id = (doc.data()['employeeId'] as String?) ?? '';
+      if (id.contains('-')) {
+        final parsed = int.tryParse(id.split('-').last);
+        if (parsed != null && parsed > maxNumber) {
+          maxNumber = parsed;
+        }
+      }
     }
 
-    return query.docs.first.get('employeeId');
+    if (maxNumber == 0) return null;
+
+    // Return in the same format the controller already knows how to parse
+    final prefix = role.toLowerCase().contains('lab') ? 'Lab' : 'Qual';
+    return '$prefix-${maxNumber.toString().padLeft(3, '0')}';
   }
 
   /// Validates system record duplicates before building new vendor nodes
@@ -73,7 +85,7 @@ class UserFirebaseService {
   Future<bool> isUserEmailExists(String email) async {
     final query = await _firestore
         .collection('users')
-        .where('personalEmail', isEqualTo: email.trim().toLowerCase())
+        .where('generatedEmail', isEqualTo: email.trim().toLowerCase())
         .limit(1)
         .get();
 

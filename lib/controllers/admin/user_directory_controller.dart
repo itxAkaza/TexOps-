@@ -91,6 +91,7 @@ class UserDirectoryController extends GetxController {
 
   void changeTab(int index) {
     selectedTab.value = index;
+    selectedImagePath.value = ''; // ← clear image so employee/vendor forms don't share it
     pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 250),
@@ -100,6 +101,7 @@ class UserDirectoryController extends GetxController {
 
   void onPageChanged(int index) {
     selectedTab.value = index;
+    selectedImagePath.value = ''; // ← clear image on swipe too
   }
 
   Future<String> generateNextID(String role) async {
@@ -122,12 +124,12 @@ class UserDirectoryController extends GetxController {
   // ─── REGISTER USER (NO PASSWORD FIRESTORE WRITES) ───
   Future<void> registerUser({
     required String name,
-    required String personalEmail,
+    required String generatedEmail, // user-given Gmail — used for auth, stored, and credential delivery
     required String role,
   }) async {
     isLoading.value = true;
     try {
-      final emailExists = await _service.isUserEmailExists(personalEmail);
+      final emailExists = await _service.isUserEmailExists(generatedEmail);
       if (emailExists) {
         Utils.toastMesseges("This email is already registered as an employee.");
         return;
@@ -139,17 +141,17 @@ class UserDirectoryController extends GetxController {
 
       final imageUrl = await uploadProfileImage();
 
-      // Native Authentication registration engine
+      // Firebase Auth uses the user-given email
       final user = await _authService.registerUserWithEmailAndPass(
-        email: personalEmail.trim().toLowerCase(),
+        email: generatedEmail.trim().toLowerCase(),
         password: password,
       );
       if (user == null) return;
 
-      // Map creation without the plaintext password field
+      // Store user-given email as generatedEmail in Firestore
       final newUser = UserModel(
         uid: user.user!.uid,
-        personalEmail: personalEmail.trim().toLowerCase(),
+        generatedEmail: generatedEmail.trim().toLowerCase(),
         profilePic: imageUrl,
         name: name,
         role: role,
@@ -158,9 +160,9 @@ class UserDirectoryController extends GetxController {
       );
       await _service.saveUser(newUser);
 
-      // Automated Email dispatch matching inputs
+      // Send credentials to the same email
       await EmailService.sendCredentials(
-        toEmail: personalEmail.trim().toLowerCase(),
+        toEmail: generatedEmail.trim().toLowerCase(),
         name: name,
         employeeId: employeeID,
         password: password,

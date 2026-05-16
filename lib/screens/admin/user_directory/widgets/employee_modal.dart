@@ -218,7 +218,7 @@ class EmployeeModal extends StatelessWidget {
                               name: controller.name.text.trim(),
                               role: controller.role.value,
                               // FIXED: Changed from controller.email.value.text to controller.email.text
-                              personalEmail: controller.email.text.trim(),
+                              generatedEmail: controller.email.text.trim(),
                             );
                           }
                         },

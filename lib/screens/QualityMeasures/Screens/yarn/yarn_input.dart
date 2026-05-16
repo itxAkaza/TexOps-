@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/data/fireStoreDB/quality/quality_testing_repository.dart';
+import 'package:texops/data/models/quality_testing/quality_test_models.dart';
 import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
@@ -23,6 +26,38 @@ class YarnTestingScreen extends StatelessWidget {
         Get.isRegistered<YarnTestingController>()
         ? Get.find<YarnTestingController>()
         : Get.put(YarnTestingController());
+
+    if (!controller.didPrefill) {
+      controller.didPrefill = true;
+      final String? baleRecordId =
+          Get.arguments is Map ? (Get.arguments as Map)['baleRecordId'] as String? : null;
+      final String? baleId =
+          Get.arguments is Map ? (Get.arguments as Map)['baleId'] as String? : null;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (baleRecordId == null || baleRecordId.isEmpty || baleId == null || baleId.isEmpty) {
+          return;
+        }
+        final Map<QualityTestCategory, QualityTestRecord> records =
+            await QualityTestingRepository().fetchQualityTests(
+              baleRecordId,
+              baleId,
+            );
+        final QualityTestRecord? record =
+            records[QualityTestCategory.yarn];
+        if (record != null) {
+          controller.applyStoredMetrics(record.metrics);
+        }
+      });
+    }
+
+    if (!controller.didAutoExpand) {
+      controller.didAutoExpand = true;
+      controller.isActualCountExpanded.value = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.lengthFocus.requestFocus();
+        SystemChannels.textInput.invokeMethod('TextInput.hide');
+      });
+    }
 
     return Scaffold(
                   

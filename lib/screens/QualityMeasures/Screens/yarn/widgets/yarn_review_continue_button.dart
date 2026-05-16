@@ -97,18 +97,30 @@ class YarnReviewContinueButton extends StatelessWidget {
             ? _parseDouble(controller.nominalCountCtrl.text)
             : null;
 
+        final Map<String, dynamic> metrics = YarnMetrics(
+          actualCount: actualCount,
+          tenacity: tenacity,
+          elongationPercentage: elongation,
+          clsp: clsp,
+          tpm: tpm,
+          nominalCount: nominalCount,
+        ).toMap();
+        metrics['inputLength'] = controller.lengthCtrl.text.trim();
+        metrics['inputWeight'] = controller.weightCtrl.text.trim();
+        metrics['inputForce'] = controller.forceCtrl.text.trim();
+        metrics['inputTex'] = controller.texCtrl.text.trim();
+        metrics['inputFinalLength'] = controller.finalLengthCtrl.text.trim();
+        metrics['inputOriginalLength'] = controller.originalLengthCtrl.text.trim();
+        metrics['inputClspCount'] = controller.clspCountCtrl.text.trim();
+        metrics['inputStrength'] = controller.strengthCtrl.text.trim();
+        metrics['inputTwists'] = controller.twistsCtrl.text.trim();
+        metrics['inputTpmLength'] = controller.tpmLengthCtrl.text.trim();
+
         final QualityTestPayload savePayload = QualityTestPayload(
           baleRecordId: baleRecordId,
           baleId: baleId,
           category: QualityTestCategory.yarn,
-          metrics: YarnMetrics(
-            actualCount: actualCount,
-            tenacity: tenacity,
-            elongationPercentage: elongation,
-            clsp: clsp,
-            tpm: tpm,
-            nominalCount: nominalCount,
-          ).toMap(),
+          metrics: metrics,
         );
 
         Get.toNamed(

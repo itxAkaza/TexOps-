@@ -40,10 +40,8 @@ class FibreScoreCalculator {
     );
 
     final double finalScore = ScoringRules.weightedAverage(metrics);
-    final bool failedCritical = ScoringRules.hasCriticalFailure(metrics);
-    final String grade = failedCritical
-        ? 'F'
-        : ScoringRules.gradeFromScore(finalScore);
+    const bool failedCritical = false;
+    final String grade = ScoringRules.gradeFromScore(finalScore);
 
     return SectionScore(
       section: 'Fibre',

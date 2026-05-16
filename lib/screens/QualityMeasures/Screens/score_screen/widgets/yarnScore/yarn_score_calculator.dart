@@ -72,20 +72,18 @@ class YarnScoreCalculator {
       _scoreRangeMetric(
         metric: 'Twist Multiplier (TM)',
         value: tm,
-        idealMin: 3.0,
-        idealMax: 4.8,
-        targetMin: 3.6,
-        targetMax: 4.2,
+        idealMin: 400,
+        idealMax: 2000,
+        targetMin: 650,
+        targetMax: 1050,
         criticality: Criticality.important,
-        notes: 'TM = TPM / sqrt(Ne)',
+        notes: 'TPM = Twists / Length',
       ),
     );
 
     final double finalScore = ScoringRules.weightedAverage(metrics);
-    final bool failedCritical = ScoringRules.hasCriticalFailure(metrics);
-    final String grade = failedCritical
-        ? 'F'
-        : ScoringRules.gradeFromScore(finalScore);
+    const bool failedCritical = false;
+    final String grade = ScoringRules.gradeFromScore(finalScore);
 
     return SectionScore(
       section: 'Yarn',

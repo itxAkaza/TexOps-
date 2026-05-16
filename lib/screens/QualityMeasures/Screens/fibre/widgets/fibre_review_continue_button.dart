@@ -80,14 +80,18 @@ class FibreReviewContinueButton extends StatelessWidget {
           return;
         }
 
+        final Map<String, dynamic> metrics = FibreMetrics(
+          fibreLengthMm: fibreLength,
+          fibreDenier: fibreDenier,
+        ).toMap();
+        metrics['inputWeight'] = controller.weightCtrl.text.trim();
+        metrics['inputLength'] = controller.lengthCtrl.text.trim();
+
         final QualityTestPayload savePayload = QualityTestPayload(
           baleRecordId: baleRecordId,
           baleId: baleId,
           category: QualityTestCategory.fibre,
-          metrics: FibreMetrics(
-            fibreLengthMm: fibreLength,
-            fibreDenier: fibreDenier,
-          ).toMap(),
+          metrics: metrics,
         );
 
         Get.toNamed(

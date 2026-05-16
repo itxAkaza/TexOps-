@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'yarn_calculations.dart';
 
 class YarnTestingController extends GetxController {
+  bool didAutoExpand = false;
+  bool didPrefill = false;
   // ==========================================
   // 1. EXPANSION STATES (To open/close cards)
   // ==========================================
@@ -65,6 +67,60 @@ class YarnTestingController extends GetxController {
   var clspResult = "-".obs;
   var tpmResult = "-".obs;
 
+  bool _keepStoredResult(
+    RxString result,
+    List<TextEditingController> inputs,
+  ) {
+    if (!didPrefill) return false;
+    if (result.value == '-') return false;
+    return inputs.every((controller) => controller.text.trim().isEmpty);
+  }
+
+  void applyStoredMetrics(Map<String, dynamic> metrics) {
+    final Map<String, dynamic> inputMap = {
+      'inputLength': lengthCtrl,
+      'inputWeight': weightCtrl,
+      'inputForce': forceCtrl,
+      'inputTex': texCtrl,
+      'inputFinalLength': finalLengthCtrl,
+      'inputOriginalLength': originalLengthCtrl,
+      'inputClspCount': clspCountCtrl,
+      'inputStrength': strengthCtrl,
+      'inputTwists': twistsCtrl,
+      'inputTpmLength': tpmLengthCtrl,
+      'nominalCount': nominalCountCtrl,
+    };
+
+    inputMap.forEach((key, controller) {
+      final dynamic value = metrics[key];
+      if (value != null) {
+        controller.text = value.toString();
+      }
+    });
+
+    final dynamic actualCount = metrics['actualCount'];
+    final dynamic tenacity = metrics['tenacity'];
+    final dynamic elongation = metrics['elongationPercentage'];
+    final dynamic clsp = metrics['clsp'];
+    final dynamic tpm = metrics['tpm'];
+
+    if (actualCount != null) {
+      actualCountResult.value = actualCount.toString();
+    }
+    if (tenacity != null) {
+      tenacityResult.value = tenacity.toString();
+    }
+    if (elongation != null) {
+      elongationResult.value = elongation.toString();
+    }
+    if (clsp != null) {
+      clspResult.value = clsp.toString();
+    }
+    if (tpm != null) {
+      tpmResult.value = tpm.toString();
+    }
+  }
+
   // ==========================================
   // 4. LIFECYCLE (Listen for user typing)
   // ==========================================
@@ -74,6 +130,9 @@ class YarnTestingController extends GetxController {
 
     // Actual Count Listeners
     void updateActualCount() {
+      if (_keepStoredResult(actualCountResult, [lengthCtrl, weightCtrl])) {
+        return;
+      }
       actualCountResult.value = YarnCalculations.calculateActualCount(
         lengthCtrl.text,
         weightCtrl.text,
@@ -85,6 +144,9 @@ class YarnTestingController extends GetxController {
 
     // Tenacity Listeners
     void updateTenacity() {
+      if (_keepStoredResult(tenacityResult, [forceCtrl, texCtrl])) {
+        return;
+      }
       tenacityResult.value = YarnCalculations.calculateTenacity(
         forceCtrl.text,
         texCtrl.text,
@@ -96,6 +158,9 @@ class YarnTestingController extends GetxController {
 
     // Elongation Listeners
     void updateElongation() {
+      if (_keepStoredResult(elongationResult, [finalLengthCtrl, originalLengthCtrl])) {
+        return;
+      }
       elongationResult.value = YarnCalculations.calculateElongation(
         finalLengthCtrl.text,
         originalLengthCtrl.text,
@@ -107,6 +172,9 @@ class YarnTestingController extends GetxController {
 
     // CLSP Listeners
     void updateCLSP() {
+      if (_keepStoredResult(clspResult, [clspCountCtrl, strengthCtrl])) {
+        return;
+      }
       clspResult.value = YarnCalculations.calculateCLSP(
         clspCountCtrl.text,
         strengthCtrl.text,
@@ -118,6 +186,9 @@ class YarnTestingController extends GetxController {
 
     // TPM Listeners
     void updateTPM() {
+      if (_keepStoredResult(tpmResult, [twistsCtrl, tpmLengthCtrl])) {
+        return;
+      }
       tpmResult.value = YarnCalculations.calculateTPM(
         twistsCtrl.text,
         tpmLengthCtrl.text,

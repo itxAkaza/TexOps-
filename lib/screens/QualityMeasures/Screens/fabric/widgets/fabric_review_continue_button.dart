@@ -102,22 +102,34 @@ class FabricReviewContinueButton extends StatelessWidget {
           return;
         }
 
+        final Map<String, dynamic> metrics = FabricMetrics(
+          stiffness: stiffness,
+          warpCount: warpCount,
+          weftCount: weftCount,
+          gsm: gsm,
+          tensileStrength: tensile,
+          tearingStrength: tearing,
+          burstingStrength: bursting,
+          creaseRecovery: crease,
+          knitType: controller.selectedKnitType.value,
+          weaveType: controller.selectedWeaveType.value,
+        ).toMap();
+        metrics['inputStiffnessWeight'] =
+            controller.stiffnessWeightCtrl.text.trim();
+        metrics['inputStiffnessBending'] =
+            controller.stiffnessBendingCtrl.text.trim();
+        metrics['inputGsmWeight'] = controller.gsmWeightCtrl.text.trim();
+        metrics['inputGsmArea'] = controller.gsmAreaCtrl.text.trim();
+        metrics['inputCreaseTheta1'] =
+            controller.creaseTheta1Ctrl.text.trim();
+        metrics['inputCreaseTheta2'] =
+            controller.creaseTheta2Ctrl.text.trim();
+
         final QualityTestPayload savePayload = QualityTestPayload(
           baleRecordId: baleRecordId,
           baleId: baleId,
           category: QualityTestCategory.fabric,
-          metrics: FabricMetrics(
-            stiffness: stiffness,
-            warpCount: warpCount,
-            weftCount: weftCount,
-            gsm: gsm,
-            tensileStrength: tensile,
-            tearingStrength: tearing,
-            burstingStrength: bursting,
-            creaseRecovery: crease,
-            knitType: controller.selectedKnitType.value,
-            weaveType: controller.selectedWeaveType.value,
-          ).toMap(),
+          metrics: metrics,
         );
 
         Get.toNamed(

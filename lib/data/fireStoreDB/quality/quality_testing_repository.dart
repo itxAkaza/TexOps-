@@ -20,9 +20,19 @@ class QualityTestingRepository {
   }) async {
     final DocumentReference<Map<String, dynamic>> parentRef =
         _baleDocRef(baleRecordId: baleRecordId, baleId: baleId);
+    final DocumentReference<Map<String, dynamic>> statsRef =
+        _firestore.collection('records').doc('dashboard_stats');
+
+    final DocumentSnapshot<Map<String, dynamic>> snapshot =
+      await parentRef.get();
+    final Map<String, dynamic> data = snapshot.data() ?? {};
 
     final Map<String, dynamic> summaryUpdate =
-        await _buildSummaryUpdate(parentRef, summary);
+      _buildSummaryUpdate(data, summary);
+    final double? overallScore =
+      _calculateOverallScore(data, summary.category, record.toMap());
+    final bool overallCounted = data['overAllBaleScoreCounted'] == true;
+    final double? previousOverall = _parseNumber(data['overAllBaleScore']);
 
     final Map<String, dynamic> recordMap = record.toMap();
     _assertSerializable(recordMap, path: 'recordMap');
@@ -35,10 +45,25 @@ class QualityTestingRepository {
       _qualityTestFieldPathFor(summary.category): recordMap,
       ...summaryUpdate,
     };
+    if (overallScore != null) {
+      updateData['overAllBaleScore'] = overallScore;
+    }
+    if (overallScore != null) {
+      updateData['overAllBaleScoreCounted'] = true;
+    }
 
     final WriteBatch batch = _firestore.batch();
     batch.set(parentRef, updateData, SetOptions(merge: true));
     await batch.commit();
+
+    if (overallScore != null) {
+      await _updateDashboardStats(
+        statsRef: statsRef,
+        previousOverall: previousOverall,
+        newOverall: overallScore,
+        wasCounted: overallCounted,
+      );
+    }
   }
 
   Future<Map<QualityTestCategory, QualityTestRecord>> fetchQualityTests(
@@ -53,25 +78,7 @@ class QualityTestingRepository {
     final DocumentSnapshot<Map<String, dynamic>> snapshot = await docRef.get();
 
     final Map<String, dynamic> data = snapshot.data() ?? {};
-    Map<String, dynamic> tests = Map<String, dynamic>.from(
-      data[_qualityTestsField] as Map? ??
-          data['qualityTests'] as Map? ??
-          {},
-    );
-
-    if (tests.isEmpty) {
-      const String prefix = '$_qualityTestsField.';
-      final Map<String, dynamic> rebuilt = {};
-      for (final MapEntry<String, dynamic> entry in data.entries) {
-        final String key = entry.key;
-        if (!key.startsWith(prefix)) continue;
-        final String categoryKey = key.substring(prefix.length);
-        if (entry.value is Map) {
-          rebuilt[categoryKey] = Map<String, dynamic>.from(entry.value as Map);
-        }
-      }
-      tests = rebuilt;
-    }
+    final Map<String, dynamic> tests = _extractQualityTests(data);
 
     debugPrint(
       'quality_fetch_tests: path=${docRef.path} exists=${snapshot.exists} keys=${data.keys.toList()}',
@@ -92,6 +99,21 @@ class QualityTestingRepository {
     }
 
     return results;
+  }
+
+  Future<double?> fetchOverallScore(
+    String baleRecordId,
+    String baleId,
+  ) async {
+    final DocumentReference<Map<String, dynamic>> docRef = _baleDocRef(
+      baleRecordId: baleRecordId,
+      baleId: baleId,
+    );
+    final DocumentSnapshot<Map<String, dynamic>> snapshot = await docRef.get();
+    final Map<String, dynamic> data = snapshot.data() ?? {};
+    final dynamic value = data['overAllBaleScore'];
+    if (value is num) return value.toDouble();
+    return double.tryParse(value?.toString() ?? '');
   }
 
   String _qualityTestKeyFor(QualityTestCategory category) {
@@ -133,12 +155,10 @@ class QualityTestingRepository {
         .doc(baleId);
   }
 
-  Future<Map<String, dynamic>> _buildSummaryUpdate(
-    DocumentReference<Map<String, dynamic>> parentRef,
+  Map<String, dynamic> _buildSummaryUpdate(
+    Map<String, dynamic> data,
     QualitySummaryUpdate summary,
-  ) async {
-    final DocumentSnapshot<Map<String, dynamic>> snapshot = await parentRef.get();
-    final Map<String, dynamic> data = snapshot.data() ?? {};
+  ) {
     final Map<String, dynamic> existingSummaries =
         Map<String, dynamic>.from(data['qualitySummaries'] as Map? ?? {});
 
@@ -151,6 +171,92 @@ class QualityTestingRepository {
       'labTestingStatus': labStatus,
       'qualitySummaries': existingSummaries,
     };
+  }
+
+  Map<String, dynamic> _extractQualityTests(Map<String, dynamic> data) {
+    Map<String, dynamic> tests = Map<String, dynamic>.from(
+      data[_qualityTestsField] as Map? ??
+          data['qualityTests'] as Map? ??
+          {},
+    );
+
+    if (tests.isEmpty) {
+      const String prefix = '$_qualityTestsField.';
+      final Map<String, dynamic> rebuilt = {};
+      for (final MapEntry<String, dynamic> entry in data.entries) {
+        final String key = entry.key;
+        if (!key.startsWith(prefix)) continue;
+        final String categoryKey = key.substring(prefix.length);
+        if (entry.value is Map) {
+          rebuilt[categoryKey] = Map<String, dynamic>.from(entry.value as Map);
+        }
+      }
+      tests = rebuilt;
+    }
+
+    return tests;
+  }
+
+  double? _calculateOverallScore(
+    Map<String, dynamic> data,
+    QualityTestCategory category,
+    Map<String, dynamic> recordMap,
+  ) {
+    final Map<String, dynamic> tests = _extractQualityTests(data);
+    tests[_qualityTestKeyFor(category)] = recordMap;
+
+    final List<double> scores = [];
+    for (final dynamic value in tests.values) {
+      if (value is! Map) continue;
+      final dynamic scoreValue = value['calculatedScore'];
+      final double? score = scoreValue is num
+          ? scoreValue.toDouble()
+          : double.tryParse(scoreValue?.toString() ?? '');
+      if (score != null) {
+        scores.add(score);
+      }
+    }
+
+    if (scores.isEmpty) return null;
+    final double total = scores.fold(0, (sum, val) => sum + val);
+    return total / scores.length;
+  }
+
+  double? _parseNumber(Object? value) {
+    if (value is num) return value.toDouble();
+    return double.tryParse(value?.toString() ?? '');
+  }
+
+  Future<void> _updateDashboardStats({
+    required DocumentReference<Map<String, dynamic>> statsRef,
+    required double? previousOverall,
+    required double newOverall,
+    required bool wasCounted,
+  }) async {
+    final double delta = wasCounted && previousOverall != null
+        ? (newOverall - previousOverall)
+        : newOverall;
+
+    await _firestore.runTransaction((transaction) async {
+      final DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await transaction.get(statsRef);
+      final Map<String, dynamic> data = snapshot.data() ?? {};
+
+      final double totalScore =
+          _parseNumber(data['total_quality_score']) ?? 0;
+      final double testedCount =
+          _parseNumber(data['total_bales_tested']) ?? 0;
+
+      final Map<String, dynamic> updates = {
+        'total_quality_score': totalScore + delta,
+      };
+
+      if (!wasCounted) {
+        updates['total_bales_tested'] = testedCount + 1;
+      }
+
+      transaction.set(statsRef, updates, SetOptions(merge: true));
+    });
   }
 
   String _calculateLabStatus(Map<String, dynamic> summaries) {

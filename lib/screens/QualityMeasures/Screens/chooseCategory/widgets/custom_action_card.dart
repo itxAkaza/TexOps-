@@ -8,6 +8,8 @@ class CustomActionCard extends StatelessWidget {
   final String subtitle;
   final Widget leadingIcon;
   final VoidCallback onTap;
+  final bool showEditIcon;
+  final VoidCallback? onEditTap;
 
   const CustomActionCard({
     super.key,
@@ -15,6 +17,8 @@ class CustomActionCard extends StatelessWidget {
     required this.subtitle,
     required this.leadingIcon,
     required this.onTap,
+    this.showEditIcon = false,
+    this.onEditTap,
   });
 
   @override
@@ -76,13 +80,24 @@ class CustomActionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              
-              // Trailing Arrow
-              const Icon(
-                Icons.arrow_forward,
-                color: AppColors.primaryDarkTeal, // Matches the title color
-                size: 24,
-              ),
+
+              // Trailing action
+              if (showEditIcon)
+                IconButton(
+                  onPressed: onEditTap,
+                  icon: const Icon(
+                    Icons.edit,
+                    color: AppColors.accentOrange,
+                    size: 22,
+                  ),
+                  tooltip: 'Edit',
+                )
+              else
+                const Icon(
+                  Icons.arrow_forward,
+                  color: AppColors.primaryDarkTeal, // Matches the title color
+                  size: 24,
+                ),
             ],
           ),
         ),

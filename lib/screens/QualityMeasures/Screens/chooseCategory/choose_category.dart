@@ -12,18 +12,23 @@ import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/pr
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_progress_indicator.dart';
 import 'package:texops/screens/QualityMeasures/Screens/score_screen/view_score.dart';
+import 'package:texops/data/fireStoreDB/quality/quality_testing_repository.dart';
+import 'package:texops/data/models/quality_testing/quality_test_models.dart';
 
 class ChooseCategoryScreen extends StatelessWidget {
   const ChooseCategoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    });
     final String? baleRecordId =
       Get.arguments is Map ? (Get.arguments as Map)['baleRecordId'] as String? : null;
     final String? baleId =
         Get.arguments is Map ? (Get.arguments as Map)['baleId'] as String? : null;
-    const String fallbackBaleRecordId = 'Sau4XSMNSMdCXc6RnYnbg6jnZjI3';
-    const String fallbackBaleId = 'gxx_260510-2130';
+    const String fallbackBaleRecordId = '4U8fQ5BdPYhCorczhBwNWArzPHh1';
+    const String fallbackBaleId = 'fjk7_260516-1200';
 
     final String resolvedBaleRecordId =
       (baleRecordId == null || baleRecordId.isEmpty)
@@ -32,6 +37,10 @@ class ChooseCategoryScreen extends StatelessWidget {
     final String resolvedBaleId = (baleId == null || baleId.isEmpty)
       ? fallbackBaleId
       : baleId;
+
+    final QualityTestingRepository repository = QualityTestingRepository();
+    final Future<Map<QualityTestCategory, QualityTestRecord>> recordsFuture =
+        repository.fetchQualityTests(resolvedBaleRecordId, resolvedBaleId);
 
     return Scaffold(
       appBar: AppBarWithBack(title: 'Select a Testing Metric'),
@@ -58,8 +67,17 @@ class ChooseCategoryScreen extends StatelessWidget {
 
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
+              child: FutureBuilder<Map<QualityTestCategory, QualityTestRecord>>(
+                future: recordsFuture,
+                builder: (context, snapshot) {
+                  final Map<QualityTestCategory, QualityTestRecord> records =
+                      snapshot.data ?? {};
+                  final bool hasFibre = records.containsKey(QualityTestCategory.fibre);
+                  final bool hasYarn = records.containsKey(QualityTestCategory.yarn);
+                  final bool hasFabric = records.containsKey(QualityTestCategory.fabric);
+
+                  return Column(
+                    children: [
                   QualityResponsiveText(
                     text:
                         'Choose a product category to begin recording\nquality parameters',
@@ -78,13 +96,35 @@ class ChooseCategoryScreen extends StatelessWidget {
                       Iconsax.component,
                       color: AppColors.accentOrange,
                     ),
-                    onTap: () => Get.toNamed(
-                      RoutesNames.qualityFibreTesting,
-                      arguments: {
-                        'baleRecordId': resolvedBaleRecordId,
-                        'baleId': resolvedBaleId,
-                      },
-                    ),
+                    showEditIcon: hasFibre,
+                    onTap: hasFibre
+                        ? () => Get.snackbar(
+                              'Already recorded',
+                              'Use the pencil icon to update Fibre Testing.',
+                              snackPosition: SnackPosition.BOTTOM,
+                              margin: const EdgeInsets.all(16),
+                              borderRadius: 14,
+                              backgroundColor: AppColors.primaryDarkTeal,
+                              colorText: AppColors.cardWhite,
+                              icon: const Icon(Icons.edit, color: Colors.white),
+                              duration: const Duration(seconds: 2),
+                            )
+                        : () => Get.toNamed(
+                              RoutesNames.qualityFibreTesting,
+                              arguments: {
+                                'baleRecordId': resolvedBaleRecordId,
+                                'baleId': resolvedBaleId,
+                              },
+                            ),
+                    onEditTap: hasFibre
+                        ? () => Get.toNamed(
+                              RoutesNames.qualityFibreTesting,
+                              arguments: {
+                                'baleRecordId': resolvedBaleRecordId,
+                                'baleId': resolvedBaleId,
+                              },
+                            )
+                        : null,
                   ),
 
                   const SizedBox(height: 16),
@@ -95,13 +135,35 @@ class ChooseCategoryScreen extends StatelessWidget {
                       Iconsax.component,
                       color: AppColors.accentOrange,
                     ),
-                    onTap: () => Get.toNamed(
-                      RoutesNames.qualityYarnTesting,
-                      arguments: {
-                        'baleRecordId': resolvedBaleRecordId,
-                        'baleId': resolvedBaleId,
-                      },
-                    ),
+                    showEditIcon: hasYarn,
+                    onTap: hasYarn
+                        ? () => Get.snackbar(
+                              'Already recorded',
+                              'Use the pencil icon to update Yarn Testing.',
+                              snackPosition: SnackPosition.BOTTOM,
+                              margin: const EdgeInsets.all(16),
+                              borderRadius: 14,
+                              backgroundColor: AppColors.primaryDarkTeal,
+                              colorText: AppColors.cardWhite,
+                              icon: const Icon(Icons.edit, color: Colors.white),
+                              duration: const Duration(seconds: 2),
+                            )
+                        : () => Get.toNamed(
+                              RoutesNames.qualityYarnTesting,
+                              arguments: {
+                                'baleRecordId': resolvedBaleRecordId,
+                                'baleId': resolvedBaleId,
+                              },
+                            ),
+                    onEditTap: hasYarn
+                        ? () => Get.toNamed(
+                              RoutesNames.qualityYarnTesting,
+                              arguments: {
+                                'baleRecordId': resolvedBaleRecordId,
+                                'baleId': resolvedBaleId,
+                              },
+                            )
+                        : null,
                   ),
 
                   const SizedBox(height: 16),
@@ -113,13 +175,35 @@ class ChooseCategoryScreen extends StatelessWidget {
                       Iconsax.component,
                       color: AppColors.accentOrange,
                     ),
-                    onTap: () => Get.toNamed(
-                      RoutesNames.qualityFabricTesting,
-                      arguments: {
-                        'baleRecordId': resolvedBaleRecordId,
-                        'baleId': resolvedBaleId,
-                      },
-                    ),
+                    showEditIcon: hasFabric,
+                    onTap: hasFabric
+                        ? () => Get.snackbar(
+                              'Already recorded',
+                              'Use the pencil icon to update Fabric Testing.',
+                              snackPosition: SnackPosition.BOTTOM,
+                              margin: const EdgeInsets.all(16),
+                              borderRadius: 14,
+                              backgroundColor: AppColors.primaryDarkTeal,
+                              colorText: AppColors.cardWhite,
+                              icon: const Icon(Icons.edit, color: Colors.white),
+                              duration: const Duration(seconds: 2),
+                            )
+                        : () => Get.toNamed(
+                              RoutesNames.qualityFabricTesting,
+                              arguments: {
+                                'baleRecordId': resolvedBaleRecordId,
+                                'baleId': resolvedBaleId,
+                              },
+                            ),
+                    onEditTap: hasFabric
+                        ? () => Get.toNamed(
+                              RoutesNames.qualityFabricTesting,
+                              arguments: {
+                                'baleRecordId': resolvedBaleRecordId,
+                                'baleId': resolvedBaleId,
+                              },
+                            )
+                        : null,
                   ),
 
                   ContinueButton(
@@ -134,7 +218,9 @@ class ChooseCategoryScreen extends StatelessWidget {
                     text: 'View Scores',
                   ),
                 ],
-              ),
+              );
+            },
+            ),
             ),
           ],
         ),

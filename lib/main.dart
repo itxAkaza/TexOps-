@@ -45,8 +45,8 @@ class _QualityTestEntryScreen extends StatelessWidget {
       Get.offNamed(
         RoutesNames.qualityChooseCategory,
         arguments: {
-          'baleRecordId': 'Sau4XSMNSMdCXc6RnYnbg6jnZjI3',
-          'baleId': 'gxx_260510-2130',
+          'baleRecordId': '4U8fQ5BdPYhCorczhBwNWArzPHh1',
+          'baleId': 'fjk7_260516-1200',
         },
       );
     });

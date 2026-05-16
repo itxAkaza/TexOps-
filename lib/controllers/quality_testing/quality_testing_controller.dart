@@ -22,6 +22,7 @@ class QualityTestingController extends GetxController {
   final Rxn<SectionScore> fibreScore = Rxn<SectionScore>();
   final Rxn<SectionScore> yarnScore = Rxn<SectionScore>();
   final Rxn<SectionScore> fabricScore = Rxn<SectionScore>();
+  final RxnDouble overallBaleScore = RxnDouble();
 
   String _loadedBaleKey = '';
 
@@ -107,12 +108,16 @@ class QualityTestingController extends GetxController {
       final Map<QualityTestCategory, QualityTestRecord> records =
           await _repository.fetchQualityTests(baleRecordId, baleId);
 
+        overallBaleScore.value =
+          await _repository.fetchOverallScore(baleRecordId, baleId);
+
       fibreScore.value = _scoreForCategory(records, QualityTestCategory.fibre);
       yarnScore.value = _scoreForCategory(records, QualityTestCategory.yarn);
       fabricScore.value =
           _scoreForCategory(records, QualityTestCategory.fabric);
     } catch (e) {
       errorMessage.value = e.toString();
+      overallBaleScore.value = null;
     } finally {
       isLoading.value = false;
     }

@@ -29,6 +29,9 @@ class ViewScoreScreen extends StatelessWidget {
 				Get.isRegistered<QualityTestingController>()
 				? Get.find<QualityTestingController>()
 				: Get.put(QualityTestingController());
+		WidgetsBinding.instance.addPostFrameCallback((_) {
+			FocusManager.instance.primaryFocus?.unfocus();
+		});
 		controller.loadBaleScores(baleRecordId, baleId);
 
 		return Scaffold(
@@ -80,9 +83,17 @@ class ViewScoreScreen extends StatelessWidget {
 											return _emptyState();
 										}
 
-										return Column(
-											children: sections.map(_buildSectionCard).toList(),
-										);
+										final List<Widget> cards =
+											sections.map(_buildSectionCard).toList();
+										if (controller.overallBaleScore.value != null) {
+											cards.add(
+												_buildOverallScoreCard(
+													controller.overallBaleScore.value!,
+												),
+											);
+										}
+
+										return Column(children: cards);
 									}),
 									const SizedBox(height: 24),
 								],
@@ -167,20 +178,59 @@ class ViewScoreScreen extends StatelessWidget {
 						],
 					),
 					const SizedBox(height: 12),
-					if (section.failedCritical)
-						_statusBanner(
-							text: 'Critical metric out of range',
-							color: Colors.red.shade200,
-							textColor: Colors.red.shade900,
-						)
-					else
-						_statusBanner(
-							text: 'All critical metrics passed',
-							color: Colors.green.shade200,
-							textColor: Colors.green.shade900,
-						),
 					const SizedBox(height: 16),
 					...section.metrics.map(_buildMetricRow),
+				],
+			),
+		);
+	}
+
+	Widget _buildOverallScoreCard(double score) {
+		return Container(
+			width: double.infinity,
+			margin: const EdgeInsets.only(bottom: 16),
+			padding: const EdgeInsets.all(16),
+			decoration: BoxDecoration(
+				color: Colors.white,
+				borderRadius: BorderRadius.circular(18),
+				border: Border.all(color: Colors.grey.shade200, width: 1.5),
+				boxShadow: [
+					BoxShadow(
+						color: Colors.black.withValues(alpha: 0.04),
+						blurRadius: 10,
+						offset: const Offset(0, 4),
+					),
+				],
+			),
+			child: Row(
+				children: [
+					Expanded(
+						child: QualityResponsiveText(
+							text: 'Overall Bale Score',
+							style: GoogleFonts.poppins(
+								fontSize: 16,
+								fontWeight: FontWeight.w700,
+								color: AppColors.primaryDarkTeal,
+							),
+							maxLines: 1,
+						),
+					),
+					Container(
+						padding:
+							const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+						decoration: BoxDecoration(
+							color: AppColors.primaryDarkTeal,
+							borderRadius: BorderRadius.circular(18),
+						),
+						child: Text(
+							score.toStringAsFixed(1),
+							style: const TextStyle(
+								fontSize: 14,
+								fontWeight: FontWeight.w700,
+								color: Colors.white,
+							),
+						),
+					),
 				],
 			),
 		);

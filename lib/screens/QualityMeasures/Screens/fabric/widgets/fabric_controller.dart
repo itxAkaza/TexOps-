@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'fabric_calculations.dart';
 
 class FabricTestingController extends GetxController {
+  bool didAutoExpand = false;
+  bool didPrefill = false;
   var isStiffnessExpanded = false.obs;
   var isWarpCountExpanded = false.obs;
   var isWeftCountExpanded = false.obs;
@@ -71,14 +73,94 @@ class FabricTestingController extends GetxController {
   var burstingStrengthResult = '-'.obs;
   var creaseRecoveryResult = '-'.obs;
 
+  bool _keepStoredResult(
+    RxString result,
+    List<TextEditingController> inputs,
+  ) {
+    if (!didPrefill) return false;
+    if (result.value == '-') return false;
+    return inputs.every((controller) => controller.text.trim().isEmpty);
+  }
+
   var selectedKnitType = 'Warp'.obs;
   var selectedWeaveType = 'Plain'.obs;
+
+  void applyStoredMetrics(Map<String, dynamic> metrics) {
+    final Map<String, TextEditingController> inputMap = {
+      'inputStiffnessWeight': stiffnessWeightCtrl,
+      'inputStiffnessBending': stiffnessBendingCtrl,
+      'warpCount': warpCountCtrl,
+      'weftCount': weftCountCtrl,
+      'inputGsmWeight': gsmWeightCtrl,
+      'inputGsmArea': gsmAreaCtrl,
+      'tensileStrength': tensileForceCtrl,
+      'tearingStrength': tearingForceCtrl,
+      'burstingStrength': burstingPressureCtrl,
+      'inputCreaseTheta1': creaseTheta1Ctrl,
+      'inputCreaseTheta2': creaseTheta2Ctrl,
+    };
+
+    inputMap.forEach((key, controller) {
+      final dynamic value = metrics[key];
+      if (value != null) {
+        controller.text = value.toString();
+      }
+    });
+
+    final dynamic stiffness = metrics['stiffness'];
+    final dynamic warpCount = metrics['warpCount'];
+    final dynamic weftCount = metrics['weftCount'];
+    final dynamic gsm = metrics['gsm'];
+    final dynamic tensile = metrics['tensileStrength'];
+    final dynamic tearing = metrics['tearingStrength'];
+    final dynamic bursting = metrics['burstingStrength'];
+    final dynamic crease = metrics['creaseRecovery'];
+    final dynamic knitType = metrics['knitType'];
+    final dynamic weaveType = metrics['weaveType'];
+
+    if (stiffness != null) {
+      stiffnessResult.value = stiffness.toString();
+    }
+    if (warpCount != null) {
+      warpCountResult.value = warpCount.toString();
+    }
+    if (weftCount != null) {
+      weftCountResult.value = weftCount.toString();
+    }
+    if (gsm != null) {
+      gsmResult.value = gsm.toString();
+    }
+    if (tensile != null) {
+      tensileStrengthResult.value = tensile.toString();
+    }
+    if (tearing != null) {
+      tearingStrengthResult.value = tearing.toString();
+    }
+    if (bursting != null) {
+      burstingStrengthResult.value = bursting.toString();
+    }
+    if (crease != null) {
+      creaseRecoveryResult.value = crease.toString();
+    }
+    if (knitType != null) {
+      selectedKnitType.value = knitType.toString();
+    }
+    if (weaveType != null) {
+      selectedWeaveType.value = weaveType.toString();
+    }
+  }
 
   @override
   void onInit() {
     super.onInit();
 
     void updateStiffness() {
+      if (_keepStoredResult(
+        stiffnessResult,
+        [stiffnessWeightCtrl, stiffnessBendingCtrl],
+      )) {
+        return;
+      }
       stiffnessResult.value = FabricCalculations.calculateStiffness(
         stiffnessWeightCtrl.text,
         stiffnessBendingCtrl.text,
@@ -86,18 +168,27 @@ class FabricTestingController extends GetxController {
     }
 
     void updateWarpCount() {
+      if (_keepStoredResult(warpCountResult, [warpCountCtrl])) {
+        return;
+      }
       warpCountResult.value = FabricCalculations.calculateSingleValue(
         warpCountCtrl.text,
       );
     }
 
     void updateWeftCount() {
+      if (_keepStoredResult(weftCountResult, [weftCountCtrl])) {
+        return;
+      }
       weftCountResult.value = FabricCalculations.calculateSingleValue(
         weftCountCtrl.text,
       );
     }
 
     void updateGsm() {
+      if (_keepStoredResult(gsmResult, [gsmWeightCtrl, gsmAreaCtrl])) {
+        return;
+      }
       gsmResult.value = FabricCalculations.calculateGsm(
         gsmWeightCtrl.text,
         gsmAreaCtrl.text,
@@ -105,24 +196,36 @@ class FabricTestingController extends GetxController {
     }
 
     void updateTensileStrength() {
+      if (_keepStoredResult(tensileStrengthResult, [tensileForceCtrl])) {
+        return;
+      }
       tensileStrengthResult.value = FabricCalculations.calculateSingleValue(
         tensileForceCtrl.text,
       );
     }
 
     void updateTearingStrength() {
+      if (_keepStoredResult(tearingStrengthResult, [tearingForceCtrl])) {
+        return;
+      }
       tearingStrengthResult.value = FabricCalculations.calculateSingleValue(
         tearingForceCtrl.text,
       );
     }
 
     void updateBurstingStrength() {
+      if (_keepStoredResult(burstingStrengthResult, [burstingPressureCtrl])) {
+        return;
+      }
       burstingStrengthResult.value = FabricCalculations.calculateSingleValue(
         burstingPressureCtrl.text,
       );
     }
 
     void updateCreaseRecovery() {
+      if (_keepStoredResult(creaseRecoveryResult, [creaseTheta1Ctrl, creaseTheta2Ctrl])) {
+        return;
+      }
       creaseRecoveryResult.value = FabricCalculations.calculateCreaseRecovery(
         creaseTheta1Ctrl.text,
         creaseTheta2Ctrl.text,

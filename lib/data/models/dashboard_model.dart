@@ -1,34 +1,42 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DashboardStatsModel {
-  final int totalGatePasses;
   final int totalBalesCount;
-  final double overallQualityRate;
+  final double
+  totalBalesTested; // Changed to double to match your database exactly
+  final int totalGatePasses;
+  final double totalQualityScore;
   final int totalUsers;
 
   DashboardStatsModel({
-    required this.totalGatePasses,
     required this.totalBalesCount,
-    required this.overallQualityRate,
+    required this.totalBalesTested,
+    required this.totalGatePasses,
+    required this.totalQualityScore,
     required this.totalUsers,
   });
 
+  /// Factory constructor to parse fields completely crash-free
   factory DashboardStatsModel.fromSnapshot(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>? ?? {};
-
-    // Helper to safely parse Firestore Strings into Numbers
-    int pInt(dynamic val) => int.tryParse(val?.toString() ?? '0') ?? 0;
-    double pDouble(dynamic val) =>
-        double.tryParse(val?.toString() ?? '0.0') ?? 0.0;
-
-    int totalTested = pInt(data['total_bales_tested']);
-    double totalScore = pDouble(data['total_quality_score']);
+    final Map<String, dynamic> data = doc.data() as Map<String, dynamic>? ?? {};
 
     return DashboardStatsModel(
-      totalGatePasses: pInt(data['total_gate_passes']),
-      totalBalesCount: pInt(data['total_bales_count']),
-      overallQualityRate: totalTested > 0 ? (totalScore / totalTested) : 0.0,
-      totalUsers: pInt(data['total_users_count']),
+      // (data['field'] as num).toInt() or .toDouble() protects against mixed types
+      totalBalesCount: data['total_bales_count'] != null
+          ? (data['total_bales_count'] as num).toInt()
+          : 0,
+      totalBalesTested: data['total_bales_tested'] != null
+          ? (data['total_bales_tested'] as num).toDouble()
+          : 0.0,
+      totalGatePasses: data['total_gate_passes'] != null
+          ? (data['total_gate_passes'] as num).toInt()
+          : 0,
+      totalQualityScore: data['total_quality_score'] != null
+          ? (data['total_quality_score'] as num).toDouble()
+          : 0.0,
+      totalUsers: data['total_users'] != null
+          ? (data['total_users'] as num).toInt()
+          : 0,
     );
   }
 }

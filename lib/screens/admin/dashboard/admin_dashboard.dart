@@ -70,9 +70,11 @@ class AdminDashboard extends StatelessWidget {
                       backgroundColor: AppColors.accentOrange,
                       headingText: "Overall Quality Rate",
                       icon: Icons.verified_outlined,
-                      bodyText: "${s.overallQualityRate.toStringAsFixed(1)}%",
+                      bodyText: "${s.totalQualityScore.toStringAsFixed(1)}%",
                       subtitleText: "All Quality Rates",
-                      onTap: () {},
+                      onTap: () {
+                        Get.toNamed(RoutesNames.adminQuality);
+                      },
                     ),
                     AdminStatCard(
                       backgroundColor: AppColors.primaryDarkTeal,

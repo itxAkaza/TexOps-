@@ -59,12 +59,10 @@ class InventoryTurnoverChart extends StatelessWidget {
                 );
               }
 
-              // ✅ WEEKLY DATA (NEW LOGIC)
               final weeklyData = controller.getTurnoverDataByWeek();
               final inStorageWeeks = weeklyData['inStorage']!;
               final consumedWeeks = weeklyData['consumed']!;
 
-              // ✅ SAFE MAX CALC
               final maxValue = [
                 ...inStorageWeeks,
                 ...consumedWeeks,

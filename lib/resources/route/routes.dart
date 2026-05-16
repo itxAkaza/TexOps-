@@ -3,6 +3,7 @@ import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/admin/bale_inventory/admin_bale_inventory_screen.dart';
 import 'package:texops/screens/admin/dashboard/admin_dashboard.dart';
 import 'package:texops/screens/admin/gate_pass/admin_gate_pass.dart';
+import 'package:texops/screens/admin/quality/vendors_quality.dart';
 import 'package:texops/screens/admin/user_directory/admin_user_directory.dart';
 import 'package:texops/screens/auth/login_screen.dart';
 import 'package:texops/screens/lab_engineer/bailBarcode/bailBarcode_screen.dart';
@@ -64,5 +65,6 @@ class AppRoutes {
     ),
 
     GetPage(name: RoutesNames.adminGatePass, page: () => AdminGatePass()),
+    GetPage(name: RoutesNames.adminQuality, page: () => VendorQualityScreen()),
   ];
 }

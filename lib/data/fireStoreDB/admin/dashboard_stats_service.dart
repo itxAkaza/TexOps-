@@ -17,10 +17,7 @@ class DashboardService {
   Stream<List<GatePassModel>> getAllBailData() {
     return _db.collectionGroup('bail_data').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return GatePassModel.fromMap(
-          doc.data() as Map<String, dynamic>,
-          doc.id,
-        );
+        return GatePassModel.fromMap(doc.data(), doc.id);
       }).toList();
     });
   }

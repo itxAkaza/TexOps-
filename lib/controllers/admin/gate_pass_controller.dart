@@ -11,6 +11,9 @@ class GatePassController extends GetxController {
   RxString selectedStatus = 'All'.obs;
   RxString selectedType = 'All'.obs;
 
+  /// Options shown in the type dropdown on screen
+  final List<String> typeOptions = const ['All', 'Cotton', 'Polyester'];
+
   @override
   void onInit() {
     allPasses.bindStream(_service.getGatePass());
@@ -19,6 +22,10 @@ class GatePassController extends GetxController {
       _filterList();
     });
     super.onInit();
+  }
+
+  void onTypeChanged(String? value) {
+    if (value != null) selectedType.value = value;
   }
 
   void _filterList() {
@@ -30,10 +37,14 @@ class GatePassController extends GetxController {
       final searchMatch =
           record.vehicleNumber.toLowerCase().contains(q) ||
           record.supplier.toLowerCase().contains(q);
+
       final statusMatch =
-          status == "All" ||
-          (status == "Pending" ? !record.qualityStatus : record.qualityStatus);
-      final typeMatch = type == "All" || record.baleType == type;
+          status == 'All' ||
+          (status == 'Pending' ? !record.qualityStatus : record.qualityStatus);
+
+      // Case-insensitive match so 'Cotton' matches 'cotton' in Firestore too
+      final typeMatch =
+          type == 'All' || record.baleType.toLowerCase() == type.toLowerCase();
 
       return searchMatch && statusMatch && typeMatch;
     }).toList();

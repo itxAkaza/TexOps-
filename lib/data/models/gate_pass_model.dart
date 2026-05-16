@@ -13,8 +13,8 @@ class GatePassModel {
   final String baleCount;
   final bool readyForYarn;
   final DateTime createdAt;
-  // Add this field to fix the 'undefined_getter' error
   final Map<String, dynamic>? qualitySummaries;
+  final double? overAllBaleScore;
 
   GatePassModel({
     required this.id,
@@ -29,7 +29,8 @@ class GatePassModel {
     required this.baleCount,
     required this.readyForYarn,
     required this.createdAt,
-    this.qualitySummaries, // Optional field
+    this.qualitySummaries,
+    this.overAllBaleScore,
   });
 
   factory GatePassModel.fromMap(Map<String, dynamic> map, String documentId) {
@@ -46,12 +47,15 @@ class GatePassModel {
       baleCount: map['baleCount'] ?? '0',
       readyForYarn: map['readyForYarn'] ?? false,
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      // Map the qualitySummaries from your Firebase document
-      qualitySummaries: map['qualitySummaries'] as Map<String, dynamic>?,
+      qualitySummaries: map['qualitySummaries'] is Map
+          ? Map<String, dynamic>.from(map['qualitySummaries'] as Map)
+          : null,
+      overAllBaleScore: map['overAllBaleScore'] is num
+          ? (map['overAllBaleScore'] as num).toDouble()
+          : null,
     );
   }
 
-  // Needed for local storage persistence logic
   Map<String, dynamic> toMap() {
     return {
       'gatePassRef': gatePassRef,
@@ -63,6 +67,7 @@ class GatePassModel {
       'readyForYarn': readyForYarn,
       'createdAt': Timestamp.fromDate(createdAt),
       'qualitySummaries': qualitySummaries,
+      'overAllBaleScore': overAllBaleScore,
     };
   }
 }

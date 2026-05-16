@@ -10,19 +10,18 @@ class DashboardController extends GetxController {
   final DashboardService _service = DashboardService();
 
   var stats = DashboardStatsModel(
-    totalGatePasses: 0,
     totalBalesCount: 0,
-    overallQualityRate: 0.0,
+    totalBalesTested: 0.0,
+    totalGatePasses: 0,
+    totalQualityScore: 0.0,
     totalUsers: 0,
   ).obs;
 
   RxList<GatePassModel> allBailData = <GatePassModel>[].obs;
   RxBool isLoadingBales = true.obs;
-
   RxInt selectedFiberIndex = 0.obs;
 
   static const List<String> fiberTypes = ['cotton', 'poly'];
-
   StreamSubscription<List<GatePassModel>>? _balesSub;
 
   @override
@@ -30,7 +29,6 @@ class DashboardController extends GetxController {
     super.onInit();
 
     stats.bindStream(_service.getDashboardStats());
-
     _balesSub = _service.getAllBailData().listen(
       (data) {
         allBailData.value = data;
@@ -44,7 +42,7 @@ class DashboardController extends GetxController {
 
   @override
   void onClose() {
-    _balesSub?.cancel(); // prevent memory leaks
+    _balesSub?.cancel();
     super.onClose();
   }
 
@@ -53,9 +51,7 @@ class DashboardController extends GetxController {
   // ─────────────────────────────────────────────────────────────
 
   List<FlSpot> getWeeklyBaleSpots() {
-    // Always initialise all 7 days to 0 so the chart never collapses
     final Map<int, double> dailyTotals = {for (int i = 0; i < 7; i++) i: 0.0};
-
     if (allBailData.isEmpty) return _spotsFromMap(dailyTotals);
 
     final now = DateTime.now();
@@ -63,18 +59,17 @@ class DashboardController extends GetxController {
       now.year,
       now.month,
       now.day,
-    ).subtract(Duration(days: now.weekday - 1)); // Monday at midnight
+    ).subtract(Duration(days: now.weekday - 1));
 
     final String targetType = fiberTypes[selectedFiberIndex.value];
-
     for (final bale in allBailData) {
-      if (bale.baleType.trim().toLowerCase() != targetType) continue;
+      if (!bale.baleType.trim().toLowerCase().contains(targetType)) continue;
       if (bale.createdAt.isBefore(weekStart)) continue;
       if (bale.createdAt.isAfter(weekStart.add(const Duration(days: 7)))) {
         continue;
       }
-      final int dayIndex = bale.createdAt.weekday - 1; // 0=Mon … 6=Sun
-      final double count = double.tryParse(bale.baleCount.trim()) ?? 0.0;
+      final int dayIndex = bale.createdAt.weekday - 1;
+      final double count = double.tryParse(bale.baleCount) ?? 0.0;
       dailyTotals[dayIndex] = (dailyTotals[dayIndex] ?? 0.0) + count;
     }
 
@@ -153,7 +148,6 @@ class DashboardController extends GetxController {
   // WEEKLY TURNOVER DATA (for InventoryTurnoverChart)
   // ─────────────────────────────────────────────────────────────
 
-  /// Returns 0, 1, 2, or 3 for Week 1–4 of the month
   int _getWeekOfMonth(DateTime date) {
     if (date.day <= 7) return 0;
     if (date.day <= 14) return 1;
@@ -161,7 +155,6 @@ class DashboardController extends GetxController {
     return 3;
   }
 
-  /// Weekly breakdown: inStorage vs consumed (current month)
   Map<String, List<double>> getTurnoverDataByWeek() {
     final inStorage = List.filled(4, 0.0);
     final consumed = List.filled(4, 0.0);
@@ -180,7 +173,6 @@ class DashboardController extends GetxController {
 
       final weekIndex = _getWeekOfMonth(bale.createdAt);
       final count = double.tryParse(bale.baleCount.trim()) ?? 0.0;
-
       if (bale.readyForYarn == true) {
         consumed[weekIndex] += count;
       } else {
@@ -191,29 +183,23 @@ class DashboardController extends GetxController {
     return {'inStorage': inStorage, 'consumed': consumed};
   }
 
-  /// Max Y scaling for weekly bar chart
   double getBarChartMaxYForWeeks() {
     final data = getTurnoverDataByWeek();
-
     final allValues = [...data['inStorage']!, ...data['consumed']!];
 
     final maxValue = allValues.reduce((a, b) => a > b ? a : b);
-
     if (maxValue == 0) return 100.0;
 
-    // nice padding scaling (keeps chart readable)
     return (((maxValue / 100).ceil() + 1) * 100).toDouble();
   }
 
   List<String> getCurrentWeekLabels() {
     final now = DateTime.now();
-
     final monday = DateTime(
       now.year,
       now.month,
       now.day,
     ).subtract(Duration(days: now.weekday - 1));
-
     return List.generate(7, (i) {
       final date = monday.add(Duration(days: i));
       return _weekDayName(date.weekday);

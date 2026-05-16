@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 import 'package:texops/resources/route/routes_names.dart';
+import 'package:texops/screens/drawerScreens/notification_screen.dart';
 
 import '../../../../../data/fireBaseAuthService/fireBase_Auth_Serivce.dart';
+import '../../../../drawerScreens/help_and_support_screen.dart';
 import '../../../../drawerScreens/scan/scan_screen.dart';
+import '../../../../drawerScreens/setting_screen.dart';
 import 'components/drawerMenuItem.dart';
 import 'components/drawerProfile.dart';
 
@@ -47,7 +50,10 @@ class MYDrawer extends StatelessWidget {
                   DrawerMenuItem(
                     icon: Icons.notifications_none_outlined,
                     title: "Notifications",
-                    onTap: () {},
+                    onTap: () {
+
+                      Get.to(()=>NotificationsScreen());
+                    },
                   ),
                   DrawerMenuItem(
                     icon: Icons.qr_code_scanner_outlined,
@@ -59,12 +65,18 @@ class MYDrawer extends StatelessWidget {
                   DrawerMenuItem(
                     icon: Icons.settings_outlined,
                     title: "Settings",
-                    onTap: () {},
+                    onTap: () {
+
+                      Get.to(()=>SettingsScreen());
+
+                    },
                   ),
                   DrawerMenuItem(
                     icon: Icons.headset_mic_outlined,
                     title: "Help and Support",
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(()=>HelpSupportScreen());
+                    },
                   ),
                 ],
               ),

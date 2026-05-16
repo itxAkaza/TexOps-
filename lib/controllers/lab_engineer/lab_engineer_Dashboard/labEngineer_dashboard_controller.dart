@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:texops/Utiles/utiles.dart';
 
 import '../../../data/fireStoreDB/labEnginner/dashboard_data.dart';
+import '../../../services/notifiction_service.dart';
 
 
 class LabEngineerController extends GetxController {
@@ -22,6 +23,9 @@ class LabEngineerController extends GetxController {
   void onInit() {
     super.onInit();
     fetchDashboardData();
+
+    NotificationServices ns = NotificationServices();
+    ns.initializeAll();
   }
 
   Future<void> fetchDashboardData() async {

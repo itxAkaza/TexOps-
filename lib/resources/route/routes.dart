@@ -3,6 +3,7 @@ import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/lab_engineer/detailScreen/detail_Screen.dart';
 
 // --- Onboarding & Auth ---
+import '../../screens/lab_engineer/gatePassTransfer_screen/gatePassTransferList_screen.dart';
 import '../../screens/lab_engineer/viewAllGatePasses/viewAllGatePasses_screen.dart';
 import '../../screens/lab_engineer/viewShareQr/viewShare_Qr_Screen.dart';
 import '../../screens/onBoarding/intro_screen.dart';
@@ -45,6 +46,12 @@ class AppRoutes {
     GetPage(
       name: RoutesNames.viewAllGatePassesView,
       page: () => ViewAllBalesScreen(),
+      transition: Transition.fade,
+      transitionDuration: Duration(milliseconds: 250),
+    ),
+    GetPage(
+      name: RoutesNames.gatePassTransferListView,
+      page: () => GatePassTransferListScreen(),
       transition: Transition.fade,
       transitionDuration: Duration(milliseconds: 250),
     ),

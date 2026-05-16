@@ -12,6 +12,7 @@ class LabEngineerController extends GetxController {
   var userName = 'Loading...'.obs;
   var userRole = 'Lab Engineer'.obs;
   var userProfilePic = ''.obs;
+  var userEmail = ''.obs;
   var totalSystemValue = 0.0.obs;
 
 
@@ -33,6 +34,7 @@ class LabEngineerController extends GetxController {
         userName.value = userData['name'] ?? 'Unknown User';
         userRole.value = userData['role'] ?? 'Lab Engineer';
         userProfilePic.value = userData['profilePic'] ?? '';
+        userEmail.value=userData["generatedEmail"] ?? "";
 
         totalSystemValue.value = (userData['totalBalesAmount'] ?? 0.0).toDouble();
 

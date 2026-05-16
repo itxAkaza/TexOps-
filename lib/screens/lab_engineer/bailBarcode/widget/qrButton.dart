@@ -6,7 +6,7 @@ import '../../../../resources/colors/app_colors.dart';
 
 class QrButton extends StatelessWidget {
   final String text;
-  final VoidCallback onTap;
+  final VoidCallback ?onTap;
   final bool isLoading;
   final double height;
   final double width;
@@ -55,6 +55,7 @@ class QrButton extends StatelessWidget {
               mainAxisAlignment: .center,
               children: [
                 Icon(icon,color: Colors.white,),
+                SizedBox(width: 5,),
                 Text(
                   text,
                   style: GoogleFonts.jost(

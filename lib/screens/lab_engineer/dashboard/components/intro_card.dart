@@ -122,7 +122,9 @@ class DashboardTopCard extends StatelessWidget {
               ),
               SizedBox(width: 6,),
               GestureDetector(
-                onTap: (){},
+                onTap: (){
+                  Get.toNamed(RoutesNames.gatePassTransferListView,arguments: controller.recentBales.value);
+                },
                 child: Container(
                   height: height*0.1,
                   width: width*0.4,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texops/resources/route/routes_names.dart';
-import 'package:texops/screens/lab_engineer/dashboard/components/drawer.dart';
+import 'package:texops/screens/lab_engineer/dashboard/components/drawer/drawer.dart';
 
 import '../../../controllers/lab_engineer/lab_engineer_Dashboard/labEngineer_dashboard_controller.dart';
 import '../../../resources/colors/app_colors.dart';
@@ -23,7 +23,12 @@ class LabEnigneerDashboard extends StatelessWidget {
       backgroundColor: AppColors.backgroundLightPeach,
       key: scaffoldKey,
 
-      drawer: MYDrawer(),
+      drawer: MYDrawer(
+          userName: controller.userName.value,
+          userEmail: controller.userEmail.value,
+          userRole: controller.userRole.value,
+          userImageUrl: controller.userProfilePic.value
+      ),
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
@@ -84,6 +89,7 @@ class LabEnigneerDashboard extends StatelessWidget {
                       itemCount: controller.recentBales.length,
                       itemBuilder: (context, index) {
                         var bale = controller.recentBales[index];
+                        print(bale);
                         return RecentActivityTile(
                           bale: bale,
                           controller: controller,

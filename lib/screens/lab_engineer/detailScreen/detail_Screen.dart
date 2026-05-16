@@ -16,6 +16,7 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(BailDetailController());
+    print(controller.bailData.values);
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLightPeach,

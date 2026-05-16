@@ -32,11 +32,11 @@ class FilterBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // --- UPDATED: Styled Vendor Dropdown ---
+
           MYText(text: "Select Vendor", size: 14, fontweight: FontWeight.bold, color: AppColors.primaryDarkTeal),
           const SizedBox(height: 10),
           Obx(() => DropdownButtonFormField<String>(
-            value: controller.selectedVendor.value,
+            initialValue: controller.selectedVendor.value,
             dropdownColor: AppColors.cardOffWhite,
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -72,7 +72,7 @@ class FilterBottomSheet extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // Price Range Slider
+
           MYText(text: "Max Price Range (PKR)", size: 14, fontweight: FontWeight.bold, color: AppColors.primaryDarkTeal),
           Obx(() => Column(
             children: [
@@ -84,19 +84,21 @@ class FilterBottomSheet extends StatelessWidget {
                 value: controller.currentPriceLimit.value,
                 onChanged: (val) => controller.currentPriceLimit.value = val,
               ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("₹0", style: TextStyle(color: AppColors.textGrey, fontSize: 12)),
-                  Text("₹${NumberFormat('#,##0').format(controller.currentPriceLimit.value)}",
+                  const Text("Rs0", style: TextStyle(color: AppColors.textGrey, fontSize: 12)),
+                  Text("Rs${NumberFormat('#,##0').format(controller.currentPriceLimit.value)}",
                       style: const TextStyle(color: AppColors.textGrey, fontSize: 12)),
                 ],
               )
             ],
           )),
+
           const SizedBox(height: 24),
 
-          // Material Category Chips
+
           MYText(text: "Material Category", size: 14, fontweight: FontWeight.bold, color: AppColors.primaryDarkTeal),
           const SizedBox(height: 10),
           Obx(() => Wrap(
@@ -104,10 +106,11 @@ class FilterBottomSheet extends StatelessWidget {
             children: ['All', 'Cotton', 'Polyester'].map((material) {
               bool isSelected = controller.selectedMaterial.value == material;
               return ChoiceChip(
-                label: Text(material),
+                label: Text(material,textAlign: TextAlign.center,),
                 selected: isSelected,
                 selectedColor: AppColors.primaryDarkTeal,
                 backgroundColor: Colors.white,
+                checkmarkColor: Colors.white,
                 labelStyle: TextStyle(color: isSelected ? Colors.white : AppColors.primaryDarkTeal),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -120,7 +123,7 @@ class FilterBottomSheet extends StatelessWidget {
 
           const SizedBox(height: 30),
 
-          // Action Buttons
+
           Row(
             children: [
               Expanded(

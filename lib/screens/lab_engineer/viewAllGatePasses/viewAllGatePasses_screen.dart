@@ -29,9 +29,10 @@ class ViewAllBalesScreen extends StatelessWidget {
           style: TextStyle(color: AppColors.primaryDarkTeal, fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
+
       body: Column(
         children: [
-          // Search & Filter Row
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Row(
@@ -73,11 +74,10 @@ class ViewAllBalesScreen extends StatelessWidget {
             ),
           ),
 
-          // Quick Filter Chips Row
-          // Quick Filter Chips Row
+
           SizedBox(
             height: 50,
-            child: ListView.builder( // <-- Removed Obx from here
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               itemCount: controller.quickFilters.length,
@@ -94,6 +94,7 @@ class ViewAllBalesScreen extends StatelessWidget {
                       selected: isSelected,
                       selectedColor: AppColors.primaryDarkTeal,
                       backgroundColor: Colors.white,
+                      checkmarkColor: Colors.white,
                       labelStyle: TextStyle(
                         color: isSelected ? Colors.white : AppColors.primaryDarkTeal,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -114,7 +115,7 @@ class ViewAllBalesScreen extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // Expanded List View
+
           Expanded(
             child: Obx(() {
               if (controller.filteredBales.isEmpty) {

@@ -6,7 +6,7 @@ import 'package:texops/resources/colors/app_colors.dart';
 import 'package:texops/screens/lab_engineer/record_gatePass/widgets/text.dart';
 
 import '../../../../resources/route/routes_names.dart';
-import '../../detailScreen/detail_Screen.dart';
+
 
 
 class BaleInventoryCard extends StatelessWidget {
@@ -20,7 +20,7 @@ class BaleInventoryCard extends StatelessWidget {
     bool qualityStatus = bale['qualityStatus'] ?? false;
 
     double price = double.tryParse(bale['price']?.toString() ?? '0') ?? 0.0;
-    String formattedPrice = NumberFormat.currency(symbol: '₹', decimalDigits: 0).format(price);
+    String formattedPrice = NumberFormat.currency(symbol: 'Rs', decimalDigits: 0).format(price);
 
     return GestureDetector(
       onTap: ()

@@ -41,6 +41,7 @@ class BailButton extends StatelessWidget {
                         fontWeight: .w500
                     )
                 ),),
+                SizedBox(width: 5,),
                 Icon(icon,color: Colors.white,)
               ],
             )

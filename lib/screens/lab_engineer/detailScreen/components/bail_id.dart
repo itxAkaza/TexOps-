@@ -40,6 +40,7 @@ class BaleIdAndQrSection extends StatelessWidget {
             side: const BorderSide(color: AppColors.primaryDarkTeal, width: 1.5),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            backgroundColor: AppColors.cardOffWhite
           ),
 
         ),

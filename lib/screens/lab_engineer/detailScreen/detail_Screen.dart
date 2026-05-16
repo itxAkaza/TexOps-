@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../controllers/lab_engineer/detail/bail_detail_controller.dart';
 import '../../../resources/colors/app_colors.dart';
+import '../editBail/editBale_screen.dart';
 import 'components/bail_id.dart';
 import 'components/invenory.dart';
 import 'components/lab_testing.dart';
@@ -36,7 +37,7 @@ class DetailScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit_outlined, color: AppColors.primaryDarkTeal),
             onPressed: () {
-              // Get.to(() => EditBaleScreen());
+              Get.to(() => const EditBaleScreen(), arguments: controller.bailData);
             },
           ),
           IconButton(

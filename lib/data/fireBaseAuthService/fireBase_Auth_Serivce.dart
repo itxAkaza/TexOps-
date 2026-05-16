@@ -63,6 +63,18 @@ class FirebaseAuthService {
     }
   }
 
+  Future<void> sendPasswordReset(String email) async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+
+      await auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw FirebaseAuthException(code: e.code, message: e.message);
+    } catch (e) {
+      throw Exception("An unexpected error occurred: $e");
+    }
+  }
+
   Future<void> signOut() async {
     FirebaseAuth auth = FirebaseAuth.instance;
 

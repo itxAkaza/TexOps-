@@ -9,7 +9,7 @@ import '../../../../resources/colors/app_colors.dart';
 class YarnToggleCard extends StatelessWidget {
   final BailDetailController controller;
 
-  const YarnToggleCard({Key? key, required this.controller}) : super(key: key);
+  const YarnToggleCard({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,8 @@ class YarnToggleCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
-            children: const [
+            children: const
+            [
               Icon(Icons.radio_button_checked, color: AppColors.primaryDarkTeal),
               SizedBox(width: 10),
               Text(
@@ -32,11 +33,13 @@ class YarnToggleCard extends StatelessWidget {
               ),
             ],
           ),
+
           Obx(() => CupertinoSwitch(
-            activeColor: AppColors.accentOrange,
+            activeTrackColor: AppColors.accentOrange,
             value: controller.isReadyForYarn.value,
             onChanged: (val) => controller.toggleYarnStatus(val),
           )),
+
         ],
       ),
     );

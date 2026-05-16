@@ -26,15 +26,17 @@ class DetailScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios, color: AppColors.primaryDarkTeal, size: 20),
           onPressed: () => Get.back(),
         ),
+
         title: const Text(
           "Bale Details",
           style: TextStyle(color: AppColors.primaryDarkTeal, fontWeight: FontWeight.bold, fontSize: 18),
         ),
+
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined, color: AppColors.primaryDarkTeal),
             onPressed: () {
-              // TODO: Get.to(() => EditBaleScreen());
+              // Get.to(() => EditBaleScreen());
             },
           ),
           IconButton(
@@ -48,6 +50,9 @@ class DetailScreen extends StatelessWidget {
                 confirmTextColor: Colors.white,
                 buttonColor: Colors.red,
                 textCancel: "Cancel",
+                backgroundColor: AppColors.readOnlyBg,
+                titleStyle: TextStyle(color: AppColors.primaryDarkTeal),
+
                 onConfirm: () {
                   Get.back(); // close dialog
                   controller.deleteCurrentBale();
@@ -59,11 +64,13 @@ class DetailScreen extends StatelessWidget {
         ],
       ),
       body: Obx(() {
-        if (controller.isLoading.value) {
+        if (controller.isLoading.value)
+        {
           return const Center(child: CircularProgressIndicator(color: AppColors.primaryDarkTeal));
         }
 
-        if (controller.bailData.isEmpty) {
+        if (controller.bailData.isEmpty)
+        {
           return const Center(child: Text("No data found"));
         }
 
@@ -73,25 +80,28 @@ class DetailScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 1. Bale ID & QR Button
+            children:
+            [
+
               BaleIdAndQrSection(controller: controller),
               const SizedBox(height: 30),
 
-              // 2. Receiving Data Card
+
               InventoryDataCard(data: controller.bailData),
               const SizedBox(height: 20),
 
-              // 3. Yarn Toggle Card
+
               YarnToggleCard(controller: controller),
               const SizedBox(height: 20),
 
-              // 4. Lab Testing Results Card
               LabTestingCard(hasQualityData: hasQualityStatus),
               const SizedBox(height: 30),
+
             ],
           ),
+
         );
+
       }),
     );
   }

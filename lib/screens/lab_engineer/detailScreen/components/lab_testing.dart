@@ -1,6 +1,5 @@
 
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../resources/colors/app_colors.dart';
@@ -8,7 +7,7 @@ import '../../../../resources/colors/app_colors.dart';
 class LabTestingCard extends StatelessWidget {
   final bool hasQualityData;
 
-  const LabTestingCard({Key? key, required this.hasQualityData}) : super(key: key);
+  const LabTestingCard({super.key, required this.hasQualityData});
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +37,12 @@ class LabTestingCard extends StatelessWidget {
               style: TextStyle(color: AppColors.textGrey, fontSize: 13),
             ),
           ),
+
           const SizedBox(height: 20),
           if (hasQualityData)
             Row(
-              children: [
+              children:
+              [
                 const Icon(Icons.check, color: Colors.green),
                 const SizedBox(width: 10),
                 Column(
@@ -55,7 +56,8 @@ class LabTestingCard extends StatelessWidget {
             )
           else
             Row(
-              children: const [
+              children: const
+              [
                 Icon(Icons.radio_button_unchecked, color: AppColors.textGrey),
                 SizedBox(width: 10),
                 Text("Quality data hasn't been added yet.", style: TextStyle(color: AppColors.textGrey)),

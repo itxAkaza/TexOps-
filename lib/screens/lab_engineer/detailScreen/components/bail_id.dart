@@ -26,19 +26,24 @@ class BaleIdAndQrSection extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 15),
+
+
         OutlinedButton.icon(
           onPressed: controller.openQrScreen,
           icon: const Icon(Icons.qr_code_scanner, color: AppColors.primaryDarkTeal),
           label: const Text(
-            "Scan / View QR Tag",
+            "Share / View QR Tag",
             style: TextStyle(color: AppColors.primaryDarkTeal, fontWeight: FontWeight.bold),
           ),
+
           style: OutlinedButton.styleFrom(
             side: const BorderSide(color: AppColors.primaryDarkTeal, width: 1.5),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
+
         ),
+
       ],
     );
   }

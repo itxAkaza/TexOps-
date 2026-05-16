@@ -3,6 +3,7 @@ import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/lab_engineer/detailScreen/detail_Screen.dart';
 
 // --- Onboarding & Auth ---
+import '../../screens/lab_engineer/viewShareQr/viewShare_Qr_Screen.dart';
 import '../../screens/onBoarding/intro_screen.dart';
 import 'package:texops/screens/auth/login_screen.dart';
 
@@ -32,6 +33,12 @@ class AppRoutes {
       name: RoutesNames.loginScreen,
       page: () => LoginScreen(),
       transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(milliseconds: 250),
+    ),
+    GetPage(
+      name: RoutesNames.qrShareView,
+      page: () => ViewQrScreen(),
+      transition: Transition.fade,
       transitionDuration: Duration(milliseconds: 250),
     ),
 

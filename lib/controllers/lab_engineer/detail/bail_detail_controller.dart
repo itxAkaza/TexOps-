@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:texops/Utiles/utiles.dart';
+import 'package:texops/resources/route/routes_names.dart';
 
 import '../../../data/fireStoreDB/labEnginner/bail_detail_data.dart';
 
@@ -86,11 +87,15 @@ class BailDetailController extends GetxController
   }
 
 
-  void openQrScreen() {
+  void openQrScreen()
+  {
     var qrData = bailData['qrCodeData'];
-
     String qrString = qrData is String ? qrData : jsonEncode(qrData);
+    String currentBaleId = bailData['baleId'] ?? 'Unknown';
 
-
+   Get.toNamed(RoutesNames.qrShareView,arguments: {
+     'baleId': currentBaleId,
+     'qrData': qrString
+   });
   }
 }

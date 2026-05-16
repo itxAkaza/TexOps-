@@ -114,6 +114,7 @@ class ScannedOutboundScreen extends StatelessWidget {
             decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(8)),
             child: Text(grade, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
           )
+
         ],
       ),
     );

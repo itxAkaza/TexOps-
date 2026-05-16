@@ -29,12 +29,17 @@ class QualityTestingRepository {
 
     final Map<String, dynamic> summaryUpdate =
       _buildSummaryUpdate(data, summary);
+    final Map<String, dynamic> recordMap = record.toMap();
     final double? overallScore =
-      _calculateOverallScore(data, summary.category, record.toMap());
+      _calculateOverallScore(data, summary.category, recordMap);
+    final bool hasAllTests = _hasAllRequiredTests(
+      data: data,
+      category: summary.category,
+      recordMap: recordMap,
+    );
     final bool overallCounted = data['overAllBaleScoreCounted'] == true;
     final double? previousOverall = _parseNumber(data['overAllBaleScore']);
 
-    final Map<String, dynamic> recordMap = record.toMap();
     _assertSerializable(recordMap, path: 'recordMap');
     _assertSerializable(summaryUpdate, path: 'summaryUpdate');
 
@@ -45,6 +50,9 @@ class QualityTestingRepository {
       _qualityTestFieldPathFor(summary.category): recordMap,
       ...summaryUpdate,
     };
+    if (hasAllTests) {
+      updateData['qualityStatus'] = true;
+    }
     if (overallScore != null) {
       updateData['overAllBaleScore'] = overallScore;
     }
@@ -195,6 +203,21 @@ class QualityTestingRepository {
     }
 
     return tests;
+  }
+
+  bool _hasAllRequiredTests({
+    required Map<String, dynamic> data,
+    required QualityTestCategory category,
+    required Map<String, dynamic> recordMap,
+  }) {
+    final Map<String, dynamic> tests = _extractQualityTests(data);
+    tests[_qualityTestKeyFor(category)] = recordMap;
+
+    final bool hasFibre = tests['fibre'] is Map;
+    final bool hasYarn = tests['yarn'] is Map;
+    final bool hasFabric = tests['fabric'] is Map;
+
+    return hasFibre && hasYarn && hasFabric;
   }
 
   double? _calculateOverallScore(

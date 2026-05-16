@@ -23,17 +23,12 @@ class ChooseCategoryScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusManager.instance.primaryFocus?.unfocus();
     });
-    final String? baleRecordId =
-      Get.arguments is Map ? (Get.arguments as Map)['baleRecordId'] as String? : null;
     final String? baleId =
         Get.arguments is Map ? (Get.arguments as Map)['baleId'] as String? : null;
-    const String fallbackBaleRecordId = '4U8fQ5BdPYhCorczhBwNWArzPHh1';
+    const String hardcodedBaleRecordId = '4U8fQ5BdPYhCorczhBwNWArzPHh1';
     const String fallbackBaleId = 'fjk7_260516-1200';
 
-    final String resolvedBaleRecordId =
-      (baleRecordId == null || baleRecordId.isEmpty)
-        ? fallbackBaleRecordId
-        : baleRecordId;
+    final String resolvedBaleRecordId = hardcodedBaleRecordId;
     final String resolvedBaleId = (baleId == null || baleId.isEmpty)
       ? fallbackBaleId
       : baleId;

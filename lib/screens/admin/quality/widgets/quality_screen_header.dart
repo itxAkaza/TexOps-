@@ -17,7 +17,6 @@ class QualityScreenHeader extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Search Bar
           TextField(
             onChanged: (v) => controller.searchQuery.value = v,
             decoration: InputDecoration(
@@ -45,13 +44,12 @@ class QualityScreenHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          // Filters Row
           Row(
             children: [
               _buildDropdown(controller.selectedMaterial, [
                 "All",
                 "Cotton",
-                "Poly",
+                "Polyester",
               ], "Material"),
               const SizedBox(width: 12),
               _buildDropdown(controller.selectedRating, [

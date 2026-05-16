@@ -7,6 +7,7 @@ import 'package:texops/data/models/vendor_quality_model.dart';
 class QualityController extends GetxController {
   final _db = FirebaseFirestore.instance;
   RxList<GatePassModel> allBails = <GatePassModel>[].obs;
+  RxList<VendorQualityModel> vendorSummaries = <VendorQualityModel>[].obs;
 
   RxString searchQuery = "".obs;
   RxString selectedMaterial = "All".obs;
@@ -15,29 +16,41 @@ class QualityController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // CollectionGroup fetches ALL bail_data documents across all engineer IDs
+    ever(allBails, (_) => _updateVendorSummaries());
+    ever(searchQuery, (_) => _updateVendorSummaries());
+    ever(selectedMaterial, (_) => _updateVendorSummaries());
+    ever(selectedRating, (_) => _updateVendorSummaries());
+
     _db.collectionGroup('bail_data').snapshots().listen((snapshot) {
       allBails.value = snapshot.docs.map((doc) {
-        return GatePassModel.fromMap(
-          doc.data() as Map<String, dynamic>,
-          doc.id,
-        );
+        final data = doc.data() as Map<String, dynamic>;
+        return GatePassModel.fromMap(data, doc.id);
       }).toList();
     });
   }
 
-  List<VendorQualityModel> get vendorSummaries {
+  void _updateVendorSummaries() {
+    List<GatePassModel> filteredBails = selectedMaterial.value == "All"
+        ? allBails
+        : allBails
+              .where(
+                (bail) =>
+                    bail.baleType.trim().toLowerCase() ==
+                    selectedMaterial.value.toLowerCase(),
+              )
+              .toList();
+
     Map<String, List<GatePassModel>> grouped = {};
 
-    // Group all bails by their supplier name
-    for (var bail in allBails) {
-      grouped.putIfAbsent(bail.supplier, () => []).add(bail);
+    for (var bail in filteredBails) {
+      final key = bail.supplier.trim().toLowerCase();
+      grouped.putIfAbsent(key, () => []).add(bail);
     }
 
-    return grouped.entries
+    vendorSummaries.value = grouped.entries
         .map(
           (e) => VendorQualityModel(
-            vendorName: e.key,
+            vendorName: e.value.first.supplier,
             materialType: e.value.first.baleType,
             bails: e.value,
           ),
@@ -46,15 +59,12 @@ class QualityController extends GetxController {
           bool mSearch = v.vendorName.toLowerCase().contains(
             searchQuery.value.toLowerCase(),
           );
-          bool mMat =
-              selectedMaterial.value == "All" ||
-              v.materialType.toLowerCase() ==
-                  selectedMaterial.value.toLowerCase();
+
           bool mRate =
               selectedRating.value == "All" ||
               (v.hasData && getRatingTag(v.totalScore) == selectedRating.value);
 
-          return mSearch && mMat && mRate;
+          return mSearch && mRate;
         })
         .toList();
   }
@@ -64,6 +74,7 @@ class QualityController extends GetxController {
       : s >= 75
       ? const Color(0xFFFFA726)
       : const Color(0xFFFFCC80);
+
   String getRatingTag(double s) => s >= 90
       ? "Excellent"
       : s >= 75

@@ -13,33 +13,26 @@ import 'package:texops/services/cloudinary_services.dart';
 import 'package:texops/services/email_service.dart';
 
 class UserDirectoryController extends GetxController {
-  // ─── Employee fields ───────────────────────────────────────────
   final formKey = GlobalKey<FormState>();
   final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
   final RxString role = ''.obs;
 
-  // ─── Vendor fields ─────────────────────────────────────────────
   final vendorFormKey = GlobalKey<FormState>();
   final TextEditingController vendorName = TextEditingController();
   final TextEditingController vendorEmail = TextEditingController();
-
   final RxString vendorSupplyType = ''.obs;
 
-  // ─── Shared State ─────────────────────────────────────────────
   final RxInt selectedTab = 0.obs;
   final RxString searchQuery = ''.obs;
   final RxBool isLoading = false.obs;
+  final RxString selectedImagePath = ''.obs;
 
   final RxList<UserModel> allUsers = <UserModel>[].obs;
   final RxList<VendorModel> allVendors = <VendorModel>[].obs;
 
-  final RxString selectedImagePath = ''.obs;
-
   final PageController pageController = PageController();
-
   final List<String> categories = ["Lab", "Quality", "Vendors"];
-
   final List<String> supplyTypes = ["Cotton", "Polyester"];
 
   final UserFirebaseService _service = UserFirebaseService();
@@ -47,7 +40,6 @@ class UserDirectoryController extends GetxController {
   final CloudinaryService _cloudinaryService = CloudinaryService();
   final ImagePicker _picker = ImagePicker();
 
-  // ─── INIT ─────────────────────────────────────────────────────
   @override
   void onInit() {
     super.onInit();
@@ -55,7 +47,6 @@ class UserDirectoryController extends GetxController {
     allVendors.bindStream(_service.getVendors());
   }
 
-  // ─── IMAGE PICK ───────────────────────────────────────────────
   Future<void> pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
@@ -68,10 +59,8 @@ class UserDirectoryController extends GetxController {
     return await _cloudinaryService.uploadImage(File(selectedImagePath.value));
   }
 
-  // ─── FILTER DATA ──────────────────────────────────────────────
   List filteredDataByTab(int tab) {
     final q = searchQuery.value.toLowerCase();
-
     if (tab == 0) {
       return allUsers
           .where(
@@ -81,7 +70,6 @@ class UserDirectoryController extends GetxController {
           )
           .toList();
     }
-
     if (tab == 1) {
       return allUsers
           .where(
@@ -91,7 +79,6 @@ class UserDirectoryController extends GetxController {
           )
           .toList();
     }
-
     return allVendors
         .where(
           (v) =>
@@ -102,7 +89,6 @@ class UserDirectoryController extends GetxController {
         .toList();
   }
 
-  // ─── TAB CHANGE ───────────────────────────────────────────────
   void changeTab(int index) {
     selectedTab.value = index;
     pageController.animateToPage(
@@ -116,90 +102,71 @@ class UserDirectoryController extends GetxController {
     selectedTab.value = index;
   }
 
-  // ─── ID GENERATION ────────────────────────────────────────────
   Future<String> generateNextID(String role) async {
     final String? lastID = await _service.getLastEmployeeId(role: role);
-
-    String prefix;
-
-    if (role.toLowerCase().contains('lab')) {
-      prefix = 'Lab';
-    } else {
-      prefix = 'Qual';
-    }
-
+    String prefix = role.toLowerCase().contains('lab') ? 'Lab' : 'Qual';
     int nextNumber = 1;
 
     if (lastID != null && lastID.contains('-')) {
       final parts = lastID.split('-');
-
       if (parts.length > 1) {
         final parsedNumber = int.tryParse(parts[1]);
-
         if (parsedNumber != null) {
           nextNumber = parsedNumber + 1;
         }
       }
     }
-
-    final formattedNumber = nextNumber.toString().padLeft(3, '0');
-
-    return '$prefix-$formattedNumber';
+    return '$prefix-${nextNumber.toString().padLeft(3, '0')}';
   }
 
-  // ─── REGISTER USER ────────────────────────────────────────────
+  // ─── REGISTER USER (NO PASSWORD FIRESTORE WRITES) ───
   Future<void> registerUser({
     required String name,
     required String personalEmail,
     required String role,
   }) async {
     isLoading.value = true;
-
     try {
-      // ── Duplicate check ──────────────────────────────────────
       final emailExists = await _service.isUserEmailExists(personalEmail);
       if (emailExists) {
         Utils.toastMesseges("This email is already registered as an employee.");
         return;
       }
-      // ─────────────────────────────────────────────────────────
 
       final employeeID = await generateNextID(role);
-      final generatedEmail = '$employeeID@texops.com';
-      final password = "Tex@${employeeID.split('-')[1]}";
+      final password =
+          "Tex@${employeeID.split('-')[1]}"; // Initial transient password
 
       final imageUrl = await uploadProfileImage();
 
+      // Native Authentication registration engine
       final user = await _authService.registerUserWithEmailAndPass(
-        email: generatedEmail,
+        email: personalEmail.trim().toLowerCase(),
         password: password,
       );
-
       if (user == null) return;
 
+      // Map creation without the plaintext password field
       final newUser = UserModel(
         uid: user.user!.uid,
-        personalEmail: personalEmail,
-        generatedEmail: generatedEmail,
+        personalEmail: personalEmail.trim().toLowerCase(),
         profilePic: imageUrl,
         name: name,
         role: role,
         employeeId: employeeID,
         dateJoined: DateTime.now(),
       );
-
       await _service.saveUser(newUser);
 
+      // Automated Email dispatch matching inputs
       await EmailService.sendCredentials(
-        toEmail: personalEmail,
+        toEmail: personalEmail.trim().toLowerCase(),
         name: name,
         employeeId: employeeID,
-        generatedEmail: generatedEmail,
         password: password,
       );
 
       _clearEmployeeFields();
-
       Get.back();
       Utils.toastMessegessuccess("Created $employeeID");
     } catch (e) {
@@ -209,31 +176,23 @@ class UserDirectoryController extends GetxController {
     }
   }
 
-  // ─── REGISTER VENDOR ──────────────────────────────────────────
   Future<void> registerVendor({
     required String name,
     required String email,
     required String supplyType,
   }) async {
     isLoading.value = true;
-
     try {
-      // ── Duplicate checks (name → email, in priority order) ───
-      final nameExists = await _service.isVendorNameExists(name);
-      if (nameExists) {
+      if (await _service.isVendorNameExists(name)) {
         Utils.toastMesseges("A vendor with this name already exists.");
         return;
       }
-
-      final emailExists = await _service.isVendorEmailExists(email);
-      if (emailExists) {
+      if (await _service.isVendorEmailExists(email)) {
         Utils.toastMesseges("This email is already registered as a vendor.");
         return;
       }
-      // ─────────────────────────────────────────────────────────
 
       final docRef = FirebaseFirestore.instance.collection('vendors').doc();
-
       final imageUrl = await uploadProfileImage();
 
       final vendor = VendorModel(
@@ -244,11 +203,9 @@ class UserDirectoryController extends GetxController {
         supplyType: supplyType,
         dateAdded: DateTime.now(),
       );
-
       await _service.saveVendor(vendor);
 
       _clearVendorFields();
-
       Get.back();
       Utils.toastMessegessuccess("Vendor registered");
     } catch (e) {
@@ -258,7 +215,6 @@ class UserDirectoryController extends GetxController {
     }
   }
 
-  // ─── CLEAR ─────────────────────────────────────────────────────
   void _clearEmployeeFields() {
     name.clear();
     email.clear();
@@ -275,7 +231,6 @@ class UserDirectoryController extends GetxController {
     vendorFormKey.currentState?.reset();
   }
 
-  // ─── DISPOSE ──────────────────────────────────────────────────
   @override
   void onClose() {
     name.dispose();

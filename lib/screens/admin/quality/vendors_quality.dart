@@ -20,6 +20,19 @@ class VendorQualityScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: AppColors.primaryDarkTeal,
+              size: 22,
+            ),
+          ),
+        ),
         title: Text(
           "Supplier Quality Rates",
           style: GoogleFonts.poppins(
@@ -29,37 +42,40 @@ class VendorQualityScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 10),
-          QualityScreenHeader(),
-          const SizedBox(height: 20),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF7F7F7),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(30),
-                  topLeft: Radius.circular(30),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            QualityScreenHeader(),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF7F7F7),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(30),
+                    topLeft: Radius.circular(30),
+                  ),
                 ),
-              ),
-              child: Obx(() {
-                final list = controller.vendorSummaries;
-                if (list.isEmpty) {
-                  return const Center(child: Text("Waiting for Lab Data..."));
-                }
+                child: Obx(() {
+                  final list = controller.vendorSummaries;
+                  if (list.isEmpty) {
+                    return const Center(child: Text("Waiting for Lab Data..."));
+                  }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.only(top: 15, bottom: 20),
-                  itemCount: list.length,
-                  itemBuilder: (context, index) =>
-                      VendorQualityCard(vendor: list[index]),
-                );
-              }),
+                  return ListView.builder(
+                    padding: const EdgeInsets.only(top: 15, bottom: 20),
+                    itemCount: list.length,
+                    itemBuilder: (context, index) =>
+                        VendorQualityCard(vendor: list[index]),
+                  );
+                }),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

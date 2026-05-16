@@ -59,7 +59,7 @@ class LabEnigneerDashboard extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          // Get.to(ViewAllGatePassesScreen(gatePasses: controller.recentBales));
+                          Get.toNamed(RoutesNames.viewAllGatePassesView,arguments:controller.recentBales.value);
                         },
                         child: const Text(
                           "View All GatePasses",

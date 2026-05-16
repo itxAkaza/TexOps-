@@ -1,6 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../data/fireStoreDB/labEnginner/bail_data.dart';
+
 
 class ViewAllBalesController extends GetxController
 {
@@ -16,7 +18,7 @@ class ViewAllBalesController extends GetxController
 
 
   final RxString selectedVendor = 'All Vendors'.obs;
-  final RxList<String> availableVendors = <String>['All Vendors'].obs;
+  final RxList<String> availableVendors = <String>['All Vendors'].obs; // Defaults with 'All Vendors'
 
   final RxDouble maxPriceRange = 200000.0.obs;
   final RxDouble currentPriceLimit = 200000.0.obs;
@@ -27,75 +29,80 @@ class ViewAllBalesController extends GetxController
   void onInit() {
     super.onInit();
 
+
     if (Get.arguments != null) {
       List<Map<String, dynamic>> passedData = List<Map<String, dynamic>>.from(Get.arguments);
       allBales.assignAll(passedData);
       filteredBales.assignAll(passedData);
-
-      // 2. Extract unique vendors for the filter dropdown
-      Set<String> vendors = {'All Vendors'};
-      for (var bale in passedData) {
-        if (bale['supplier'] != null) vendors.add(bale['supplier']);
-      }
-      availableVendors.assignAll(vendors.toList());
     }
 
-    // Listen to search text changes
+
+    _loadVendors();
+
+
     searchController.addListener(() {
       searchText.value = searchController.text;
       applyFilters();
     });
+
   }
 
-  // Set quick filter chip
+  Future<void> _loadVendors() async {
+    List<String> vendors = await BailRecordService.fetchSuppliers();
+    availableVendors.assignAll(['All Vendors', ...vendors]);
+  }
+
+
   void setQuickFilter(String filter) {
     selectedQuickFilter.value = filter;
     applyFilters();
   }
 
-  // Set bottom sheet material category
+
   void setMaterialFilter(String material) {
     selectedMaterial.value = material;
     applyFilters();
   }
 
-  // The master filter function
-  void applyFilters() {
+  void applyFilters()
+  {
     var result = allBales.where((bale) {
 
-      // 1. Text Search (Bale ID or GatePass)
       bool matchesSearch = true;
-      if (searchText.value.isNotEmpty) {
+      if (searchText.value.isNotEmpty)
+      {
         String query = searchText.value.toLowerCase();
         String baleId = (bale['baleId'] ?? '').toString().toLowerCase();
         String gatePass = (bale['gatePassRef'] ?? '').toString().toLowerCase();
         String supplier = (bale['supplier'] ?? '').toString().toLowerCase();
-
         matchesSearch = baleId.contains(query) || gatePass.contains(query) || supplier.contains(query);
       }
 
-      // 2. Quick Filters
+
       bool matchesQuickFilter = true;
-      if (selectedQuickFilter.value == 'Pending Lab Test') {
+      if (selectedQuickFilter.value == 'Pending Lab Test')
+      {
         matchesQuickFilter = (bale['qualityStatus'] == false || bale['qualityStatus'] == null);
-      } else if (selectedQuickFilter.value == 'Ready for Yarn') {
+      } else if (selectedQuickFilter.value == 'Ready for Yarn')
+      {
         matchesQuickFilter = (bale['readyForYarn'] == true);
       }
 
-      // 3. Bottom Sheet: Vendor
+
       bool matchesVendor = true;
-      if (selectedVendor.value != 'All Vendors') {
+      if (selectedVendor.value != 'All Vendors')
+      {
         matchesVendor = bale['supplier'] == selectedVendor.value;
       }
 
-      // 4. Bottom Sheet: Price
       bool matchesPrice = true;
       double price = double.tryParse(bale['price']?.toString() ?? '0') ?? 0.0;
       matchesPrice = price <= currentPriceLimit.value;
 
-      // 5. Bottom Sheet: Material
+
       bool matchesMaterial = true;
-      if (selectedMaterial.value != 'All') {
+      if (selectedMaterial.value != 'All')
+      {
         String type = (bale['baleType'] ?? '').toString().toLowerCase();
         matchesMaterial = type.contains(selectedMaterial.value.toLowerCase());
       }
@@ -104,9 +111,11 @@ class ViewAllBalesController extends GetxController
     }).toList();
 
     filteredBales.assignAll(result);
+
   }
 
-  void resetBottomSheetFilters() {
+  void resetBottomSheetFilters()
+  {
     selectedVendor.value = 'All Vendors';
     currentPriceLimit.value = maxPriceRange.value;
     selectedMaterial.value = 'All';
@@ -118,4 +127,6 @@ class ViewAllBalesController extends GetxController
     searchController.dispose();
     super.onClose();
   }
+
+
 }

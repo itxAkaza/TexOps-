@@ -16,6 +16,8 @@ class RoutesNames {
   static const String  bailBarcodeView="/BailBarcodeView";
   static const String  detailView="/detailView";
   static const String  qrShareView="/qrShareView";
+  static const String  viewAllGatePassesView="/viewAllGatePassesView";
+
 
 
 }

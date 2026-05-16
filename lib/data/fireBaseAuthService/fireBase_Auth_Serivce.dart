@@ -63,10 +63,21 @@ class FirebaseAuthService {
     }
   }
 
-  Future<void> signOut() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
+  static Future<void> signOut() async {
+    try
+    {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      await auth.signOut();
+      Utils.toastMessegessuccess("log out success");
 
-    await auth.signOut();
+    }
+    catch(e)
+    {
+      Utils.toastMesseges(e.toString());
+
+    }
+
+
   }
 
   void _handleAuthException(FirebaseAuthException e) {

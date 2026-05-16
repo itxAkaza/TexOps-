@@ -23,12 +23,12 @@ class LabEnigneerDashboard extends StatelessWidget {
       backgroundColor: AppColors.backgroundLightPeach,
       key: scaffoldKey,
 
-      drawer: MYDrawer(
+      drawer: Obx(() => MYDrawer(
           userName: controller.userName.value,
           userEmail: controller.userEmail.value,
           userRole: controller.userRole.value,
           userImageUrl: controller.userProfilePic.value
-      ),
+      )),
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/resources/route/routes_names.dart';
 
+import '../../../../../data/fireBaseAuthService/fireBase_Auth_Serivce.dart';
+import '../../../../drawerScreens/scan/scan_screen.dart';
 import 'components/drawerMenuItem.dart';
 import 'components/drawerProfile.dart';
 
@@ -48,7 +52,9 @@ class MYDrawer extends StatelessWidget {
                   DrawerMenuItem(
                     icon: Icons.qr_code_scanner_outlined,
                     title: "Scan",
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(()=>TexOpsBarcodeScanner());
+                    },
                   ),
                   DrawerMenuItem(
                     icon: Icons.settings_outlined,
@@ -76,7 +82,8 @@ class MYDrawer extends StatelessWidget {
               title: "Logout",
               color: AppColors.accentOrange,
               onTap: () {
-
+                FirebaseAuthService.signOut();
+                Get.offAllNamed(RoutesNames.loginScreen);
               },
             ),
           ),

@@ -56,9 +56,50 @@ class UserFirebaseService {
     return query.docs.isNotEmpty;
   }
 
+  // Fixed: use set+merge so it creates the doc if it doesn't exist
   Future<void> incrementTotalUsers() async {
-    await _firestore.collection('records').doc('dashboard_stats').update({
+    await _firestore.collection('records').doc('dashboard_stats').set({
       'total_users': FieldValue.increment(1),
-    });
+    }, SetOptions(merge: true));
+  }
+
+  // ── Duplicate checks ──────────────────────────────────────────────────────
+
+  Future<bool> isUserEmailExists(String email) async {
+    final query = await _firestore
+        .collection('users')
+        .where('personalEmail', isEqualTo: email.trim().toLowerCase())
+        .limit(1)
+        .get();
+    return query.docs.isNotEmpty;
+  }
+
+  Future<bool> isVendorEmailExists(String email) async {
+    final query = await _firestore
+        .collection('vendors')
+        .where('email', isEqualTo: email.trim().toLowerCase())
+        .limit(1)
+        .get();
+    return query.docs.isNotEmpty;
+  }
+
+  Future<String?> checkUserDuplicates({required String email}) async {
+    if (await isUserEmailExists(email)) {
+      return 'This email is already registered as a user.';
+    }
+    return null;
+  }
+
+  Future<String?> checkVendorDuplicates({
+    required String email,
+    required String name,
+  }) async {
+    if (await isVendorEmailExists(email)) {
+      return 'This email is already registered as a vendor.';
+    }
+    if (await isVendorNameExists(name)) {
+      return 'A vendor with this name already exists.';
+    }
+    return null;
   }
 }

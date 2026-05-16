@@ -2,12 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texops/data/models/gate_pass_model.dart';
-import 'package:texops/data/models/vendor_Quality_model.dart';
-import 'package:texops/data/models/vendor_quality_summary_model.dart';
+import 'package:texops/data/models/vendor_quality_model.dart';
 
 class QualityController extends GetxController {
   final _db = FirebaseFirestore.instance;
-  RxList<GatePassModel> allData = <GatePassModel>[].obs;
+  RxList<GatePassModel> allBails = <GatePassModel>[].obs;
 
   RxString searchQuery = "".obs;
   RxString selectedMaterial = "All".obs;
@@ -16,22 +15,23 @@ class QualityController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    allData.bindStream(
-      _db
-          .collectionGroup('bail_data')
-          .snapshots()
-          .map(
-            (s) => s.docs
-                .map((d) => GatePassModel.fromMap(d.data(), d.id))
-                .toList(),
-          ),
-    );
+    // CollectionGroup fetches ALL bail_data documents across all engineer IDs
+    _db.collectionGroup('bail_data').snapshots().listen((snapshot) {
+      allBails.value = snapshot.docs.map((doc) {
+        return GatePassModel.fromMap(
+          doc.data() as Map<String, dynamic>,
+          doc.id,
+        );
+      }).toList();
+    });
   }
 
   List<VendorQualityModel> get vendorSummaries {
     Map<String, List<GatePassModel>> grouped = {};
-    for (var p in allData) {
-      grouped.putIfAbsent(p.supplier, () => []).add(p);
+
+    // Group all bails by their supplier name
+    for (var bail in allBails) {
+      grouped.putIfAbsent(bail.supplier, () => []).add(bail);
     }
 
     return grouped.entries
@@ -42,18 +42,19 @@ class QualityController extends GetxController {
             bails: e.value,
           ),
         )
-        .where((v) {
-          bool matchesSearch = v.vendorName.toLowerCase().contains(
+        .where((VendorQualityModel v) {
+          bool mSearch = v.vendorName.toLowerCase().contains(
             searchQuery.value.toLowerCase(),
           );
-          bool matchesMat =
+          bool mMat =
               selectedMaterial.value == "All" ||
               v.materialType.toLowerCase() ==
                   selectedMaterial.value.toLowerCase();
-          bool matchesRate =
+          bool mRate =
               selectedRating.value == "All" ||
-              getRatingTag(v.averageScore) == selectedRating.value;
-          return matchesSearch && matchesMat && matchesRate;
+              (v.hasData && getRatingTag(v.totalScore) == selectedRating.value);
+
+          return mSearch && mMat && mRate;
         })
         .toList();
   }

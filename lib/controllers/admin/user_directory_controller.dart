@@ -118,25 +118,33 @@ class UserDirectoryController extends GetxController {
 
   // ─── ID GENERATION ────────────────────────────────────────────
   Future<String> generateNextID(String role) async {
-    final String prefix = role.toLowerCase().contains('lab') ? 'Lab' : 'Qual';
+    final String? lastID = await _service.getLastEmployeeId(role: role);
 
-    final counterRef = FirebaseFirestore.instance
-        .collection('counters')
-        .doc(prefix.toLowerCase());
+    String prefix;
 
-    int nextNumber = 1000;
+    if (role.toLowerCase().contains('lab')) {
+      prefix = 'Lab';
+    } else {
+      prefix = 'Qual';
+    }
 
-    await FirebaseFirestore.instance.runTransaction((tx) async {
-      final snapshot = await tx.get(counterRef);
+    int nextNumber = 1;
 
-      nextNumber = snapshot.exists
-          ? (snapshot.data()?['last'] ?? 999) + 1
-          : 1000;
+    if (lastID != null && lastID.contains('-')) {
+      final parts = lastID.split('-');
 
-      tx.set(counterRef, {'last': nextNumber});
-    });
+      if (parts.length > 1) {
+        final parsedNumber = int.tryParse(parts[1]);
 
-    return "$prefix-$nextNumber";
+        if (parsedNumber != null) {
+          nextNumber = parsedNumber + 1;
+        }
+      }
+    }
+
+    final formattedNumber = nextNumber.toString().padLeft(3, '0');
+
+    return '$prefix-$formattedNumber';
   }
 
   // ─── REGISTER USER ────────────────────────────────────────────
@@ -148,6 +156,14 @@ class UserDirectoryController extends GetxController {
     isLoading.value = true;
 
     try {
+      // ── Duplicate check ──────────────────────────────────────
+      final emailExists = await _service.isUserEmailExists(personalEmail);
+      if (emailExists) {
+        Utils.toastMesseges("This email is already registered as an employee.");
+        return;
+      }
+      // ─────────────────────────────────────────────────────────
+
       final employeeID = await generateNextID(role);
       final generatedEmail = '$employeeID@texops.com';
       final password = "Tex@${employeeID.split('-')[1]}";
@@ -193,7 +209,7 @@ class UserDirectoryController extends GetxController {
     }
   }
 
-  // ─── REGISTER VENDOR (FIXED) ───────────────────────────────────
+  // ─── REGISTER VENDOR ──────────────────────────────────────────
   Future<void> registerVendor({
     required String name,
     required String email,
@@ -202,12 +218,20 @@ class UserDirectoryController extends GetxController {
     isLoading.value = true;
 
     try {
-      final exists = await _service.isVendorNameExists(name);
-
-      if (exists) {
-        Utils.toastMesseges("Vendor already exists with this name");
+      // ── Duplicate checks (name → email, in priority order) ───
+      final nameExists = await _service.isVendorNameExists(name);
+      if (nameExists) {
+        Utils.toastMesseges("A vendor with this name already exists.");
         return;
       }
+
+      final emailExists = await _service.isVendorEmailExists(email);
+      if (emailExists) {
+        Utils.toastMesseges("This email is already registered as a vendor.");
+        return;
+      }
+      // ─────────────────────────────────────────────────────────
+
       final docRef = FirebaseFirestore.instance.collection('vendors').doc();
 
       final imageUrl = await uploadProfileImage();

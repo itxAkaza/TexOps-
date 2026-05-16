@@ -46,6 +46,18 @@ class AuthController extends GetxController {
         return;
       }
 
+      // ─────────────────────────────────────────────────────────────
+      // SECURITY GATE: Check if user account is deactivated
+      // ─────────────────────────────────────────────────────────────
+      final Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+      final bool isActive = data != null && (data['isActive'] ?? true) != false;
+
+      if (!isActive) {
+        await FirebaseAuth.instance.signOut();
+        Utils.toastMesseges("Account suspended. Please contact Admin.");
+        return;
+      }
+
       final String role = (doc['role'] ?? "").toString();
 
       navigateOnRole(role);

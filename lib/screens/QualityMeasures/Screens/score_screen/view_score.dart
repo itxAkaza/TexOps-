@@ -268,28 +268,6 @@ class ViewScoreScreen extends StatelessWidget {
 		);
 	}
 
-	Widget _statusBanner({
-		required String text,
-		required Color color,
-		required Color textColor,
-	}) {
-		return Container(
-			width: double.infinity,
-			padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-			decoration: BoxDecoration(
-				color: color,
-				borderRadius: BorderRadius.circular(12),
-			),
-			child: Text(
-				text,
-				style: TextStyle(
-					fontSize: 12,
-					fontWeight: FontWeight.w600,
-					color: textColor,
-				),
-			),
-		);
-	}
 
 	Widget _buildMetricRow(MetricScore metric) {
 		final Color chipColor = _criticalityColor(metric.criticality);

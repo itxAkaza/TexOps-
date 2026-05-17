@@ -5,6 +5,7 @@ import 'package:texops/resources/route/routes_names.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/route/routes.dart';
 import 'package:get/get.dart';
+import 'package:texops/screens/chat_bot/chat_bot_screen.dart';
 
 import 'firebase_options.dart';
 
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
       ),
-      home: const _QualityTestEntryScreen(),
+      home: const ChatBotScreen(),
       getPages: AppRoutes.appRoutes(),
     );
   }

@@ -28,6 +28,7 @@ class AppBarWithBack extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: AppColors.backgroundLightPeach,
       elevation: 0,
+      actionsPadding:.only(right: 20),
       scrolledUnderElevation: 0,
       //centerTitle: true,
       leading: IconButton(

@@ -13,6 +13,20 @@ class QualityTestingController extends GetxController {
   QualityTestingController({QualityTestingRepository? repository})
       : _repository = repository ?? QualityTestingRepository();
 
+    @override
+  void onInit() {
+    // // TODO: implement onInit
+    // NotificationServices ns = NotificationServices();
+    // ns.requestNotificationPermissions();
+    // ns.initNotification();
+    // ns.getAndSaveDeviceToken();
+    // ns.isTokenRefresh();
+    // ns.setupForegroundListener();
+    // ns.setupInteractMessage();
+
+    super.onInit();
+  }
+
   final QualityTestingRepository _repository;
 
   final RxBool isSaving = false.obs;

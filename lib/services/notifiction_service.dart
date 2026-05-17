@@ -20,7 +20,8 @@ class NotificationServices {
 
 
 
-  Future<void> initializeAll() async {
+  Future<void> initializeAll() async
+  {
     if (_isSetup) return;
 
     await initNotification();
@@ -36,7 +37,8 @@ class NotificationServices {
   // =================================================================
   // 1. INIT LOCAL NOTIFICATIONS (Foreground Popups)
   // =================================================================
-  Future<void> initNotification() async {
+  Future<void> initNotification() async
+  {
 
 
     const initSettingAndroid = AndroidInitializationSettings("@mipmap/ic_launcher");
@@ -60,9 +62,12 @@ class NotificationServices {
         }
       },
     );
+
   }
 
-  NotificationDetails notificationDetails() {
+
+  NotificationDetails notificationDetails()
+  {
     AndroidNotificationChannel channel = const AndroidNotificationChannel(
         "high_importance_channel",
         "TexOps Alerts",
@@ -78,99 +83,125 @@ class NotificationServices {
           priority: Priority.max,
           playSound: true,
         ),
+
         iOS: const DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
             presentSound: true
         )
+
     );
+
   }
 
   // =================================================================
   // 2. REQUEST PERMISSIONS
   // =================================================================
-  void requestNotificationPermissions() async {
+  void requestNotificationPermissions() async
+  {
     NotificationSettings settings = await messaging.requestPermission(
         alert: true,
         badge: true,
         sound: true
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    if (settings.authorizationStatus == AuthorizationStatus.authorized)
+    {
       debugPrint("Notification Permission Granted");
-    } else {
+    }
+    else
+    {
       AppSettings.openAppSettings(type: AppSettingsType.notification);
       debugPrint("Notification Permission Denied");
     }
+
   }
 
   // =================================================================
   // 3. FIRESTORE TOKEN MANAGEMENT
   // =================================================================
-  Future<void> saveTokenToDatabase(String token) async {
+  Future<void> saveTokenToDatabase(String token) async
+  {
     String? uid = FirebaseAuth.instance.currentUser?.uid;
 
-    if (uid != null) {
+    if (uid != null)
+    {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
           .set({'deviceToken': token}, SetOptions(merge: true));
       debugPrint("FCM Token securely saved to Firestore for UID: $uid");
+
     }
+
   }
 
-  Future<void> getAndSaveDeviceToken() async {
+  Future<void> getAndSaveDeviceToken() async
+  {
     String? token = await messaging.getToken();
-    if (token != null) {
+    if (token != null)
+    {
       await saveTokenToDatabase(token);
     }
+
   }
 
-  void isTokenRefresh() {
+  void isTokenRefresh()
+  {
     messaging.onTokenRefresh.listen((newToken) {
       saveTokenToDatabase(newToken);
     });
+
   }
 
   // =================================================================
   // 4. FOREGROUND LISTENER
   // =================================================================
-  void setupForegroundListener() {
+  void setupForegroundListener()
+  {
     FirebaseMessaging.onMessage.listen((message) {
-      if (Platform.isAndroid || Platform.isIOS) {
+      if (Platform.isAndroid || Platform.isIOS)
+      {
         if (message.notification != null) {
           notificationPlugin.show(
              id:  DateTime.now().millisecond, // Unique ID
              title:  message.notification!.title,
              body:  message.notification!.body,
-            notificationDetails:   notificationDetails(),
+              notificationDetails:   notificationDetails(),
               payload: jsonEncode(message.data)
           );
         }
+
       }
+
     });
   }
 
   // =================================================================
   // 5. BACKGROUND / TERMINATED ROUTING (PURE GETX)
   // =================================================================
-  Future<void> setupInteractMessage() async {
+  Future<void> setupInteractMessage() async
+  {
     // When app is completely terminated and opened via tap
     RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
+    if (initialMessage != null)
+    {
       handleMessage(initialMessage.data);
     }
 
     // When app is in background and opened via tap
-    FirebaseMessaging.onMessageOpenedApp.listen((onData) {
+    FirebaseMessaging.onMessageOpenedApp.listen((onData)
+    {
       handleMessage(onData.data);
     });
+
   }
 
   // The GetX Steering Wheel
-  void handleMessage(Map<String, dynamic> data) {
-    // Navigate straight to the Notifications Screen using GetX
-    // No context needed!
+  void handleMessage(Map<String, dynamic> data)
+  {
     Get.to(() => const NotificationsScreen());
   }
+
+
 }

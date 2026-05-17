@@ -69,7 +69,7 @@ class IntroScreen extends StatelessWidget {
               MYButton(text: "Get Started", height: height*0.07,width: width*0.85,
                   onTap:
                       (){
-                    Get.offAll(()=>LabEnigneerDashboard());
+                    Get.offAll(()=>LoginScreen());
                     Get.delete<onBoradingController>();
 
                   }

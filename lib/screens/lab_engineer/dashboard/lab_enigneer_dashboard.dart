@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/lab_engineer/dashboard/components/drawer/drawer.dart';
-
 import '../../../controllers/lab_engineer/lab_engineer_Dashboard/labEngineer_dashboard_controller.dart';
 import '../../../resources/colors/app_colors.dart';
 import 'components/intro_card.dart';
 import 'components/recent_activity_card.dart';
 
-class LabEnigneerDashboard extends StatelessWidget {
+class LabEnigneerDashboard extends StatelessWidget
+{
   LabEnigneerDashboard({super.key});
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();

@@ -1,28 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/data/fireStoreDB/quality/quality_testing_repository.dart';
+import 'package:texops/data/models/quality_testing/quality_test_models.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/app_bar_with_back.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/primary_header_container.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_Indicator_text/step_indicator_label_text_widget.dart';
 import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/widgets/step_progress_indicator.dart';
-import 'package:texops/screens/QualityMeasures/Screens/fibre/expandable_input_card.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/expandable_input_card.dart';
 import 'package:texops/screens/QualityMeasures/Screens/fibre/widgets/calculated_denier_widget.dart';
 import 'package:texops/screens/QualityMeasures/Screens/fibre/widgets/fabric_input_controller.dart';
+import 'package:texops/screens/QualityMeasures/Screens/fibre/widgets/fibre_review_continue_button.dart';
 
 class FibreTestingScreen extends StatelessWidget {
-  FibreTestingScreen({super.key});
+  const FibreTestingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Get existing controller or create if doesn't exist
-    final FibreTestingController controller = Get.isRegistered<FibreTestingController>() 
-        ? Get.find<FibreTestingController>() 
+    final FibreTestingController controller =
+        Get.isRegistered<FibreTestingController>()
+        ? Get.find<FibreTestingController>()
         : Get.put(FibreTestingController());
 
+    if (!controller.didPrefill) {
+      controller.didPrefill = true;
+      final String? baleRecordId =
+          Get.arguments is Map ? (Get.arguments as Map)['baleRecordId'] as String? : null;
+      final String? baleId =
+          Get.arguments is Map ? (Get.arguments as Map)['baleId'] as String? : null;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (baleRecordId == null || baleRecordId.isEmpty || baleId == null || baleId.isEmpty) {
+          return;
+        }
+        final Map<QualityTestCategory, QualityTestRecord> records =
+            await QualityTestingRepository().fetchQualityTests(
+              baleRecordId,
+              baleId,
+            );
+        final QualityTestRecord? record =
+            records[QualityTestCategory.fibre];
+        if (record != null) {
+          controller.applyStoredMetrics(record.metrics);
+        }
+      });
+    }
+
+    if (!controller.didAutoExpand) {
+      controller.didAutoExpand = true;
+      controller.isFibreLengthExpanded.value = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.fibreLengthFocus.requestFocus();
+        SystemChannels.textInput.invokeMethod('TextInput.hide');
+      });
+    }
+
     return Scaffold(
+      appBar: AppBarWithBack(title: 'Fibre Testing'),
       backgroundColor: AppColors.cardWhite,
       body: SingleChildScrollView(
         child: Column(
@@ -31,7 +70,7 @@ class FibreTestingScreen extends StatelessWidget {
             EPrimaryHeaderContainer(
               child: Column(
                 children: [
-                  AppBarWithBack(title: 'Fibre Testing'),
+                  
 
                   /// Circular Containers indicator
                   StepProgressIndicator(currentStep: 2),
@@ -48,12 +87,11 @@ class FibreTestingScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  Text(
-                    'Expand attributes to input lab test values',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
+                  QualityResponsiveText(
+                    text: 'Expand attributes to input lab test values',
+                    style: const TextStyle(fontSize: 15, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
                   ),
                   const SizedBox(height: 30),
 
@@ -72,6 +110,8 @@ class FibreTestingScreen extends StatelessWidget {
                           hasMultipleInputs: false,
                           inputLabels: const ['Length (mm)'],
                           inputHints: const ['e.g., 32.5'],
+                          inputControllers: [controller.fibreLengthCtrl],
+                          inputFocusNodes: [controller.fibreLengthFocus],
                         ),
                       ),
 
@@ -86,47 +126,29 @@ class FibreTestingScreen extends StatelessWidget {
                           hasMultipleInputs: true,
                           inputLabels: const ['Weight', 'Length'],
                           inputHints: const ['e.g., 0.5 g', 'e.g., 4500 m'],
+                          inputControllers: [
+                            controller.weightCtrl,
+                            controller.lengthCtrl,
+                          ],
+                          inputFocusNodes: [
+                            controller.weightFocus,
+                            controller.lengthFocus,
+                          ],
 
                           // Inject the Formula UI dynamically!
-                          bottomWidget: CalculatedDenierWidget(
-                            // Pass the live calculated result down to the widget
-                            calculatedValue:
-                                controller.calculatedDenierResult.value,
+                          bottomWidget: Obx(
+                            () => CalculatedDenierWidget(
+                              // Pass the live calculated result down to the widget
+                              calculatedValue:
+                                  controller.calculatedDenierResult.value,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
 
-                  // 4. The Bottom Button
-                  Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:  AppColors.primaryDarkTeal, // Dark Teal
-                        minimumSize: const Size(double.infinity, 56),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {
-                        // Navigate to Screen 3 (Review & Save)
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Continue to Review',
-                            style: GoogleFonts.poppins(
-                              textStyle: TextStyle(fontSize: 15 , fontWeight: .bold , color: AppColors.cardWhite )
-                            )
-                          ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_forward, size: 20 , color: AppColors.cardWhite,),
-                        ],
-                      ),
-                    ),
-                  ),
+                  FibreReviewContinueButton(controller: controller),
                 ],
               ),
             ),

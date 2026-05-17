@@ -1,47 +1,53 @@
 import 'package:flutter/material.dart';
 
-class CalculatedDenierWidget extends StatelessWidget {
-  /// The final calculated value passed down from your state controller.
-  /// Pass something like "1.0" or "0.0" when ready.
+class FabricCalculatedResultWidget extends StatelessWidget {
+  final String formulaText;
+  final String resultTitle;
   final String calculatedValue;
+  final String units;
 
-  const CalculatedDenierWidget({super.key, required this.calculatedValue});
+  const FabricCalculatedResultWidget({
+    super.key,
+    required this.formulaText,
+    required this.resultTitle,
+    required this.calculatedValue,
+    this.units = '',
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
+    final String displayValue = units.isEmpty
+        ? calculatedValue
+        : '$calculatedValue $units';
 
-        // The Italicized Formula Text
-        const Text(
-          'Formula: (Weight / Length) × 9000',
-          style: TextStyle(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          formulaText,
+          style: const TextStyle(
             fontStyle: FontStyle.italic,
             color: Colors.grey,
             fontSize: 12,
           ),
         ),
-
-        const SizedBox(height: 16),
-
-        // The Orange Result Container
+        const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFF7ED), // The light orange background
+            color: const Color(0xFFFFF7ED),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Calculated Denier:',
-                  style: TextStyle(
+                  resultTitle,
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1B3B46), // Dark Teal
+                    color: Color(0xFF1B3B46),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -50,11 +56,11 @@ class CalculatedDenierWidget extends StatelessWidget {
               const SizedBox(width: 12),
               Flexible(
                 child: Text(
-                  '$calculatedValue D', // Appends the " D" automatically
+                  displayValue,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFFFDB45C), // Accent Orange
+                    color: Color(0xFFFDB45C),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

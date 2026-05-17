@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 
 class CustomActionCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final Widget leadingIcon;
   final VoidCallback onTap;
+  final bool showEditIcon;
+  final VoidCallback? onEditTap;
 
   const CustomActionCard({
     super.key,
@@ -14,6 +17,8 @@ class CustomActionCard extends StatelessWidget {
     required this.subtitle,
     required this.leadingIcon,
     required this.onTap,
+    this.showEditIcon = false,
+    this.onEditTap,
   });
 
   @override
@@ -50,35 +55,49 @@ class CustomActionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      title,
+                    QualityResponsiveText(
+                      text: title,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.primaryDarkTeal, // Dark Teal from image
+                        color: AppColors.primaryDarkTeal,
                       ),
+                      maxLines: 1,
+                      softWrap: false,
                     ),
                     const SizedBox(height: 6),
-                    Text(
-                      subtitle,
+                    QualityResponsiveText(
+                      text: subtitle,
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.grey, // Slate Gray from image
+                        color: Colors.grey,
                         height: 1.3,
                       ),
+                      maxLines: 2,
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 16),
-              
-              // Trailing Arrow
-              const Icon(
-                Icons.arrow_forward,
-                color: AppColors.primaryDarkTeal, // Matches the title color
-                size: 24,
-              ),
+
+              // Trailing action
+              if (showEditIcon)
+                IconButton(
+                  onPressed: onEditTap,
+                  icon: const Icon(
+                    Icons.edit,
+                    color: AppColors.accentOrange,
+                    size: 22,
+                  ),
+                  tooltip: 'Edit',
+                )
+              else
+                const Icon(
+                  Icons.arrow_forward,
+                  color: AppColors.primaryDarkTeal, // Matches the title color
+                  size: 24,
+                ),
             ],
           ),
         ),

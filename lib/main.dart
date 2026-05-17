@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       // The main branch has the app starting on the Login Screen.
       // If you want it to start on your Intro Screen instead,
       // change this to: RoutesNames.introScreen
-      initialRoute: RoutesNames.chatBotScreen,
+      initialRoute: RoutesNames.introScreen,
       getPages: AppRoutes.appRoutes(),
     );
   }

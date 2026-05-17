@@ -81,6 +81,14 @@ class QualityTestingController extends GetxController {
         icon: const Icon(Icons.check_circle_outline, color: Colors.white),
         duration: const Duration(seconds: 2),
       );
+
+      // ---> THE STACK FIX <---
+      // Wait 1 second so they can read the "Saved" popup, then automatically
+      // destroy this input screen and drop them safely back on the main Category hub!
+      Future.delayed(const Duration(seconds: 1), () {
+        Get.close(2);
+      });
+
     } catch (e) {
       errorMessage.value = e.toString();
       Get.snackbar(

@@ -6,6 +6,8 @@ import 'package:texops/data/fireBaseAuthService/fireBase_Auth_Serivce.dart';
 import 'package:texops/data/fireStoreDB/role_firestore_service.dart';
 import 'package:texops/resources/route/routes_names.dart';
 
+import '../../services/userPrefrence.dart';
+
 class AuthController extends GetxController {
   final FirebaseAuthService _authService = FirebaseAuthService();
   final RoleFirestoreService _roleFirestoreService = RoleFirestoreService();
@@ -55,7 +57,11 @@ class AuthController extends GetxController {
       }
 
       final String role = (doc['role'] ?? "").toString();
+      await UserPreference().saveUserRole(role);
       navigateOnRole(role);
+      // Inside your login success logic:
+
+
     } on FirebaseAuthException catch (e) {
       String msg;
       switch (e.code) {
@@ -122,10 +128,21 @@ class AuthController extends GetxController {
 
   void navigateOnRole(String role) {
     final String lowerCaseRole = role.toLowerCase();
+
     if (lowerCaseRole.contains("admin")) {
       Get.offAllNamed(RoutesNames.adminDashboard);
-    } else if (lowerCaseRole.contains("lab")) {
+    }
+    else if (lowerCaseRole.contains("lab")) {
       Get.offAllNamed(RoutesNames.labEngineerDashboard);
+    }
+    else if (lowerCaseRole.contains("quality")) {
+      // Pointing to your Quality route!
+      Get.offAllNamed(RoutesNames.QualityPersondashboardview);
+    }
+    else {
+      // Fallback if they somehow have no role or a corrupted role
+      Get.snackbar("Error", "Role not recognized. Please contact Admin.");
+      FirebaseAuth.instance.signOut();
     }
   }
 

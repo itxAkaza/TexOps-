@@ -5,6 +5,7 @@ import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/drawerScreens/notification_screen.dart';
 
 import '../../../../../data/fireBaseAuthService/fireBase_Auth_Serivce.dart';
+import '../../../../../services/userPrefrence.dart';
 import '../../../../drawerScreens/help_and_support_screen.dart';
 import '../../../../drawerScreens/scan/scan_screen.dart';
 import '../../../../drawerScreens/setting_screen.dart';
@@ -93,8 +94,10 @@ class MYDrawer extends StatelessWidget {
               icon: Icons.logout_outlined,
               title: "Logout",
               color: AppColors.accentOrange,
-              onTap: () {
-                FirebaseAuthService.signOut();
+              onTap: () async{
+                await FirebaseAuthService.signOut();
+                // Inside your login success logic:
+                await UserPreference().clearUserData();
                 Get.offAllNamed(RoutesNames.loginScreen);
               },
             ),

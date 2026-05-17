@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../services/splash_services.dart';
+
 class onBoradingController extends GetxController
 {
 
@@ -12,6 +14,13 @@ class onBoradingController extends GetxController
   {
     isLast.value=last;
 
+  }
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    SplashServices().checkLoginAndRoute();
   }
 
 }

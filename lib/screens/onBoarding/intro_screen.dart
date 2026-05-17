@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texops/controllers/onBoarding/onBoarding_controller.dart';
 import 'package:texops/resources/colors/app_colors.dart';
-import 'package:texops/screens/Authentication/login_screen.dart';
 import 'package:texops/screens/lab_engineer/dashboard/lab_enigneer_dashboard.dart';
 import 'package:texops/screens/onBoarding/onBoarding_Screens/onBoarding2.dart';
 import 'package:texops/screens/onBoarding/onBoarding_Screens/onBoarding3.dart';
 import 'package:texops/screens/onBoarding/widgets/my_button.dart';
 
+import '../auth/login_screen.dart';
 import 'onBoarding_Screens/onBoarding1.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 

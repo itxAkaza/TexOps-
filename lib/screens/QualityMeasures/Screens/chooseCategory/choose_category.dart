@@ -23,19 +23,20 @@ class ChooseCategoryScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusManager.instance.primaryFocus?.unfocus();
     });
-    final String? baleId =
-        Get.arguments is Map ? (Get.arguments as Map)['baleId'] as String? : null;
-    const String hardcodedBaleRecordId = '4U8fQ5BdPYhCorczhBwNWArzPHh1';
-    const String fallbackBaleId = 'fjk7_260516-1200';
 
-    final String resolvedBaleRecordId = hardcodedBaleRecordId;
-    final String resolvedBaleId = (baleId == null || baleId.isEmpty)
-      ? fallbackBaleId
-      : baleId;
+    // ---> THIS IS THE MAGIC HOOKUP <---
+    final Map<String, dynamic> args = Get.arguments ?? {};
+    final String resolvedBaleRecordId = args['baleRecordId'] ?? '';
+    final String resolvedBaleId = args['baleId'] ?? '';
+
+    // Safety check so it doesn't crash if it loads empty
+    if (resolvedBaleRecordId.isEmpty || resolvedBaleId.isEmpty) {
+      return const Scaffold(body: Center(child: Text("Error: No Bale Data Found")));
+    }
 
     final QualityTestingRepository repository = QualityTestingRepository();
     final Future<Map<QualityTestCategory, QualityTestRecord>> recordsFuture =
-        repository.fetchQualityTests(resolvedBaleRecordId, resolvedBaleId);
+    repository.fetchQualityTests(resolvedBaleRecordId, resolvedBaleId);
 
     return Scaffold(
       appBar: AppBarWithBack(title: 'Select a Testing Metric'),
@@ -43,179 +44,104 @@ class ChooseCategoryScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header fpr clipPath
             EPrimaryHeaderContainer(
               child: Column(
                 children: [
-
-                  /// Circular Containers indicator
                   StepProgressIndicator(currentStep: 1),
-
-                  /// Circular Containers indicator Label Text ( The text Below them )
                   StepIndicatorLabelTextWidget(currentStep: 1),
                   const SizedBox(height: 40),
                 ],
               ),
-
-              // Body
             ),
-
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: FutureBuilder<Map<QualityTestCategory, QualityTestRecord>>(
                 future: recordsFuture,
                 builder: (context, snapshot) {
-                  final Map<QualityTestCategory, QualityTestRecord> records =
-                      snapshot.data ?? {};
+                  final Map<QualityTestCategory, QualityTestRecord> records = snapshot.data ?? {};
                   final bool hasFibre = records.containsKey(QualityTestCategory.fibre);
                   final bool hasYarn = records.containsKey(QualityTestCategory.yarn);
                   final bool hasFabric = records.containsKey(QualityTestCategory.fabric);
 
                   return Column(
                     children: [
-                  QualityResponsiveText(
-                    text:
-                        'Choose a product category to begin recording\nquality parameters',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                  ),
-                  const SizedBox(height: 30),
-                  CustomActionCard(
-                    title: 'Fibre Testing',
-                    subtitle: 'Analyse Raw Material Quality Parameters',
-                    leadingIcon: Icon(
-                      Iconsax.component,
-                      color: AppColors.accentOrange,
-                    ),
-                    showEditIcon: hasFibre,
-                    onTap: hasFibre
-                        ? () => Get.snackbar(
-                              'Already recorded',
-                              'Use the pencil icon to update Fibre Testing.',
-                              snackPosition: SnackPosition.BOTTOM,
-                              margin: const EdgeInsets.all(16),
-                              borderRadius: 14,
-                              backgroundColor: AppColors.primaryDarkTeal,
-                              colorText: AppColors.cardWhite,
-                              icon: const Icon(Icons.edit, color: Colors.white),
-                              duration: const Duration(seconds: 2),
-                            )
-                        : () => Get.toNamed(
-                              RoutesNames.qualityFibreTesting,
-                              arguments: {
-                                'baleRecordId': resolvedBaleRecordId,
-                                'baleId': resolvedBaleId,
-                              },
-                            ),
-                    onEditTap: hasFibre
-                        ? () => Get.toNamed(
-                              RoutesNames.qualityFibreTesting,
-                              arguments: {
-                                'baleRecordId': resolvedBaleRecordId,
-                                'baleId': resolvedBaleId,
-                              },
-                            )
-                        : null,
-                  ),
+                      QualityResponsiveText(
+                        text: 'Choose a product category to begin recording\nquality parameters',
+                        style: GoogleFonts.poppins(fontSize: 15, color: Colors.grey),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 30),
 
-                  const SizedBox(height: 16),
-                  CustomActionCard(
-                    title: 'Yarn Testing',
-                    subtitle: 'Record Specifications for Yarn Samples',
-                    leadingIcon: Icon(
-                      Iconsax.component,
-                      color: AppColors.accentOrange,
-                    ),
-                    showEditIcon: hasYarn,
-                    onTap: hasYarn
-                        ? () => Get.snackbar(
-                              'Already recorded',
-                              'Use the pencil icon to update Yarn Testing.',
-                              snackPosition: SnackPosition.BOTTOM,
-                              margin: const EdgeInsets.all(16),
-                              borderRadius: 14,
-                              backgroundColor: AppColors.primaryDarkTeal,
-                              colorText: AppColors.cardWhite,
-                              icon: const Icon(Icons.edit, color: Colors.white),
-                              duration: const Duration(seconds: 2),
-                            )
-                        : () => Get.toNamed(
-                              RoutesNames.qualityYarnTesting,
-                              arguments: {
-                                'baleRecordId': resolvedBaleRecordId,
-                                'baleId': resolvedBaleId,
-                              },
-                            ),
-                    onEditTap: hasYarn
-                        ? () => Get.toNamed(
-                              RoutesNames.qualityYarnTesting,
-                              arguments: {
-                                'baleRecordId': resolvedBaleRecordId,
-                                'baleId': resolvedBaleId,
-                              },
-                            )
-                        : null,
-                  ),
+                      CustomActionCard(
+                        title: 'Fibre Testing',
+                        subtitle: 'Analyse Raw Material Quality Parameters',
+                        leadingIcon: const Icon(Iconsax.component, color: AppColors.accentOrange),
+                        showEditIcon: hasFibre,
+                        onTap: hasFibre
+                            ? () => Get.snackbar(
+                          'Already recorded', 'Use the pencil icon to update.',
+                          snackPosition: SnackPosition.BOTTOM, margin: const EdgeInsets.all(16),
+                          backgroundColor: AppColors.primaryDarkTeal, colorText: AppColors.cardWhite,
+                        )
+                            : () => Get.toNamed(RoutesNames.qualityFibreTesting, arguments: {
+                          'baleRecordId': resolvedBaleRecordId, 'baleId': resolvedBaleId,
+                        }),
+                        onEditTap: hasFibre ? () => Get.toNamed(RoutesNames.qualityFibreTesting, arguments: {
+                          'baleRecordId': resolvedBaleRecordId, 'baleId': resolvedBaleId,
+                        }) : null,
+                      ),
+                      const SizedBox(height: 16),
 
-                  const SizedBox(height: 16),
+                      CustomActionCard(
+                        title: 'Yarn Testing',
+                        subtitle: 'Record Specifications for Yarn Samples',
+                        leadingIcon: const Icon(Iconsax.component, color: AppColors.accentOrange),
+                        showEditIcon: hasYarn,
+                        onTap: hasYarn
+                            ? () => Get.snackbar('Already recorded', 'Use the pencil icon to update.',
+                            snackPosition: SnackPosition.BOTTOM, margin: const EdgeInsets.all(16),
+                            backgroundColor: AppColors.primaryDarkTeal, colorText: AppColors.cardWhite)
+                            : () => Get.toNamed(RoutesNames.qualityYarnTesting, arguments: {
+                          'baleRecordId': resolvedBaleRecordId, 'baleId': resolvedBaleId,
+                        }),
+                        onEditTap: hasYarn ? () => Get.toNamed(RoutesNames.qualityYarnTesting, arguments: {
+                          'baleRecordId': resolvedBaleRecordId, 'baleId': resolvedBaleId,
+                        }) : null,
+                      ),
+                      const SizedBox(height: 16),
 
-                  CustomActionCard(
-                    title: 'Fabric Testing',
-                    subtitle: 'Document Finished Products Quality Standards',
-                    leadingIcon: Icon(
-                      Iconsax.component,
-                      color: AppColors.accentOrange,
-                    ),
-                    showEditIcon: hasFabric,
-                    onTap: hasFabric
-                        ? () => Get.snackbar(
-                              'Already recorded',
-                              'Use the pencil icon to update Fabric Testing.',
-                              snackPosition: SnackPosition.BOTTOM,
-                              margin: const EdgeInsets.all(16),
-                              borderRadius: 14,
-                              backgroundColor: AppColors.primaryDarkTeal,
-                              colorText: AppColors.cardWhite,
-                              icon: const Icon(Icons.edit, color: Colors.white),
-                              duration: const Duration(seconds: 2),
-                            )
-                        : () => Get.toNamed(
-                              RoutesNames.qualityFabricTesting,
-                              arguments: {
-                                'baleRecordId': resolvedBaleRecordId,
-                                'baleId': resolvedBaleId,
-                              },
-                            ),
-                    onEditTap: hasFabric
-                        ? () => Get.toNamed(
-                              RoutesNames.qualityFabricTesting,
-                              arguments: {
-                                'baleRecordId': resolvedBaleRecordId,
-                                'baleId': resolvedBaleId,
-                              },
-                            )
-                        : null,
-                  ),
+                      CustomActionCard(
+                        title: 'Fabric Testing',
+                        subtitle: 'Document Finished Products Quality Standards',
+                        leadingIcon: const Icon(Iconsax.component, color: AppColors.accentOrange),
+                        showEditIcon: hasFabric,
+                        onTap: hasFabric
+                            ? () => Get.snackbar('Already recorded', 'Use the pencil icon to update.',
+                            snackPosition: SnackPosition.BOTTOM, margin: const EdgeInsets.all(16),
+                            backgroundColor: AppColors.primaryDarkTeal, colorText: AppColors.cardWhite)
+                            : () => Get.toNamed(RoutesNames.qualityFabricTesting, arguments: {
+                          'baleRecordId': resolvedBaleRecordId, 'baleId': resolvedBaleId,
+                        }),
+                        onEditTap: hasFabric ? () => Get.toNamed(RoutesNames.qualityFabricTesting, arguments: {
+                          'baleRecordId': resolvedBaleRecordId, 'baleId': resolvedBaleId,
+                        }) : null,
+                      ),
 
-                  ContinueButton(
-                    onPressed: () {
-                      Get.to(
-                        () => ViewScoreScreen(
-                          baleRecordId: resolvedBaleRecordId,
-                          baleId: resolvedBaleId,
-                        ),
-                      );
-                    },
-                    text: 'View Scores',
-                  ),
-                ],
-              );
-            },
-            ),
+                      const SizedBox(height: 20),
+                      ContinueButton(
+                        onPressed: () {
+                          Get.to(() => ViewScoreScreen(
+                            baleRecordId: resolvedBaleRecordId,
+                            baleId: resolvedBaleId,
+                          ));
+                        },
+                        text: 'View Scores',
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ],
         ),

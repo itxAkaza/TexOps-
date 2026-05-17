@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/lab_engineer/dashboard/components/drawer/drawer.dart';
 import '../../../controllers/lab_engineer/lab_engineer_Dashboard/labEngineer_dashboard_controller.dart';
 import '../../../resources/colors/app_colors.dart';
+import '../../chat_bot/chat_bot_screen.dart';
 import 'components/intro_card.dart';
 import 'components/recent_activity_card.dart';
 
@@ -109,6 +111,18 @@ class LabEnigneerDashboard extends StatelessWidget
           ),
         ),
       ),
-    );
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){
+            Get.to(()=>ChatBotScreen());
+          },
+          backgroundColor: AppColors.accentOrange,
+          child: Icon(
+            Iconsax.gps5,
+            size: 30,
+            color: AppColors.primaryDarkTeal,
+          ),
+        )
+
+        );
   }
 }

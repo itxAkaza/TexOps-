@@ -26,4 +26,5 @@ class RoutesNames {
   static const String qualityYarnTesting = '/qualityYarnTesting';
   static const String qualityFabricTesting = '/qualityFabricTesting';
   static const String qualityReview = '/qualityReview';
+  static const String QualityPersondashboardview = '/QualityPersondashboardview';
 }

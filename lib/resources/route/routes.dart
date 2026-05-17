@@ -26,6 +26,7 @@ import 'package:texops/screens/lab_engineer/viewShareQr/viewShare_Qr_Screen.dart
 import '../../screens/lab_engineer/gatePassTransfer_screen/gatePassTransferList_screen.dart';
 import '../../screens/lab_engineer/record_gatePass/bail_entry_screen.dart';
 import '../../screens/onBoarding/intro_screen.dart';
+import '../../screens/qualityPerson/quality_personDashBoard.dart';
 
 class AppRoutes {
   static List<GetPage> appRoutes() => [
@@ -129,6 +130,11 @@ class AppRoutes {
     GetPage(
       name: RoutesNames.qualityFabricTesting,
       page: () => const FabricTestingScreen(),
+      transition: Transition.rightToLeftWithFade,
+    ),
+    GetPage(
+      name: RoutesNames.QualityPersondashboardview,
+      page: () => QualityPersondashboard(),
       transition: Transition.rightToLeftWithFade,
     ),
     GetPage(

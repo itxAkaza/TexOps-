@@ -1,7 +1,13 @@
 import 'package:get/get.dart';
 import 'package:texops/data/models/quality_testing/quality_test_models.dart';
 import 'package:texops/resources/route/routes_names.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/quality_review_screen.dart';
+import 'package:texops/screens/QualityMeasures/Screens/chooseCategory/choose_category.dart';
+import 'package:texops/screens/QualityMeasures/Screens/fabric/fabric_input.dart';
+import 'package:texops/screens/QualityMeasures/Screens/fibre/fibre_input.dart';
+import 'package:texops/screens/QualityMeasures/Screens/yarn/yarn_input.dart';
 import 'package:texops/screens/chat_bot/chat_bot_screen.dart';
+import 'package:texops/screens/admin/bale_inventory/admin_bale_details_screen.dart';
 import 'package:texops/screens/admin/bale_inventory/admin_bale_inventory_screen.dart';
 // --- Admin Screens ---
 import 'package:texops/screens/admin/dashboard/admin_dashboard.dart';
@@ -88,12 +94,17 @@ class AppRoutes {
       page: () => AdminBaleInventoryScreen(),
       transition: Transition.rightToLeftWithFade,
     ),
+    GetPage(
+      name: RoutesNames.adminBaleInfo,
+      page: () => const AdminBaleDetailsScreen(),
+      transition: Transition.rightToLeftWithFade,
+    ),
     
-    // GetPage(
-    //   name: RoutesNames.adminUserDirectory,
-    //   page: () => //AdminUserDirectory(),
-    //   transition: Transition.rightToLeftWithFade,
-    // ),
+    GetPage(
+      name: RoutesNames.adminUserDirectory,
+      page: () => AdminUserDirectory(),
+      transition: Transition.rightToLeftWithFade,
+    ),
     GetPage(
       name: RoutesNames.chatBotScreen,
       page: () => const ChatBotScreen(),

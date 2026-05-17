@@ -48,7 +48,7 @@ A comprehensive module for Lab Engineers to record, calculate, and review materi
 
 ---
 
-### 🤖 4. TexOps AI Assistant
+### 🤖 4. TexOps AI Assistant: Bobbin AI
 
 - An integrated, context-aware AI chatbot designed for Lab Engineers.
 - Provides immediate assistance on textile formulas, fabric care, GSM calculations, and weave structures directly on the factory floor.

@@ -22,7 +22,10 @@ class ChatSuggestionCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16), // Adjusted for precise proportions
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ), // Adjusted for precise proportions
           decoration: BoxDecoration(
             color: AppColors.cardOffWhite, // The card background
             borderRadius: BorderRadius.circular(16),
@@ -42,7 +45,7 @@ class ChatSuggestionCard extends StatelessWidget {
                 height: 48,
                 decoration: BoxDecoration(
                   // Automatically creates the perfect pale background matching your theme
-                  color: AppColors.primaryDarkTeal.withValues(alpha: 0.1), 
+                  color: AppColors.primaryDarkTeal.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -51,9 +54,9 @@ class ChatSuggestionCard extends StatelessWidget {
                   size: 24,
                 ),
               ),
-              
+
               const SizedBox(width: 16),
-              
+
               // Title Text
               Expanded(
                 child: Text(
@@ -65,11 +68,13 @@ class ChatSuggestionCard extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // Trailing Chevron
               Icon(
                 Icons.chevron_right_rounded,
-                color: AppColors.primaryDarkTeal.withValues( alpha: 0.6), // Slightly faded as per design
+                color: AppColors.primaryDarkTeal.withValues(
+                  alpha: 0.6,
+                ), // Slightly faded as per design
                 size: 26,
               ),
             ],

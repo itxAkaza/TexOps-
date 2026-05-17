@@ -57,7 +57,9 @@ class AdminUserDirectory extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Get.back();
+          },
           icon: Icon(Icons.arrow_back_ios, color: AppColors.primaryDarkTeal),
         ),
         title: Text(

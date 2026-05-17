@@ -40,6 +40,43 @@ class FirebaseAuthService {
     }
   }
 
+  Future<UserCredential?> signIn({
+    required String email,
+    required String pass,
+  }) async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+
+      final UserCredential userCredential = await auth
+          .signInWithEmailAndPassword(email: email.trim(), password: pass);
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      _handleSignInException(e);
+      return null;
+    } on FirebaseException catch (e) {
+      Utils.ShowSnackbar("Firebase error: ${e.message ?? 'Unknown error'}");
+      return null;
+    } catch (e) {
+      Utils.ShowSnackbar("Unexpected error occurred. Try again.");
+      return null;
+    }
+  }
+
+  static Future<void> signOut() async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      await auth.signOut();
+      Utils.toastMessegessuccess("log out success");
+    } catch (e) {
+      Utils.toastMesseges(e.toString());
+    }
+  }
+
+  Future<void> sendPasswordReset(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
   void _handleAuthException(FirebaseAuthException e) {
     String message;
 
@@ -68,4 +105,33 @@ class FirebaseAuthService {
 
     Utils.ShowSnackbar(message);
   }
+}
+
+void _handleSignInException(FirebaseAuthException e) {
+  String message;
+
+  switch (e.code) {
+    case 'user-not-found':
+      message = "No user found with this email.";
+      break;
+    case 'wrong-password':
+      message = "Incorrect password. Try again.";
+      break;
+    case 'invalid-email':
+      message = "Invalid email format.";
+      break;
+    case 'user-disabled':
+      message = "This account has been disabled.";
+      break;
+    case 'too-many-requests':
+      message = "Too many attempts. Please try later.";
+      break;
+    case 'network-request-failed':
+      message = "No internet connection. Try again.";
+      break;
+    default:
+      message = e.message ?? "Login failed.";
+  }
+
+  Utils.ShowSnackbar(message);
 }

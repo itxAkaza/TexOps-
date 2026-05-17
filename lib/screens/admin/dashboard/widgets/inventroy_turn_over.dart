@@ -1,167 +1,221 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:texops/controllers/admin/dashboard_controller.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 
 class InventoryTurnoverChart extends StatelessWidget {
   const InventoryTurnoverChart({super.key});
 
+  static const _storageColor = AppColors.primaryDarkTeal;
+  static const _consumedColor = AppColors.accentOrange;
+
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<DashboardController>();
+
     return Container(
-      height: 260,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        color: AppColors.cardWhite,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.autoRecorded, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             "Inventory Turn Over",
-            style: TextStyle(
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w600,
               color: AppColors.primaryDarkTeal,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+              fontSize: 14,
             ),
           ),
-          const SizedBox(height: 12),
-          _buildLegend(),
-          const SizedBox(height: 20),
-          Expanded(
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceAround,
-                maxY: 1200,
-                barTouchData: BarTouchData(enabled: true),
-                titlesData: _buildTitles(),
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  getDrawingHorizontalLine: (value) => FlLine(
-                    color: Colors.grey.withOpacity(0.1),
-                    strokeWidth: 1,
+
+          const SizedBox(height: 10),
+
+          Wrap(
+            spacing: 16,
+            runSpacing: 8,
+            children: [
+              _legendDot(_storageColor, "In Storage"),
+              _legendDot(_consumedColor, "Consumed"),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          SizedBox(
+            height: 220,
+            child: Obx(() {
+              if (controller.isLoadingBales.value) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryDarkTeal,
+                    strokeWidth: 2,
                   ),
+                );
+              }
+
+              final weeklyData = controller.getTurnoverDataByWeek();
+              final inStorageWeeks = weeklyData['inStorage']!;
+              final consumedWeeks = weeklyData['consumed']!;
+
+              final maxValue = [
+                ...inStorageWeeks,
+                ...consumedWeeks,
+              ].reduce((a, b) => a > b ? a : b);
+
+              final double maxY = maxValue > 0
+                  ? ((maxValue / 100).ceil() + 1) * 100
+                  : 500;
+
+              final double interval = maxY / 5.0;
+
+              return BarChart(
+                BarChartData(
+                  maxY: maxY,
+                  groupsSpace: 12,
+                  borderData: FlBorderData(show: false),
+
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: interval,
+                    getDrawingHorizontalLine: (value) => FlLine(
+                      color: AppColors.autoRecorded.withOpacity(0.5),
+                      strokeWidth: 1,
+                    ),
+                  ),
+
+                  titlesData: FlTitlesData(
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 32,
+                        getTitlesWidget: (val, _) {
+                          const titles = [
+                            "Week 1",
+                            "Week 2",
+                            "Week 3",
+                            "Week 4",
+                          ];
+
+                          if (val >= 0 && val < titles.length) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                titles[val.toInt()],
+                                style: GoogleFonts.poppins(
+                                  color: AppColors.textGrey,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: interval,
+                        reservedSize: 40,
+                        getTitlesWidget: (val, _) => Text(
+                          val.toInt().toString(),
+                          style: GoogleFonts.poppins(
+                            color: AppColors.textGrey,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  barGroups: List.generate(4, (index) {
+                    final sY = inStorageWeeks[index];
+                    final cY = consumedWeeks[index];
+
+                    return BarChartGroupData(
+                      x: index,
+                      barsSpace: 8,
+                      barRods: [
+                        BarChartRodData(
+                          toY: sY,
+                          color: _storageColor,
+                          width: 28,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(6),
+                          ),
+                          backDrawRodData: BackgroundBarChartRodData(
+                            show: sY > 0,
+                            toY: sY,
+                            color: AppColors.backgroundLightPeach.withOpacity(
+                              0.4,
+                            ),
+                          ),
+                        ),
+                        BarChartRodData(
+                          toY: cY,
+                          color: _consumedColor,
+                          width: 28,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(6),
+                          ),
+                          backDrawRodData: BackgroundBarChartRodData(
+                            show: cY > 0,
+                            toY: cY,
+                            color: AppColors.backgroundLightPeach.withOpacity(
+                              0.4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
                 ),
-                borderData: FlBorderData(show: false),
-                barGroups: _buildBarGroups(),
-              ),
-            ),
+              );
+            }),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLegend() {
+  Widget _legendDot(Color color, String label) {
     return Row(
-      children: [
-        _legendItem(AppColors.primaryDarkTeal, "Received"),
-        const SizedBox(width: 16),
-        _legendItem(AppColors.accentOrange, "Consumed"),
-      ],
-    );
-  }
-
-  Widget _legendItem(Color color, String label) {
-    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 12,
-          height: 12,
+          width: 11,
+          height: 11,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(3),
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 5),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 11,
+          style: GoogleFonts.poppins(
+            fontSize: 10,
             color: AppColors.textGrey,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
-    );
-  }
-
-  List<BarChartGroupData> _buildBarGroups() {
-    // Data for Q1, Q2, Q3, Q4
-    // Each group has two bars: [Received, Consumed]
-    return [
-      _makeGroupData(0, 800, 750),
-      _makeGroupData(1, 1000, 950),
-      _makeGroupData(2, 700, 680),
-      _makeGroupData(3, 900, 850),
-    ];
-  }
-
-  BarChartGroupData _makeGroupData(int x, double received, double consumed) {
-    return BarChartGroupData(
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: received,
-          color: AppColors.primaryDarkTeal,
-          width: 12,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        BarChartRodData(
-          toY: consumed,
-          color: AppColors.accentOrange,
-          width: 12,
-          borderRadius: BorderRadius.circular(4),
-        ),
-      ],
-    );
-  }
-
-  FlTitlesData _buildTitles() {
-    return FlTitlesData(
-      show: true,
-      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 40,
-          getTitlesWidget: (value, meta) => SideTitleWidget(
-            meta: meta,
-            child: Text(
-              "${(value / 1000).toStringAsFixed(1)}k",
-              style: const TextStyle(color: AppColors.textGrey, fontSize: 10),
-            ),
-          ),
-        ),
-      ),
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          getTitlesWidget: (value, meta) {
-            const titles = ['Q1', 'Q2', 'Q3', 'Q4'];
-            return SideTitleWidget(
-              meta: meta,
-              child: Text(
-                titles[value.toInt()],
-                style: const TextStyle(
-                  color: AppColors.textGrey,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            );
-          },
-        ),
-      ),
     );
   }
 }

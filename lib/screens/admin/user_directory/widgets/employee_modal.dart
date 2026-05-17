@@ -29,7 +29,6 @@ class EmployeeModal extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// DRAG HANDLE
               Center(
                 child: Container(
                   width: 40,
@@ -144,7 +143,6 @@ class EmployeeModal extends StatelessWidget {
 
               const SizedBox(height: 22),
 
-              /// FORM
               Form(
                 key: controller.formKey,
                 child: Column(
@@ -156,15 +154,12 @@ class EmployeeModal extends StatelessWidget {
                       hint: "e.g Ali Ahmed",
                       keyboardType: TextInputType.name,
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
+                        if (v == null || v.trim().isEmpty)
                           return "Full name is required";
-                        }
-                        if (v.trim().length < 3) {
+                        if (v.trim().length < 3)
                           return "Name must be at least 3 characters";
-                        }
-                        if (!RegExp(r"^[a-zA-Z\s]+$").hasMatch(v.trim())) {
+                        if (!RegExp(r"^[a-zA-Z\s]+$").hasMatch(v.trim()))
                           return "Name must contain letters only";
-                        }
                         return null;
                       },
                     ),
@@ -177,15 +172,13 @@ class EmployeeModal extends StatelessWidget {
                       hint: "name@gmail.com",
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
+                        if (v == null || v.trim().isEmpty)
                           return "Email is required";
-                        }
                         final emailRegex = RegExp(
                           r"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$",
                         );
-                        if (!emailRegex.hasMatch(v.trim())) {
+                        if (!emailRegex.hasMatch(v.trim()))
                           return "Enter a valid email address";
-                        }
                         return null;
                       },
                     ),
@@ -224,7 +217,8 @@ class EmployeeModal extends StatelessWidget {
                             controller.registerUser(
                               name: controller.name.text.trim(),
                               role: controller.role.value,
-                              personalEmail: controller.email.value.text,
+                              // FIXED: Changed from controller.email.value.text to controller.email.text
+                              generatedEmail: controller.email.text.trim(),
                             );
                           }
                         },
@@ -326,7 +320,6 @@ class EmployeeModal extends StatelessWidget {
 
   Widget _dropdown() {
     final roles = ["Lab Engineer", "Quality Engineer"];
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:texops/controllers/admin/dashboard_controller.dart';
 import 'package:texops/resources/colors/app_colors.dart';
 import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/admin/dashboard/widgets/admin_stat_card.dart';
 import 'package:texops/screens/admin/dashboard/widgets/fiber_price_chart.dart';
 import 'package:texops/screens/admin/dashboard/widgets/inventroy_turn_over.dart';
+import 'package:texops/screens/lab_engineer/dashboard/components/drawer/drawer.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Inject and instantiate the GetX state controller
+    final controller = Get.put(DashboardController());
     final size = MediaQuery.of(context).size;
     final crossAxisCount = size.width > 650 ? 4 : 2;
 
@@ -20,100 +24,110 @@ class AdminDashboard extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: false,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: AppColors.primaryDarkTeal,
-              size: 22,
-            ),
-            onPressed: () {},
-          ),
-        ),
+        // Set to true so the hamburger menu icon appears naturally to open the drawer panel
+        automaticallyImplyLeading: true,
+        iconTheme: const IconThemeData(color: AppColors.primaryDarkTeal),
+        centerTitle: false,
         title: Text(
           "TexOps Overview",
           style: GoogleFonts.poppins(
             color: AppColors.primaryDarkTeal,
             fontWeight: FontWeight.bold,
             fontSize: 20,
-            letterSpacing: -0.1,
           ),
         ),
-        centerTitle: false,
+      ),
+      // Wrapped in Obx so updates to profile data re-render the drawer instantly
+      drawer: Obx(
+        () => MYDrawer(
+          userName: controller.userName.value,
+          userEmail: controller.userEmail.value,
+          userRole: controller.userRole.value,
+          userImageUrl: controller.userImageUrl.value,
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 12.0,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GridView.count(
-                    crossAxisCount: crossAxisCount,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 1.2,
-                    children: [
-                      AdminStatCard(
-                        backgroundColor: AppColors.primaryDarkTeal,
-                        headingText: "Total Gate Passes",
-                        icon: Icons.description_outlined,
-                        bodyText: "342",
-                        subtitleText: "View GatePass list",
-                        onTap: () {
-                          Get.toNamed(RoutesNames.adminBaleInventory);
-                        },
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Stat Cards Grid Layout ─────────────────────────────
+              Obx(() {
+                final s = controller.stats.value;
+                return GridView.count(
+                  crossAxisCount: crossAxisCount,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 1.2,
+                  children: [
+                    AdminStatCard(
+                      backgroundColor: AppColors.primaryDarkTeal,
+                      headingText: "Total Gate Passes",
+                      icon: Icons.description_outlined,
+                      bodyText: s.totalGatePasses.toString(),
+                      subtitleText: "View GatePass list",
+                      onTap: () => Get.toNamed(RoutesNames.adminGatePass),
+                    ),
+                    AdminStatCard(
+                      backgroundColor: AppColors.accentOrange,
+                      headingText: "Inventory Count",
+                      icon: Icons.inventory_2_outlined,
+                      bodyText: _formatCount(s.totalBalesCount),
+                      subtitleText: "Number of Bales",
+                      onTap: () => Get.toNamed(
+                        RoutesNames.adminBaleInventory,
+                        arguments: controller.rawBailData.toList(),
                       ),
-                      AdminStatCard(
-                        backgroundColor: AppColors.accentOrange,
-                        headingText: "Inventory Count",
-                        icon: Icons.inventory_2_outlined,
-                        bodyText: "7,265",
-                        subtitleText: "Number of Bales",
-                        onTap: () {
-                          Get.toNamed(RoutesNames.adminBaleInventory);
-                        },
-                      ),
-                      AdminStatCard(
-                        backgroundColor: AppColors.accentOrange,
-                        headingText: "Overall Quality Rate",
-                        icon: Icons.verified_outlined,
-                        bodyText: "94.8%",
-                        subtitleText: "All Quality Rates",
-                        onTap: () {
-                          Get.toNamed(RoutesNames.adminBaleInventory);
-                        },
-                      ),
-                      AdminStatCard(
-                        backgroundColor: AppColors.primaryDarkTeal,
-                        headingText: "Total Users",
-                        icon: Icons.supervised_user_circle_rounded,
-                        bodyText: "12",
-                        subtitleText: "Add New User",
-                        onTap: () {
-                          Get.toNamed(RoutesNames.adminBaleInventory);
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  FiberPriceChart(),
-                  const SizedBox(height: 10),
-                  InventoryTurnoverChart(),
-                ],
-              ),
-            ),
+                    ),
+                    AdminStatCard(
+                      backgroundColor: AppColors.accentOrange,
+                      headingText: "Overall Quality Rate",
+                      icon: Icons.verified_outlined,
+                      bodyText: "${s.totalQualityScore.toStringAsFixed(1)}%",
+                      subtitleText: "All Quality Rates",
+                      onTap: () => Get.toNamed(RoutesNames.adminQuality),
+                    ),
+                    AdminStatCard(
+                      backgroundColor: AppColors.primaryDarkTeal,
+                      headingText: "Total Users",
+                      icon: Icons.supervised_user_circle_rounded,
+                      bodyText: s.totalUsers.toString(),
+                      subtitleText: "Add New User",
+                      onTap: () => Get.toNamed(RoutesNames.adminUserDirectory),
+                    ),
+                  ],
+                );
+              }),
+
+              const SizedBox(height: 14),
+
+              // ── Line Chart ──────────────────────────────────────
+              const FiberPriceChart(),
+
+              const SizedBox(height: 14),
+
+              // ── Bar Chart ───────────────────────────────────────
+              const InventoryTurnoverChart(),
+
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  /// Compact number formatter for stat cards (e.g. 7265 → "7.3k")
+  String _formatCount(int value) {
+    if (value >= 1000000) {
+      return '${(value / 1000000).toStringAsFixed(1)}M';
+    }
+    if (value >= 1000) {
+      return '${(value / 1000).toStringAsFixed(1)}k';
+    }
+    return value.toString();
   }
 }

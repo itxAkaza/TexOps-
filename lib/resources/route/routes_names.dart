@@ -4,6 +4,7 @@ class RoutesNames {
   static const String adminBaleInfo = '/adminBaleInfo';
   static const String adminUserDirectory = '/adminUserDirectory';
   static const String adminGatePass = '/adminGatePass';
+  static const String chatBotScreen = '/chatBotScreen';
 
   static const String introScreen = "/";
 

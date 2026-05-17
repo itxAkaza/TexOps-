@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart'; // Adjust path if needed
+import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 
 class StepIndicatorLabelText extends StatelessWidget {
   final int currentStep; // The screen we are currently on
@@ -20,12 +21,12 @@ class StepIndicatorLabelText extends StatelessWidget {
     // Only highlight the text if the screen strictly matches this step
     final bool isActive = currentStep == stepIndex;
 
-    return Text(
-      text,
-      textAlign: TextAlign.center, // Keeps the two-line text centered
+    return QualityResponsiveText(
+      text: text,
+      textAlign: TextAlign.center,
+      maxLines: 2,
       style: GoogleFonts.poppins(
         textStyle: TextStyle(
-          overflow: TextOverflow.ellipsis,
           color: isActive ? AppColors.primaryDarkTeal : Colors.grey,
         ),
         fontSize: 12,

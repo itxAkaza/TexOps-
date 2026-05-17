@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/controllers/auth/auth_controller.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/screens/auth/forgot_password.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
+
   final controller = Get.put(AuthController());
   final _formKey = GlobalKey<FormState>();
 
@@ -13,16 +16,19 @@ class LoginScreen extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: AppColors.backgroundLightPeach,
       appBar: AppBar(
         foregroundColor: Colors.transparent,
         backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      backgroundColor: AppColors.backgroundLightPeach,
+      extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
             children: [
+              SizedBox(height: screenHeight * 0.1),
               SizedBox(
                 height: screenHeight * 0.28,
                 width: double.infinity,
@@ -34,27 +40,29 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 30),
-                    const Text(
+                    Text(
                       "Login to Access Your",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: AppColors.primaryDarkTeal,
                       ),
                     ),
-                    const Text(
+                    Text(
                       "Mill Operations",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
                         color: AppColors.accentOrange,
                       ),
                     ),
                     const SizedBox(height: 40),
+
                     _buildTextField(
                       controller: controller.emailController,
                       hintText: "Enter your email",
                       icon: Icons.email_outlined,
+                      keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Email is required";
@@ -69,6 +77,7 @@ class LoginScreen extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 20),
+
                     Obx(
                       () => _buildTextField(
                         controller: controller.passwordController,
@@ -88,7 +97,24 @@ class LoginScreen extends StatelessWidget {
                         },
                       ),
                     ),
+                    const SizedBox(height: 12),
+
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () => Get.to(() => ForgotPasswordScreen()),
+                        child: Text(
+                          "Forgot Password?",
+                          style: GoogleFonts.poppins(
+                            color: AppColors.primaryDarkTeal,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 30),
+
                     Obx(
                       () => SizedBox(
                         width: double.infinity,
@@ -109,13 +135,18 @@ class LoginScreen extends StatelessWidget {
                             elevation: 0,
                           ),
                           child: controller.isLoading.value
-                              ? const CircularProgressIndicator(
-                                  color: AppColors.cardWhite,
+                              ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.5,
+                                  ),
                                 )
-                              : const Text(
+                              : Text(
                                   "Login",
-                                  style: TextStyle(
-                                    color: AppColors.cardWhite,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -140,36 +171,71 @@ class LoginScreen extends StatelessWidget {
     required IconData icon,
     bool isPassword = false,
     bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
     VoidCallback? toggleVisibility,
     String? Function(String?)? validator,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cardWhite,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: AppColors.primaryDarkTeal, width: 1.5),
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      validator: validator,
+      keyboardType: keyboardType,
+      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+      style: GoogleFonts.poppins(
+        color: AppColors.primaryDarkTeal,
+        fontSize: 15,
       ),
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscureText,
-        validator: validator,
-        style: const TextStyle(color: AppColors.primaryDarkTeal),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: const TextStyle(color: AppColors.textGrey),
-          prefixIcon: Icon(icon, color: AppColors.primaryDarkTeal),
-          suffixIcon: isPassword
-              ? IconButton(
-                  icon: Icon(
-                    obscureText ? Icons.visibility_off : Icons.visibility,
-                    color: AppColors.primaryDarkTeal.withOpacity(0.5),
-                  ),
-                  onPressed: toggleVisibility,
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
-          errorStyle: const TextStyle(color: Colors.redAccent, fontSize: 12),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: GoogleFonts.poppins(
+          color: Colors.grey.shade400,
+          fontSize: 14,
+        ),
+        prefixIcon: Icon(icon, color: AppColors.primaryDarkTeal),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  obscureText
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                  color: AppColors.primaryDarkTeal.withOpacity(0.6),
+                  size: 20,
+                ),
+                onPressed: toggleVisibility,
+              )
+            : null,
+        filled: true,
+        fillColor: Colors.white,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(
+            color: AppColors.primaryDarkTeal,
+            width: 1.5,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(
+            color: AppColors.accentOrange,
+            width: 2.0,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 16,
+        ),
+        errorStyle: GoogleFonts.poppins(
+          color: Colors.redAccent.shade400,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

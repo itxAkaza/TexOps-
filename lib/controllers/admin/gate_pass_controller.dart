@@ -6,21 +6,26 @@ class GatePassController extends GetxController {
   final GatePassFirebaseService _service = GatePassFirebaseService();
 
   RxList<GatePassModel> allPasses = <GatePassModel>[].obs;
-  RxList<GatePassModel> displayedPasses =
-      <GatePassModel>[].obs; // Use this for ListView
+  RxList<GatePassModel> displayedPasses = <GatePassModel>[].obs;
   RxString searchQuery = ''.obs;
   RxString selectedStatus = 'All'.obs;
   RxString selectedType = 'All'.obs;
+
+  /// Options shown in the type dropdown on screen
+  final List<String> typeOptions = const ['All', 'Cotton', 'Polyester'];
 
   @override
   void onInit() {
     allPasses.bindStream(_service.getGatePass());
 
-    // This updates displayedPasses only when data, search, or filters change
     everAll([allPasses, searchQuery, selectedStatus, selectedType], (_) {
       _filterList();
     });
     super.onInit();
+  }
+
+  void onTypeChanged(String? value) {
+    if (value != null) selectedType.value = value;
   }
 
   void _filterList() {
@@ -32,10 +37,14 @@ class GatePassController extends GetxController {
       final searchMatch =
           record.vehicleNumber.toLowerCase().contains(q) ||
           record.supplier.toLowerCase().contains(q);
+
       final statusMatch =
-          status == "All" ||
-          (status == "Pending" ? !record.qualityStatus : record.qualityStatus);
-      final typeMatch = type == "All" || record.baleType == type;
+          status == 'All' ||
+          (status == 'Pending' ? !record.qualityStatus : record.qualityStatus);
+
+      // Case-insensitive match so 'Cotton' matches 'cotton' in Firestore too
+      final typeMatch =
+          type == 'All' || record.baleType.toLowerCase() == type.toLowerCase();
 
       return searchMatch && statusMatch && typeMatch;
     }).toList();

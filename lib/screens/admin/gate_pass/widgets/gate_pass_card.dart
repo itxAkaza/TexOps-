@@ -23,23 +23,6 @@ class GatePassCard extends StatelessWidget {
     } catch (e) {
       formattedPrice = model.price;
     }
-    String formatGatepassId(String raw) {
-      try {
-        final underscoreSplit = raw.split('_');
-        final name = underscoreSplit[0];
-
-        final secondPart = underscoreSplit.length > 1 ? underscoreSplit[1] : '';
-        final number = secondPart.split('-')[0];
-
-        final formattedName = name.isNotEmpty
-            ? name[0].toUpperCase() + name.substring(1)
-            : '';
-
-        return "$formattedName-$number";
-      } catch (e) {
-        return raw;
-      }
-    }
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -94,7 +77,7 @@ class GatePassCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  formatGatepassId(model.baleID),
+                  _formatGatepassId(model.baleID),
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -168,5 +151,21 @@ class GatePassCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Formats a raw bale ID string like "ahmed_8902-1" → "Ahmed-8902"
+  static String _formatGatepassId(String raw) {
+    try {
+      final underscoreSplit = raw.split('_');
+      final name = underscoreSplit[0];
+      final secondPart = underscoreSplit.length > 1 ? underscoreSplit[1] : '';
+      final number = secondPart.split('-')[0];
+      final formattedName = name.isNotEmpty
+          ? name[0].toUpperCase() + name.substring(1)
+          : '';
+      return "$formattedName-$number";
+    } catch (e) {
+      return raw;
+    }
   }
 }

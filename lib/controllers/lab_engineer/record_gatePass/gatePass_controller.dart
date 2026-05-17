@@ -16,13 +16,14 @@ class BaleEntryController extends GetxController {
   final gatePassRefController = TextEditingController();
   final vehicleNumberController = TextEditingController();
   final selectedSupplier = Rxn<String>();
-  final arrivalTime =  DateFormat('dd MMMM yyyy, hh:mm a').format(DateTime.now());
+  final arrivalTime = DateFormat(
+    'dd MMMM yyyy, hh:mm a',
+  ).format(DateTime.now());
   // Add these Form Keys
   final GlobalKey<FormState> formKeyStep1 = GlobalKey<FormState>();
   final GlobalKey<FormState> formKeyStep2 = GlobalKey<FormState>();
 
   final RxString qrData = ''.obs;
-
 
   // --- Bale Inventory Controllers ---
   final RxString generatedBaleId = ''.obs;
@@ -32,14 +33,8 @@ class BaleEntryController extends GetxController {
   final weightController = TextEditingController();
   final priceController = TextEditingController();
 
-
-
-
-  final bool QualityStatus=false;
-  final bool ReadyforYarn=false;
-
-
-
+  final bool QualityStatus = false;
+  final bool ReadyforYarn = false;
 
   // --- Reactive Dynamic Data ---
   final RxList<String> suppliers = <String>[].obs;
@@ -53,18 +48,13 @@ class BaleEntryController extends GetxController {
   }
 
   Future<void> _loadDynamicData() async {
-
     final details = await BailRecordService.getEngineerDetails();
     engineerName.value = details['name']!;
     engineerId.value = details['employeeId']!;
 
-
     final fetchedSuppliers = await BailRecordService.fetchSuppliers();
     suppliers.assignAll(fetchedSuppliers);
   }
-
-
-
 
   String? validateNumber(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) return '$fieldName is required';
@@ -75,25 +65,21 @@ class BaleEntryController extends GetxController {
   }
 
   Future<void> shareQRAsPDF() async {
-
     try {
       await GatePassPdfService.generateAndShare(
         gatePassId: gatePassRefController.text.trim(),
         qrData: qrData.value,
       );
     } catch (e) {
-
       Utils.toastMesseges(e.toString());
     }
   }
-
 
   Future<void> saveTagAndRegister() async {
     String? currentUserId = BailRecordService.getCurrentUserId();
 
     isLoading.value = true;
 
-    // Gather all the exact data you want to save to the database
     Map<String, dynamic> databaseData = {
       'gatePassRef': gatePassRefController.text.trim(),
       'vehicleNumber': vehicleNumberController.text.trim(),
@@ -111,7 +97,7 @@ class BaleEntryController extends GetxController {
       'qualityStatus': QualityStatus,
       'readyForYarn': ReadyforYarn,
       'qrCodeData': qrData.value,
-      "in":true
+      "in": true,
     };
 
     try {
@@ -126,21 +112,14 @@ class BaleEntryController extends GetxController {
       isLoading.value = false;
 
       // Optional: Clear form or navigate back here
-
     } catch (e) {
-
       Utils.toastMesseges(e.toString());
       isLoading.value = false;
-
     }
   }
 
-
-
-  void goToNextStep()
-  {
-    if (currentStep.value == 0)
-    {
+  void goToNextStep() {
+    if (currentStep.value == 0) {
       String gatePass = gatePassRefController.text.trim();
 
       String idDateFormatter = DateFormat('yyMMdd-HHmm').format(DateTime.now());
@@ -152,12 +131,10 @@ class BaleEntryController extends GetxController {
   }
 
   void goToPreviousStep() {
-    if (currentStep.value == 1)
-    {
+    if (currentStep.value == 1) {
       currentStep.value = 0;
     }
   }
-
 
   void submitData() {
     Map<String, dynamic> baleData = {
@@ -171,10 +148,9 @@ class BaleEntryController extends GetxController {
       'quantity': quantityController.text.trim(),
       'weight': weightController.text.trim(),
       'price': priceController.text.trim(),
-      "engineerID":engineerId.value,
-      "in":true
+      "engineerID": engineerId.value,
+      "in": true,
     };
-
 
     qrData.value = jsonEncode(baleData);
   }

@@ -1,49 +1,53 @@
 class UserModel {
   final String uid;
-  final String personalEmail;
   final String generatedEmail;
-  final String name;
   final String? profilePic;
+  final String name;
   final String role;
   final String employeeId;
   final DateTime dateJoined;
+  final double? totalBalesAmount;
 
   UserModel({
     required this.uid,
-    required this.personalEmail,
     required this.generatedEmail,
-    required this.name,
     this.profilePic,
+    required this.name,
     required this.role,
     required this.employeeId,
     required this.dateJoined,
+    this.totalBalesAmount,
   });
 
+  /// Converts the UserModel instance into a clean Map for writing to Firestore
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
-      'personalEmail': personalEmail,
       'generatedEmail': generatedEmail,
-      'name': name,
       'profilePic': profilePic,
+      'name': name,
       'role': role,
       'employeeId': employeeId,
       'dateJoined': dateJoined.toIso8601String(),
+      'totalBalesAmount': totalBalesAmount ?? 0.0,
     };
   }
 
+  /// Factory constructor to map your incoming Firestore document snapshots safely
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       uid: map['uid'] ?? '',
-      personalEmail: map['personalEmail'] ?? '',
-      generatedEmail: map['generatedEmail'] ?? '',
-      name: map['name'] ?? '',
+      generatedEmail: map['generatedEmail'] ?? map['personalEmail'] ?? map['email'] ?? '',
       profilePic: map['profilePic'],
+      name: map['name'] ?? '',
       role: map['role'] ?? '',
       employeeId: map['employeeId'] ?? '',
-      dateJoined: DateTime.parse(
-        map['dateJoined'] ?? DateTime.now().toIso8601String(),
-      ),
+      dateJoined: map['dateJoined'] != null
+          ? DateTime.parse(map['dateJoined'])
+          : DateTime.now(),
+      totalBalesAmount: map['totalBalesAmount'] != null
+          ? (map['totalBalesAmount'] as num).toDouble()
+          : 0.0,
     );
   }
 }

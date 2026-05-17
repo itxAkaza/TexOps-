@@ -1,7 +1,9 @@
 // TODO: AppBarWithBack — reusable
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:texops/resources/colors/app_colors.dart';
+import 'package:texops/screens/QualityMeasures/Screens/Common/quality_responsive_text.dart';
 
 
 /// A generic reusable AppBar with a back arrow, centered title,
@@ -26,6 +28,7 @@ class AppBarWithBack extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: AppColors.backgroundLightPeach,
       elevation: 0,
+      actionsPadding:.only(right: 20),
       scrolledUnderElevation: 0,
       //centerTitle: true,
       leading: IconButton(
@@ -34,15 +37,17 @@ class AppBarWithBack extends StatelessWidget implements PreferredSizeWidget {
           color: AppColors.primaryDarkTeal,
           size: 20,
         ),
-        onPressed: onBack ?? () => Navigator.pop(context),
+        onPressed: onBack ?? Get.back,
       ),
-      title: Text(
-        title,
+      title: QualityResponsiveText(
+        text: title,
         style: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
           fontSize: 20,
           color: AppColors.primaryDarkTeal,
         ),
+        maxLines: 1,
+        softWrap: false,
       ),
       actions: [
         trailingWidget ?? const SizedBox(width: 48),

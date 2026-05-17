@@ -13,7 +13,6 @@ class EmailService {
     required String toEmail,
     required String name,
     required String employeeId,
-    required String generatedEmail,
     required String password,
   }) async {
     final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
@@ -33,7 +32,6 @@ class EmailService {
             'to_email': toEmail,
             'to_name': name,
             'employee_id': employeeId,
-            'login_email': generatedEmail,
             'password': password,
           },
         }),

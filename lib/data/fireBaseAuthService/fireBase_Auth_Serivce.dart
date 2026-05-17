@@ -64,20 +64,17 @@ class FirebaseAuthService {
   }
 
   static Future<void> signOut() async {
-    try
-    {
+    try {
       FirebaseAuth auth = FirebaseAuth.instance;
       await auth.signOut();
       Utils.toastMessegessuccess("log out success");
-
-    }
-    catch(e)
-    {
+    } catch (e) {
       Utils.toastMesseges(e.toString());
-
     }
+  }
 
-
+  Future<void> sendPasswordReset(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
   void _handleAuthException(FirebaseAuthException e) {

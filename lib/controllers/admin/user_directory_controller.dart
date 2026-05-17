@@ -13,33 +13,26 @@ import 'package:texops/services/cloudinary_services.dart';
 import 'package:texops/services/email_service.dart';
 
 class UserDirectoryController extends GetxController {
-  // ─── Employee fields ───────────────────────────────────────────
   final formKey = GlobalKey<FormState>();
   final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
   final RxString role = ''.obs;
 
-  // ─── Vendor fields ─────────────────────────────────────────────
   final vendorFormKey = GlobalKey<FormState>();
   final TextEditingController vendorName = TextEditingController();
   final TextEditingController vendorEmail = TextEditingController();
-
   final RxString vendorSupplyType = ''.obs;
 
-  // ─── Shared State ─────────────────────────────────────────────
   final RxInt selectedTab = 0.obs;
   final RxString searchQuery = ''.obs;
   final RxBool isLoading = false.obs;
+  final RxString selectedImagePath = ''.obs;
 
   final RxList<UserModel> allUsers = <UserModel>[].obs;
   final RxList<VendorModel> allVendors = <VendorModel>[].obs;
 
-  final RxString selectedImagePath = ''.obs;
-
   final PageController pageController = PageController();
-
   final List<String> categories = ["Lab", "Quality", "Vendors"];
-
   final List<String> supplyTypes = ["Cotton", "Polyester"];
 
   final UserFirebaseService _service = UserFirebaseService();
@@ -47,7 +40,6 @@ class UserDirectoryController extends GetxController {
   final CloudinaryService _cloudinaryService = CloudinaryService();
   final ImagePicker _picker = ImagePicker();
 
-  // ─── INIT ─────────────────────────────────────────────────────
   @override
   void onInit() {
     super.onInit();
@@ -55,7 +47,6 @@ class UserDirectoryController extends GetxController {
     allVendors.bindStream(_service.getVendors());
   }
 
-  // ─── IMAGE PICK ───────────────────────────────────────────────
   Future<void> pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
@@ -68,10 +59,8 @@ class UserDirectoryController extends GetxController {
     return await _cloudinaryService.uploadImage(File(selectedImagePath.value));
   }
 
-  // ─── FILTER DATA ──────────────────────────────────────────────
   List filteredDataByTab(int tab) {
     final q = searchQuery.value.toLowerCase();
-
     if (tab == 0) {
       return allUsers
           .where(
@@ -81,7 +70,6 @@ class UserDirectoryController extends GetxController {
           )
           .toList();
     }
-
     if (tab == 1) {
       return allUsers
           .where(
@@ -91,7 +79,6 @@ class UserDirectoryController extends GetxController {
           )
           .toList();
     }
-
     return allVendors
         .where(
           (v) =>
@@ -102,9 +89,9 @@ class UserDirectoryController extends GetxController {
         .toList();
   }
 
-  // ─── TAB CHANGE ───────────────────────────────────────────────
   void changeTab(int index) {
     selectedTab.value = index;
+    selectedImagePath.value = ''; // ← clear image so employee/vendor forms don't share it
     pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 250),
@@ -114,76 +101,74 @@ class UserDirectoryController extends GetxController {
 
   void onPageChanged(int index) {
     selectedTab.value = index;
+    selectedImagePath.value = ''; // ← clear image on swipe too
   }
 
-  // ─── ID GENERATION ────────────────────────────────────────────
   Future<String> generateNextID(String role) async {
-    final String prefix = role.toLowerCase().contains('lab') ? 'Lab' : 'Qual';
+    final String? lastID = await _service.getLastEmployeeId(role: role);
+    String prefix = role.toLowerCase().contains('lab') ? 'Lab' : 'Qual';
+    int nextNumber = 1;
 
-    final counterRef = FirebaseFirestore.instance
-        .collection('counters')
-        .doc(prefix.toLowerCase());
-
-    int nextNumber = 1000;
-
-    await FirebaseFirestore.instance.runTransaction((tx) async {
-      final snapshot = await tx.get(counterRef);
-
-      nextNumber = snapshot.exists
-          ? (snapshot.data()?['last'] ?? 999) + 1
-          : 1000;
-
-      tx.set(counterRef, {'last': nextNumber});
-    });
-
-    return "$prefix-$nextNumber";
+    if (lastID != null && lastID.contains('-')) {
+      final parts = lastID.split('-');
+      if (parts.length > 1) {
+        final parsedNumber = int.tryParse(parts[1]);
+        if (parsedNumber != null) {
+          nextNumber = parsedNumber + 1;
+        }
+      }
+    }
+    return '$prefix-${nextNumber.toString().padLeft(3, '0')}';
   }
 
-  // ─── REGISTER USER ────────────────────────────────────────────
+  // ─── REGISTER USER (NO PASSWORD FIRESTORE WRITES) ───
   Future<void> registerUser({
     required String name,
-    required String personalEmail,
+    required String generatedEmail, // user-given Gmail — used for auth, stored, and credential delivery
     required String role,
   }) async {
     isLoading.value = true;
-
     try {
+      final emailExists = await _service.isUserEmailExists(generatedEmail);
+      if (emailExists) {
+        Utils.toastMesseges("This email is already registered as an employee.");
+        return;
+      }
+
       final employeeID = await generateNextID(role);
-      final generatedEmail = '$employeeID@texops.com';
-      final password = "Tex@${employeeID.split('-')[1]}";
+      final password =
+          "Tex@${employeeID.split('-')[1]}"; // Initial transient password
 
       final imageUrl = await uploadProfileImage();
 
+      // Firebase Auth uses the user-given email
       final user = await _authService.registerUserWithEmailAndPass(
-        email: generatedEmail,
+        email: generatedEmail.trim().toLowerCase(),
         password: password,
       );
-
       if (user == null) return;
 
+      // Store user-given email as generatedEmail in Firestore
       final newUser = UserModel(
         uid: user.user!.uid,
-        personalEmail: personalEmail,
-        generatedEmail: generatedEmail,
+        generatedEmail: generatedEmail.trim().toLowerCase(),
         profilePic: imageUrl,
         name: name,
         role: role,
         employeeId: employeeID,
         dateJoined: DateTime.now(),
       );
-
       await _service.saveUser(newUser);
 
+      // Send credentials to the same email
       await EmailService.sendCredentials(
-        toEmail: personalEmail,
+        toEmail: generatedEmail.trim().toLowerCase(),
         name: name,
         employeeId: employeeID,
-        generatedEmail: generatedEmail,
         password: password,
       );
 
       _clearEmployeeFields();
-
       Get.back();
       Utils.toastMessegessuccess("Created $employeeID");
     } catch (e) {
@@ -193,23 +178,23 @@ class UserDirectoryController extends GetxController {
     }
   }
 
-  // ─── REGISTER VENDOR (FIXED) ───────────────────────────────────
   Future<void> registerVendor({
     required String name,
     required String email,
     required String supplyType,
   }) async {
     isLoading.value = true;
-
     try {
-      final exists = await _service.isVendorNameExists(name);
-
-      if (exists) {
-        Utils.toastMesseges("Vendor already exists with this name");
+      if (await _service.isVendorNameExists(name)) {
+        Utils.toastMesseges("A vendor with this name already exists.");
         return;
       }
-      final docRef = FirebaseFirestore.instance.collection('vendors').doc();
+      if (await _service.isVendorEmailExists(email)) {
+        Utils.toastMesseges("This email is already registered as a vendor.");
+        return;
+      }
 
+      final docRef = FirebaseFirestore.instance.collection('vendors').doc();
       final imageUrl = await uploadProfileImage();
 
       final vendor = VendorModel(
@@ -220,11 +205,9 @@ class UserDirectoryController extends GetxController {
         supplyType: supplyType,
         dateAdded: DateTime.now(),
       );
-
       await _service.saveVendor(vendor);
 
       _clearVendorFields();
-
       Get.back();
       Utils.toastMessegessuccess("Vendor registered");
     } catch (e) {
@@ -234,7 +217,6 @@ class UserDirectoryController extends GetxController {
     }
   }
 
-  // ─── CLEAR ─────────────────────────────────────────────────────
   void _clearEmployeeFields() {
     name.clear();
     email.clear();
@@ -251,7 +233,6 @@ class UserDirectoryController extends GetxController {
     vendorFormKey.currentState?.reset();
   }
 
-  // ─── DISPOSE ──────────────────────────────────────────────────
   @override
   void onClose() {
     name.dispose();

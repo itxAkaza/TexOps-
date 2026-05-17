@@ -7,12 +7,14 @@ import 'package:texops/resources/route/routes_names.dart';
 import 'package:texops/screens/admin/dashboard/widgets/admin_stat_card.dart';
 import 'package:texops/screens/admin/dashboard/widgets/fiber_price_chart.dart';
 import 'package:texops/screens/admin/dashboard/widgets/inventroy_turn_over.dart';
+import 'package:texops/screens/lab_engineer/dashboard/components/drawer/drawer.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Inject and instantiate the GetX state controller
     final controller = Get.put(DashboardController());
     final size = MediaQuery.of(context).size;
     final crossAxisCount = size.width > 650 ? 4 : 2;
@@ -22,7 +24,9 @@ class AdminDashboard extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: false,
+        // Set to true so the hamburger menu icon appears naturally to open the drawer panel
+        automaticallyImplyLeading: true,
+        iconTheme: const IconThemeData(color: AppColors.primaryDarkTeal),
         centerTitle: false,
         title: Text(
           "TexOps Overview",
@@ -33,13 +37,22 @@ class AdminDashboard extends StatelessWidget {
           ),
         ),
       ),
+      // Wrapped in Obx so updates to profile data re-render the drawer instantly
+      drawer: Obx(
+        () => MYDrawer(
+          userName: controller.userName.value,
+          userEmail: controller.userEmail.value,
+          userRole: controller.userRole.value,
+          userImageUrl: controller.userImageUrl.value,
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Stat Cards ──────────────────────────────────────
+              // ── Stat Cards Grid Layout ─────────────────────────────
               Obx(() {
                 final s = controller.stats.value;
                 return GridView.count(
@@ -64,7 +77,10 @@ class AdminDashboard extends StatelessWidget {
                       icon: Icons.inventory_2_outlined,
                       bodyText: _formatCount(s.totalBalesCount),
                       subtitleText: "Number of Bales",
-                      onTap: () => Get.toNamed(RoutesNames.adminBaleInventory),
+                      onTap: () => Get.toNamed(
+                        RoutesNames.adminBaleInventory,
+                        arguments: controller.rawBailData.toList(),
+                      ),
                     ),
                     AdminStatCard(
                       backgroundColor: AppColors.accentOrange,
@@ -72,9 +88,7 @@ class AdminDashboard extends StatelessWidget {
                       icon: Icons.verified_outlined,
                       bodyText: "${s.totalQualityScore.toStringAsFixed(1)}%",
                       subtitleText: "All Quality Rates",
-                      onTap: () {
-                        Get.toNamed(RoutesNames.adminQuality);
-                      },
+                      onTap: () => Get.toNamed(RoutesNames.adminQuality),
                     ),
                     AdminStatCard(
                       backgroundColor: AppColors.primaryDarkTeal,

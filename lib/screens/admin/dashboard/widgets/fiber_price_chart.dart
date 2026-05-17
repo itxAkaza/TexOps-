@@ -33,7 +33,7 @@ class FiberPriceChart extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Price Trends by Bale Type",
+                  "Purchase Trends",
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w600,
@@ -45,7 +45,6 @@ class FiberPriceChart extends StatelessWidget {
 
               const SizedBox(width: 8),
 
-              // FIXED TAB (no overflow)
               Obx(
                 () => FittedBox(
                   fit: BoxFit.scaleDown,
@@ -72,7 +71,6 @@ class FiberPriceChart extends StatelessWidget {
               final interval = controller.getLineChartInterval();
               final color = _lineColor(tabIdx);
 
-              // ✅ DYNAMIC WEEK LABELS (from controller)
               final days = controller.getCurrentWeekLabels();
 
               final hasData = spots.any((s) => s.y > 0);
@@ -89,7 +87,7 @@ class FiberPriceChart extends StatelessWidget {
                         curve: Curves.easeInOut,
                         LineChartData(
                           minX: 0,
-                          maxX: 6,
+                          maxX: 6.1,
                           minY: 0,
                           maxY: maxY,
                           clipData: const FlClipData.all(),
@@ -130,7 +128,13 @@ class FiberPriceChart extends StatelessWidget {
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 reservedSize: 26,
+                                interval: 1,
                                 getTitlesWidget: (val, _) {
+                                  // Skip fractional ticks injected at maxX boundary
+                                  if (val % 1 != 0) {
+                                    return const SizedBox.shrink();
+                                  }
+
                                   final idx = val.toInt();
 
                                   if (idx < 0 || idx >= days.length) {

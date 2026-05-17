@@ -124,8 +124,8 @@ class AuthController extends GetxController {
     final String lowerCaseRole = role.toLowerCase();
     if (lowerCaseRole.contains("admin")) {
       Get.offAllNamed(RoutesNames.adminDashboard);
-    } else {
-      Utils.toastMesseges("Unauthorized role access");
+    } else if (lowerCaseRole.contains("lab")) {
+      Get.offAllNamed(RoutesNames.labEngineerDashboard);
     }
   }
 

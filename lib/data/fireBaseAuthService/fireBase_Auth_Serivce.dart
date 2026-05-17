@@ -63,22 +63,18 @@ class FirebaseAuthService {
     }
   }
 
-  Future<void> sendPasswordReset(String email) async {
+  static Future<void> signOut() async {
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
-
-      await auth.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
-      throw FirebaseAuthException(code: e.code, message: e.message);
+      await auth.signOut();
+      Utils.toastMessegessuccess("log out success");
     } catch (e) {
-      throw Exception("An unexpected error occurred: $e");
+      Utils.toastMesseges(e.toString());
     }
   }
 
-  Future<void> signOut() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-
-    await auth.signOut();
+  Future<void> sendPasswordReset(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
   void _handleAuthException(FirebaseAuthException e) {

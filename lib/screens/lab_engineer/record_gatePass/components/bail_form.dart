@@ -69,7 +69,7 @@ class BaleInventoryForm extends StatelessWidget {
                   Expanded(
                     child: _buildTextField(
                         text: "Weight",
-                        hint: "e.g., 100 lbs",
+                        hint: "e.g., 100 Kg",
                         controller: baleController.weightController,
                         type: TextInputType.number,
                       validator: (value) => baleController.validateNumber(value, 'Weight'),

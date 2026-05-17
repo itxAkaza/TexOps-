@@ -9,13 +9,13 @@ class RoutesNames {
 
   static const String introScreen = "/";
 
-  static const String loginView = "/LoginView";
   static const String signUpView = "/SignUpView";
 
   static const String bailEntryView = "/BailEntryView";
   static const String labEngineerDashboard = "/labEngineerDashboard";
   static const String bailBarcodeView = "/BailBarcodeView";
-
-  static const String movieDetailView = "/movieDetailView";
-  static const String movieTrailerlView = "/movieTrailerView";
+  static const String detailView = "/detailView";
+  static const String qrShareView = "/qrShareView";
+  static const String viewAllGatePassesView = "/viewAllGatePassesView";
+  static const String gatePassTransferListView = "/gatePassTransferListView";
 }

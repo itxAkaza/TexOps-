@@ -9,8 +9,8 @@ import 'package:texops/screens/onBoarding/widgets/my_button.dart';
 
 import '../../../controllers/lab_engineer/record_gatePass/gatePass_controller.dart';
 
-class BailbarcodeScreen extends StatelessWidget {
-  const BailbarcodeScreen({super.key});
+class BailBarcodeScreen extends StatelessWidget {
+  const BailBarcodeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +21,7 @@ class BailbarcodeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLightPeach,
+
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(color: AppColors.primaryDarkTeal),
@@ -86,8 +87,8 @@ class BailbarcodeScreen extends StatelessWidget {
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50),
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
                   ),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
@@ -106,7 +107,7 @@ class BailbarcodeScreen extends StatelessWidget {
                     // Grid Details
                     Row(
                       children: [
-                        _buildDetailColumn("Bale ID", "#${baleController.generatedBaleId.value}"),
+                        _buildDetailColumn("Bale ID", baleController.generatedBaleId.value),
                         _buildDetailColumn("Supplier", baleController.selectedSupplier.value ?? "N/A"),
                       ],
                     ),
@@ -120,7 +121,7 @@ class BailbarcodeScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        _buildDetailColumn("Cost", "\$${baleController.priceController.text} | Local Database Req.", valueSize: 14),
+                        _buildDetailColumn("Cost", "Rs${baleController.priceController.text}", valueSize: 14),
                         _buildDetailColumn("GatePassID", "#${baleController.gatePassRefController.text}"),
                       ],
                     ),
@@ -152,7 +153,7 @@ class BailbarcodeScreen extends StatelessWidget {
 
                     ),
 
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 3),
 
                     Obx(
                         (){

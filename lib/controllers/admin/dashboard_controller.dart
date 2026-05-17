@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:get/get.dart';
 import 'package:texops/data/fireStoreDB/admin/dashboard_stats_service.dart';
 import 'package:texops/data/models/dashboard_model.dart';
 import 'package:texops/data/models/gate_pass_model.dart';
+import 'package:texops/services/notifiction_service.dart';
 
 class DashboardController extends GetxController {
   final DashboardService _service = DashboardService();
@@ -18,16 +20,36 @@ class DashboardController extends GetxController {
   ).obs;
 
   RxList<GatePassModel> allBailData = <GatePassModel>[].obs;
+  RxList<Map<String, dynamic>> rawBailData = <Map<String, dynamic>>[].obs;
   RxBool isLoadingBales = true.obs;
   RxInt selectedFiberIndex = 0.obs;
 
   static const List<String> fiberTypes = ['cotton', 'poly'];
   StreamSubscription<List<GatePassModel>>? _balesSub;
+  StreamSubscription<List<Map<String, dynamic>>>? _rawBalesSub;
+  RxString userName = 'Admin Demo'.obs;
+  RxString userEmail = 'admin.demo@gmail.com'.obs;
+  RxString userRole = 'Admin'.obs;
+  RxString userImageUrl = ''.obs;
+
+  // 2. Add this quick method to load directly from Auth memory
+  void loadAuthProfileDirectly() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      // Pull directly from local Auth memory with fallbacks
+      userName.value = currentUser.displayName ?? 'Admin Demo';
+      userEmail.value = currentUser.email ?? 'admin.demo@gmail.com';
+      userRole.value = 'Admin'; // Hardcoded for this dashboard route safety
+      userImageUrl.value = currentUser.photoURL ?? '';
+    }
+  }
 
   @override
   void onInit() {
     super.onInit();
-
+    NotificationServices ns = NotificationServices();
+    ns.initializeAll();
+    loadAuthProfileDirectly(); // <--- Just add this line!
     stats.bindStream(_service.getDashboardStats());
     _balesSub = _service.getAllBailData().listen(
       (data) {
@@ -38,11 +60,15 @@ class DashboardController extends GetxController {
         isLoadingBales.value = false;
       },
     );
+    _rawBalesSub = _service.getAllRawBailData().listen((data) {
+      rawBailData.value = data;
+    });
   }
 
   @override
   void onClose() {
     _balesSub?.cancel();
+    _rawBalesSub?.cancel();
     super.onClose();
   }
 

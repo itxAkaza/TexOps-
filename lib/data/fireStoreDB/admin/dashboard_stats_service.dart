@@ -21,4 +21,14 @@ class DashboardService {
       }).toList();
     });
   }
+
+  Stream<List<Map<String, dynamic>>> getAllRawBailData() {
+    return _db.collectionGroup('bail_data').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data();
+        data['docId'] = doc.id;
+        return data;
+      }).toList();
+    });
+  }
 }
